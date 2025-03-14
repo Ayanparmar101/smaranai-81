@@ -9,17 +9,23 @@ import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
 import { openaiService } from '@/services/openaiService';
 
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanations?: string[];
+}
+
 interface GrammarLesson {
   title: string;
   content: string;
-  level: 'Easy' | 'Medium' | 'Hard';
+  level: string;
   examples: string[];
   quiz: {
-    question: string;
-    options: string[];
-    correctIndex: number;
-    explanations?: string[]; // Added explanations for incorrect answers
-  }[];
+    easy: QuizQuestion[];
+    medium: QuizQuestion[];
+    hard: QuizQuestion[];
+  };
 }
 
 const GrammarPage = () => {
@@ -31,6 +37,7 @@ const GrammarPage = () => {
   const [lesson, setLesson] = useState<GrammarLesson | null>(null);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy'); // Added difficulty selection
 
   const grammarTopics = {
     beginner: [
@@ -93,7 +100,7 @@ const GrammarPage = () => {
     setLesson(null);
 
     try {
-      const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' : 
+      const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' :
                          selectedLevel === 'intermediate' ? 'grades 3-5' : 'grades 6-8';
 
       const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. 
@@ -103,16 +110,35 @@ const GrammarPage = () => {
         "content": "A clear, simple explanation of the grammar concept with examples",
         "level": "Easy/Medium/Hard",
         "examples": ["Example 1", "Example 2", "Example 3"],
-        "quiz": [
-          {
-            "question": "Question text",
-            "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correctIndex": 0, // Index of the correct answer (0 for Option A, etc.)
-            "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"] // Added explanations for incorrect answers
-          }
-        ] // Include 3-5 quiz questions
+        "quiz": {
+          "easy": [
+            {
+              "question": "Question text",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctIndex": 0,
+              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+            }
+          ],
+          "medium": [
+            {
+              "question": "Question text",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctIndex": 0,
+              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+            }
+          ],
+          "hard": [
+            {
+              "question": "Question text",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctIndex": 0,
+              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+            }
+          ]
+        }
       }
-      Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to.`;
+      Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to. Include 3-5 quiz questions for each difficulty level.`;
+
 
       const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
       // Remove any markdown formatting and extract just the JSON
@@ -120,7 +146,7 @@ const GrammarPage = () => {
       const lessonData: GrammarLesson = JSON.parse(jsonStr);
 
       setLesson(lessonData);
-      setUserAnswers(new Array(lessonData.quiz.length).fill(-1));
+      setUserAnswers(new Array(lessonData.quiz[selectedDifficulty].length).fill(-1)); // Initialize answers for selected difficulty
     } catch (error) {
       console.error('Error generating lesson:', error);
       toast.error('Failed to generate lesson. Please try again.');
@@ -151,12 +177,12 @@ const GrammarPage = () => {
     // Calculate score
     let correctAnswers = 0;
     userAnswers.forEach((answer, index) => {
-      if (answer === lesson.quiz[index].correctIndex) {
+      if (answer === lesson.quiz[selectedDifficulty][index].correctIndex) { // Access quiz based on selectedDifficulty
         correctAnswers++;
       }
     });
 
-    const percentage = Math.round((correctAnswers / lesson.quiz.length) * 100);
+    const percentage = Math.round((correctAnswers / lesson.quiz[selectedDifficulty].length) * 100);
 
     if (percentage >= 80) {
       toast.success(`Great job! You scored ${percentage}%`);
@@ -168,7 +194,7 @@ const GrammarPage = () => {
   };
 
   const resetQuiz = () => {
-    setUserAnswers(new Array(lesson?.quiz.length || 0).fill(-1));
+    setUserAnswers(new Array(lesson?.quiz[selectedDifficulty].length || 0).fill(-1));
     setShowResults(false);
   };
 
@@ -223,6 +249,44 @@ const GrammarPage = () => {
               </button>
             </div>
           </div>
+
+          {/* Difficulty selection */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Select Difficulty:</h2>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => setSelectedDifficulty('easy')}
+                className={`px-4 py-2 rounded-full transition-all ${
+                  selectedDifficulty === 'easy'
+                    ? 'bg-green-200 text-green-800'
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Easy
+              </button>
+              <button
+                onClick={() => setSelectedDifficulty('medium')}
+                className={`px-4 py-2 rounded-full transition-all ${
+                  selectedDifficulty === 'medium'
+                    ? 'bg-yellow-200 text-yellow-800'
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Medium
+              </button>
+              <button
+                onClick={() => setSelectedDifficulty('hard')}
+                className={`px-4 py-2 rounded-full transition-all ${
+                  selectedDifficulty === 'hard'
+                    ? 'bg-red-200 text-red-800'
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Hard
+              </button>
+            </div>
+          </div>
+
 
           {/* Topics grid */}
           <div className="mb-12">
@@ -297,21 +361,21 @@ const GrammarPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {lesson.quiz.map((question, qIndex) => (
+                  {lesson.quiz[selectedDifficulty].map((question, qIndex) => ( // Use selectedDifficulty
                     <div key={qIndex} className="bg-gray-50 p-4 rounded-xl">
                       <p className="font-medium mb-3">{qIndex + 1}. {question.question}</p>
                       <div className="space-y-2">
                         {question.options.map((option, oIndex) => (
-                          <div 
+                          <div
                             key={oIndex}
                             onClick={() => handleAnswerSelect(qIndex, oIndex)}
                             className={`p-3 rounded-lg cursor-pointer flex items-center transition-all ${
-                              userAnswers[qIndex] === oIndex 
+                              userAnswers[qIndex] === oIndex
                                 ? 'bg-kid-green/20 border-kid-green border-2'
                                 : 'bg-white border-2 border-gray-200 hover:border-kid-green/50'
                             } ${
-                              showResults 
-                                ? oIndex === question.correctIndex 
+                              showResults
+                                ? oIndex === question.correctIndex
                                   ? 'bg-green-100 border-green-500 border-2'
                                   : userAnswers[qIndex] === oIndex && userAnswers[qIndex] !== question.correctIndex
                                     ? 'bg-red-100 border-red-500 border-2'
