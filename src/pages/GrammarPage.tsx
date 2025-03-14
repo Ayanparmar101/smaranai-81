@@ -175,14 +175,13 @@ const GrammarPage = () => {
       
       <main className="flex-1">
         <div className="page-container">
-          <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold">
               <span className="flex items-center gap-2">
                 <BookOpen className="text-kid-green" />
                 English Grammar Learner
               </span>
             </h1>
-            <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
           </div>
           
           {/* Level selection */}
