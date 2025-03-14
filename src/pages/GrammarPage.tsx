@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, CheckCircle, HelpCircle, RefreshCw } from 'lucide-react';
@@ -19,6 +18,7 @@ interface GrammarLesson {
     question: string;
     options: string[];
     correctIndex: number;
+    explanations?: string[]; // Added explanations for incorrect answers
   }[];
 }
 
@@ -31,7 +31,7 @@ const GrammarPage = () => {
   const [lesson, setLesson] = useState<GrammarLesson | null>(null);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
-  
+
   const grammarTopics = {
     beginner: [
       'Nouns and Pronouns',
@@ -67,7 +67,7 @@ const GrammarPage = () => {
     } else {
       navigate('/');
     }
-    
+
     // Reset state when component mounts
     setLesson(null);
     setUserAnswers([]);
@@ -91,11 +91,11 @@ const GrammarPage = () => {
   const generateLesson = async (topic: string) => {
     setLoading(true);
     setLesson(null);
-    
+
     try {
       const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' : 
                          selectedLevel === 'intermediate' ? 'grades 3-5' : 'grades 6-8';
-      
+
       const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. 
       The response must be in valid JSON format with the following structure:
       {
@@ -107,15 +107,16 @@ const GrammarPage = () => {
           {
             "question": "Question text",
             "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correctIndex": 0 // Index of the correct answer (0 for Option A, etc.)
+            "correctIndex": 0, // Index of the correct answer (0 for Option A, etc.)
+            "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"] // Added explanations for incorrect answers
           }
         ] // Include 3-5 quiz questions
       }
       Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to.`;
-      
+
       const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
       const lessonData: GrammarLesson = JSON.parse(result);
-      
+
       setLesson(lessonData);
       setUserAnswers(new Array(lessonData.quiz.length).fill(-1));
     } catch (error) {
@@ -128,7 +129,7 @@ const GrammarPage = () => {
 
   const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
     if (showResults) return; // Don't allow changes after submission
-    
+
     const newAnswers = [...userAnswers];
     newAnswers[questionIndex] = answerIndex;
     setUserAnswers(newAnswers);
@@ -136,15 +137,15 @@ const GrammarPage = () => {
 
   const handleQuizSubmit = () => {
     if (!lesson) return;
-    
+
     // Check if all questions are answered
     if (userAnswers.includes(-1)) {
       toast.error('Please answer all questions before submitting');
       return;
     }
-    
+
     setShowResults(true);
-    
+
     // Calculate score
     let correctAnswers = 0;
     userAnswers.forEach((answer, index) => {
@@ -152,9 +153,9 @@ const GrammarPage = () => {
         correctAnswers++;
       }
     });
-    
+
     const percentage = Math.round((correctAnswers / lesson.quiz.length) * 100);
-    
+
     if (percentage >= 80) {
       toast.success(`Great job! You scored ${percentage}%`);
     } else if (percentage >= 60) {
@@ -168,11 +169,11 @@ const GrammarPage = () => {
     setUserAnswers(new Array(lesson?.quiz.length || 0).fill(-1));
     setShowResults(false);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      
+
       <main className="flex-1">
         <div className="page-container">
           <div className="mb-8">
@@ -183,7 +184,7 @@ const GrammarPage = () => {
               </span>
             </h1>
           </div>
-          
+
           {/* Level selection */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Select your level:</h2>
@@ -220,7 +221,7 @@ const GrammarPage = () => {
               </button>
             </div>
           </div>
-          
+
           {/* Topics grid */}
           <div className="mb-12">
             <h2 className="text-xl font-semibold mb-4">Choose a topic to study:</h2>
@@ -240,7 +241,7 @@ const GrammarPage = () => {
               ))}
             </div>
           </div>
-          
+
           {/* Lesson content */}
           {loading ? (
             <div className="text-center py-12">
@@ -259,11 +260,11 @@ const GrammarPage = () => {
                   {lesson.level}
                 </span>
               </div>
-              
+
               <div className="prose max-w-none mb-8">
                 <div dangerouslySetInnerHTML={{ __html: lesson.content.replace(/\n/g, '<br />') }} />
               </div>
-              
+
               <div className="mb-8">
                 <h3 className="text-xl font-semibold mb-4">Examples:</h3>
                 <ul className="space-y-2">
@@ -277,7 +278,7 @@ const GrammarPage = () => {
                   ))}
                 </ul>
               </div>
-              
+
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Practice Quiz:</h3>
@@ -292,7 +293,7 @@ const GrammarPage = () => {
                     </DoodleButton>
                   )}
                 </div>
-                
+
                 <div className="space-y-6">
                   {lesson.quiz.map((question, qIndex) => (
                     <div key={qIndex} className="bg-gray-50 p-4 rounded-xl">
@@ -329,10 +330,28 @@ const GrammarPage = () => {
                           </div>
                         ))}
                       </div>
+                      {showResults && (
+                        <div className="mt-2">
+                          {userAnswers[qIndex] === question.correctIndex ? (
+                            <span className="text-green-600 flex items-center gap-1">
+                              <CheckCircle size={16} /> Correct!
+                            </span>
+                          ) : (
+                            <div className="text-red-600">
+                              <p>Incorrect. The correct answer is: {question.options[question.correctIndex]}</p>
+                              {question.explanations && question.explanations[userAnswers[qIndex]] && (
+                                <p className="mt-1 text-sm">
+                                  Why it's wrong: {question.explanations[userAnswers[qIndex]]}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-                
+
                 {!showResults && (
                   <div className="mt-8 flex justify-center">
                     <DoodleButton
@@ -355,7 +374,7 @@ const GrammarPage = () => {
           ) : null}
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
