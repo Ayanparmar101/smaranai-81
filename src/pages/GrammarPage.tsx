@@ -115,7 +115,9 @@ const GrammarPage = () => {
       Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to.`;
 
       const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
-      const lessonData: GrammarLesson = JSON.parse(result);
+      // Remove any markdown formatting and extract just the JSON
+      const jsonStr = result.replace(/```json\n|\n```/g, '').trim();
+      const lessonData: GrammarLesson = JSON.parse(jsonStr);
 
       setLesson(lessonData);
       setUserAnswers(new Array(lessonData.quiz.length).fill(-1));
