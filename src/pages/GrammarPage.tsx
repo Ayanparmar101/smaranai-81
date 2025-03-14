@@ -88,11 +88,8 @@ const GrammarPage = () => {
 
   const selectTopic = (topic: string) => {
     setSelectedTopic(topic);
-  };
-
-  const handleGenerateLesson = async () => {
     if (apiKey) {
-      generateLesson(selectedTopic);
+      generateLesson(topic);
     } else {
       toast.error('Please enter your OpenAI API key first');
     }
@@ -312,19 +309,13 @@ const GrammarPage = () => {
             </div>
           </div>
 
-          {selectedTopic && !lesson && (
-            <div className="flex justify-center mb-8">
-              <DoodleButton
-                color="green"
-                size="lg"
-                onClick={handleGenerateLesson}
-              >
-                Generate Lesson
-              </DoodleButton>
+          {/* Lesson content */}
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-kid-green border-t-transparent"></div>
+              <p className="mt-4 text-lg">Generating your lesson...</p>
             </div>
-          )}
-
-          {lesson ? (
+          ) : lesson ? (
             <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green mb-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{lesson.title}</h2>
