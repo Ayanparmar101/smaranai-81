@@ -125,7 +125,7 @@ const SocraticTutorPage = () => {
               <p className="text-sm text-yellow-700 mb-4">
                 To use the Socratic Tutor, you need to provide your OpenAI API key. This key remains in your browser and is never sent to our servers.
               </p>
-              <ApiKeyInput onSave={handleApiKeyChange} />
+              <ApiKeyInput onApiKeySubmit={handleApiKeyChange} />
             </div>
           )}
 
