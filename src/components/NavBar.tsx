@@ -61,7 +61,7 @@ const NavBar = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-2xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
+            <span className="font-bold text-4xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
               Smaran.ai
             </span>
           </Link>
