@@ -156,3 +156,83 @@ const FlashcardsPage = () => {
 };
 
 export default FlashcardsPage;
+import React, { useState } from 'react';
+import { FileText } from 'lucide-react';
+import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
+const FlashcardsPage = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [flashcards, setFlashcards] = useState<Array<{ question: string; answer: string }>>([]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+    // TODO: Implement PDF processing logic here
+    // For now, just show a sample flashcard
+    setFlashcards([
+      { question: "Sample Question", answer: "Sample Answer" }
+    ]);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <NavBar />
+      
+      <main className="flex-1">
+        <div className="page-container">
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold">
+              <span className="flex items-center gap-2">
+                <FileText className="text-kid-green" />
+                PDF Flashcards Generator
+              </span>
+            </h1>
+          </div>
+
+          <div className="max-w-xl mx-auto">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <Input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileChange}
+                className="mb-4"
+              />
+              <Button 
+                onClick={handleUpload}
+                className="w-full bg-kid-green hover:bg-kid-green/90"
+                disabled={!file}
+              >
+                Generate Flashcards
+              </Button>
+            </div>
+
+            {flashcards.length > 0 && (
+              <div className="mt-8 space-y-4">
+                {flashcards.map((card, index) => (
+                  <div key={index} className="bg-white p-4 rounded-lg shadow-md">
+                    <h3 className="font-semibold">Question:</h3>
+                    <p className="mb-2">{card.question}</p>
+                    <h3 className="font-semibold">Answer:</h3>
+                    <p>{card.answer}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default FlashcardsPage;
