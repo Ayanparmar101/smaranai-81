@@ -38,22 +38,21 @@ const DoodleButton = ({
     lg: "text-lg px-6 py-3 rounded-2xl",
   };
 
+  // Create text color classes
+  const textColors = {
+    blue: "text-kid-blue",
+    green: "text-kid-green",
+    yellow: "text-kid-yellow",
+    red: "text-kid-red",
+    purple: "text-kid-purple",
+    pink: "text-kid-pink",
+    orange: "text-kid-orange",
+  };
+
   const variants = {
     default: colors[color],
-    outline: `bg-transparent border-2 border-current text-${color === 'blue' ? 'kid-blue' : 
-      color === 'green' ? 'kid-green' : 
-      color === 'yellow' ? 'kid-yellow' : 
-      color === 'red' ? 'kid-red' : 
-      color === 'purple' ? 'kid-purple' : 
-      color === 'pink' ? 'kid-pink' : 
-      'kid-orange'} hover:bg-gray-50`,
-    ghost: `bg-transparent text-${color === 'blue' ? 'kid-blue' : 
-      color === 'green' ? 'kid-green' : 
-      color === 'yellow' ? 'kid-yellow' : 
-      color === 'red' ? 'kid-red' : 
-      color === 'purple' ? 'kid-purple' : 
-      color === 'pink' ? 'kid-pink' : 
-      'kid-orange'} hover:bg-gray-50`,
+    outline: `bg-transparent border-2 border-current ${textColors[color]} hover:bg-gray-50`,
+    ghost: `bg-transparent ${textColors[color]} hover:bg-gray-50`,
   };
 
   return (
