@@ -1,8 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Heart } from 'lucide-react';
 
-const Footer: React.FC = () => {
+import React from 'react';
+
+export const Footer: React.FC = () => {
   return (
     <footer className="bg-white mt-12 border-t-2 border-dashed border-gray-200 pt-8 pb-6">
       <div className="container mx-auto px-4">
@@ -32,5 +31,3 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
-
-export default Footer;
