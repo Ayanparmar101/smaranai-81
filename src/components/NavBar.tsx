@@ -74,7 +74,7 @@ const NavBar = () => {
                 className={cn(
                   "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 md:flex-row md:flex-nowrap",
                   location.pathname === item.path
-                    ? `${item.color} text-white font-medium animate-wiggle`
+                    ? `${item.color} text-white font-medium`
                     : "hover:bg-gray-100"
                 )}
               >
