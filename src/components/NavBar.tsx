@@ -52,7 +52,7 @@ const NavBar = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <span className="font-bold text-2xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
-              Doodle Lingo
+              Smaran.ai
             </span>
           </Link>
           

@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-wrap">
           <div className="w-full md:w-4/12 mb-8 md:mb-0">
             <h4 className="text-xl font-bold mb-4 bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
-              Doodle Lingo
+              Smaran.ai
             </h4>
             <p className="text-gray-600 mb-4">
               Making English learning fun and interactive for students in grades 1-8.
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
             Made with <Heart className="text-kid-red mx-1 h-4 w-4" /> for young learners
           </p>
           <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Doodle Lingo. All rights reserved.
+            &copy; {new Date().getFullYear()} Smaran.ai. All rights reserved.
           </p>
         </div>
       </div>
