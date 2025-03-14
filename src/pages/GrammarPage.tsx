@@ -64,6 +64,8 @@ const GrammarPage = () => {
     if (savedApiKey) {
       setApiKey(savedApiKey);
       openaiService.setApiKey(savedApiKey);
+    } else {
+      navigate('/');
     }
     
     // Reset state when component mounts

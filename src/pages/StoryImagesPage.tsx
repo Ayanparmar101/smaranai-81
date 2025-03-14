@@ -113,14 +113,13 @@ const StoryImagesPage = () => {
       
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold">
               <span className="flex items-center gap-2">
                 <Image className="text-kid-yellow" />
                 Story Image Generator
               </span>
             </h1>
-            <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
