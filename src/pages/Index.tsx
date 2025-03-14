@@ -29,9 +29,11 @@ const Index = () => {
                   Interactive lessons, story generators, and AI tutors to help students in grades 1-8 master English.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <DoodleButton color="blue" size="lg">
-                    Get Started
-                  </DoodleButton>
+                  <Link to="/grammar">
+                    <DoodleButton color="blue" size="lg">
+                      Get Started
+                    </DoodleButton>
+                  </Link>
                   <Link to="/grammar">
                     <DoodleButton color="purple" size="lg" variant="outline">
                       Explore Lessons
