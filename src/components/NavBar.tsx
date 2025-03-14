@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, FileText } from 'lucide-react';
+import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NavBar = () => {
@@ -53,12 +53,6 @@ const NavBar = () => {
       path: '/socratic-tutor',
       icon: <HelpCircle className="w-6 h-6" />,
       color: 'bg-kid-orange'
-    },
-    {
-      name: 'Flashcards',
-      path: '/flashcards',
-      icon: <FileText className="w-6 h-6" />,
-      color: 'bg-kid-blue',
     }
   ];
 

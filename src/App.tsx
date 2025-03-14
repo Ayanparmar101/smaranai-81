@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,7 +11,6 @@ import SpokenEnglishPage from "./pages/SpokenEnglishPage";
 import VoiceBotPage from "./pages/VoiceBotPage";
 import SocraticTutorPage from "./pages/SocraticTutorPage";
 import NotFound from "./pages/NotFound";
-import FlashcardsPage from "./pages/FlashcardsPage"; // Added import for FlashcardsPage
 
 const queryClient = new QueryClient();
 
@@ -27,7 +27,6 @@ const App = () => (
           <Route path="/spoken-english" element={<SpokenEnglishPage />} />
           <Route path="/voice-bot" element={<VoiceBotPage />} />
           <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
-          <Route path="/flashcards" element={<FlashcardsPage />} /> {/* Added route for flashcards */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
