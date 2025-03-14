@@ -1,12 +1,22 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NavBar = () => {
   const location = useLocation();
-  
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    const closeMenu = () => setIsOpen(false);
+    window.addEventListener('resize', closeMenu);
+    return () => window.removeEventListener('resize', closeMenu);
+  }, []);
+
   const navItems = [
     { 
       name: 'Home', 
@@ -55,14 +65,14 @@ const NavBar = () => {
               Smaran.ai
             </span>
           </Link>
-          
-          <div className="hidden md:flex space-x-2">
+
+          <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-16 left-0 right-0 flex-col bg-white shadow-lg md:relative md:top-0 md:flex md:flex-row md:shadow-none md:items-center md:space-x-4`}>
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300",
+                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 md:flex-row md:flex-nowrap",
                   location.pathname === item.path
                     ? `${item.color} text-white font-medium animate-wiggle`
                     : "hover:bg-gray-100"
@@ -73,10 +83,9 @@ const NavBar = () => {
               </Link>
             ))}
           </div>
-          
+
           <div className="md:hidden">
-            {/* Mobile menu button */}
-            <button className="p-2 rounded-md bg-gray-100">
+            <button onClick={toggle} className="p-2 rounded-md bg-gray-100">
               <span className="sr-only">Open menu</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -95,25 +104,6 @@ const NavBar = () => {
             </button>
           </div>
         </div>
-      </div>
-      
-      {/* Mobile navigation */}
-      <div className="md:hidden flex overflow-x-auto py-2 px-4 space-x-4 mt-2 no-scrollbar">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={cn(
-              "flex flex-col items-center space-y-1 min-w-[70px] px-3 py-2 rounded-lg transition-all",
-              location.pathname === item.path
-                ? `${item.color} text-white font-medium`
-                : "bg-gray-100"
-            )}
-          >
-            {item.icon}
-            <span className="text-xs">{item.name}</span>
-          </Link>
-        ))}
       </div>
     </nav>
   );
