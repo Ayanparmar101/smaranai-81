@@ -353,13 +353,27 @@ const GrammarPage = () => {
                 </div>
 
                 {!showResults && (
-                  <div className="mt-8 flex justify-center">
+                  <div className="mt-8 flex justify-center gap-4">
                     <DoodleButton
                       color="green"
                       size="lg"
                       onClick={handleQuizSubmit}
                     >
                       Submit Answers
+                    </DoodleButton>
+                  </div>
+                )}
+                {showResults && (
+                  <div className="mt-8 flex justify-center gap-4">
+                    <DoodleButton
+                      color="purple"
+                      size="lg"
+                      onClick={() => {
+                        setShowResults(false);
+                        generateLesson(selectedTopic);
+                      }}
+                    >
+                      New Practice
                     </DoodleButton>
                   </div>
                 )}
