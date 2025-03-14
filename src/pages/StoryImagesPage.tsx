@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image, Download, RefreshCcw, Undo, Send } from 'lucide-react';
 import { toast } from 'sonner';
@@ -17,7 +16,7 @@ const StoryImagesPage = () => {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<Array<{ prompt: string; imageUrl: string }>>([]);
-  
+
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
@@ -36,46 +35,53 @@ const StoryImagesPage = () => {
       toast.error('Please enter your OpenAI API key first');
       return;
     }
-    
+
     if (!storyText.trim()) {
       toast.error('Please write a story first');
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
-      const systemPrompt = `You are a helpful AI that creates art prompts for children's stories. Given a story snippet, create a child-friendly, colorful, and engaging prompt that can be used to generate an illustration for the story. The prompt should be detailed yet simple, and should focus on creating a cheerful, colorful doodle-style illustration. Include specific details from the story, and describe the art style as "colorful children's book illustration with doodle style". Keep the prompt under 200 characters.`;
-      
-      const result = await openaiService.createCompletion(systemPrompt, storyText);
-      setPrompt(result);
+      const newPrompt = await openaiService.generatePrompt(storyText);
+      setPrompt(newPrompt);
+
+      // Generate image right after prompt
+      const enhancedPrompt = newPrompt + ", children's book illustration style, colorful doodles, cute characters, happy mood";
+      const imageUrl = await openaiService.generateImage(enhancedPrompt);
+      setGeneratedImageUrl(imageUrl);
+
+      // Add to history
+      setHistory(prev => [{ prompt: newPrompt, imageUrl }, ...prev.slice(0, 5)]);
     } catch (error) {
-      console.error('Error generating prompt:', error);
-      toast.error('Failed to generate a prompt. Please try again.');
+      console.error('Error:', error);
+      toast.error('Failed to generate image. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
 
   const generateImage = async () => {
     if (!apiKey) {
       toast.error('Please enter your OpenAI API key first');
       return;
     }
-    
+
     if (!prompt.trim()) {
       toast.error('Please generate or write a prompt first');
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const enhancedPrompt = prompt + ", children's book illustration style, colorful doodles, cute characters, happy mood";
       const imageUrl = await openaiService.generateImage(enhancedPrompt);
-      
+
       setGeneratedImageUrl(imageUrl);
-      
+
       // Add to history
       setHistory(prev => [{ prompt, imageUrl }, ...prev.slice(0, 5)]);
     } catch (error) {
@@ -88,7 +94,7 @@ const StoryImagesPage = () => {
 
   const downloadImage = () => {
     if (!generatedImageUrl) return;
-    
+
     const link = document.createElement('a');
     link.href = generatedImageUrl;
     link.download = 'story-illustration.png';
@@ -100,6 +106,7 @@ const StoryImagesPage = () => {
   const clearStory = () => {
     setStoryText('');
     setPrompt('');
+    setGeneratedImageUrl(null); //Added to clear image on clear story
   };
 
   const loadFromHistory = (item: { prompt: string; imageUrl: string }) => {
@@ -110,7 +117,7 @@ const StoryImagesPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      
+
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
@@ -121,7 +128,7 @@ const StoryImagesPage = () => {
               </span>
             </h1>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <div>
               <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-yellow mb-6">
@@ -129,7 +136,7 @@ const StoryImagesPage = () => {
                 <p className="text-gray-600 mb-4">
                   Write a short story or describe a scene, and we'll generate an illustration for it!
                 </p>
-                
+
                 <div className="mb-4">
                   <Textarea
                     placeholder="Once upon a time, there was a little rabbit who lived in a magical forest..."
@@ -138,7 +145,7 @@ const StoryImagesPage = () => {
                     className="min-h-[150px] border-2 border-gray-200 focus:border-kid-yellow"
                   />
                 </div>
-                
+
                 <div className="flex space-x-3">
                   <DoodleButton
                     color="yellow"
@@ -147,7 +154,7 @@ const StoryImagesPage = () => {
                   >
                     Create Prompt
                   </DoodleButton>
-                  
+
                   <Button
                     variant="outline"
                     size="icon"
@@ -158,13 +165,13 @@ const StoryImagesPage = () => {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-orange">
                 <h2 className="text-xl font-bold mb-4">Image Prompt</h2>
                 <p className="text-gray-600 mb-4">
                   Edit the prompt or use the generated one to create your image.
                 </p>
-                
+
                 <div className="mb-4">
                   <Textarea
                     placeholder="The prompt will appear here..."
@@ -173,7 +180,7 @@ const StoryImagesPage = () => {
                     className="min-h-[100px] border-2 border-gray-200 focus:border-kid-orange"
                   />
                 </div>
-                
+
                 <DoodleButton
                   color="orange"
                   onClick={generateImage}
@@ -184,11 +191,11 @@ const StoryImagesPage = () => {
                 </DoodleButton>
               </div>
             </div>
-            
+
             <div>
               <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-red h-full flex flex-col">
                 <h2 className="text-xl font-bold mb-4">Your Illustration</h2>
-                
+
                 {generatedImageUrl ? (
                   <div className="flex flex-col flex-grow">
                     <div className="relative bg-gray-100 rounded-xl overflow-hidden flex-grow flex items-center justify-center">
@@ -198,7 +205,7 @@ const StoryImagesPage = () => {
                         className="max-w-full max-h-full object-contain"
                       />
                     </div>
-                    
+
                     <div className="mt-4 flex justify-center">
                       <DoodleButton
                         color="red"
@@ -222,7 +229,7 @@ const StoryImagesPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* History section */}
           {history.length > 0 && (
             <div className="mt-12">
@@ -251,7 +258,7 @@ const StoryImagesPage = () => {
           )}
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
