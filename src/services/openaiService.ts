@@ -25,8 +25,8 @@ class OpenAIService {
   private apiKey: string | null = null;
 
   constructor() {
-    // Try to get the API key from localStorage
-    this.apiKey = localStorage.getItem("openaiApiKey");
+    // Try to get the API key from env
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || null;
   }
 
   setApiKey(key: string): void {

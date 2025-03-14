@@ -19,17 +19,16 @@ const StoryImagesPage = () => {
   const [history, setHistory] = useState<Array<{ prompt: string; imageUrl: string }>>([]);
   
   useEffect(() => {
-    const savedApiKey = localStorage.getItem('openaiApiKey');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      openaiService.setApiKey(savedApiKey);
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      setApiKey(envApiKey);
+      openaiService.setApiKey(envApiKey);
     }
   }, []);
 
   const handleApiKeySubmit = (key: string) => {
     setApiKey(key);
     openaiService.setApiKey(key);
-    toast.success('API key saved');
   };
 
   const generatePrompt = async () => {
