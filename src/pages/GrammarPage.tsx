@@ -103,7 +103,8 @@ const GrammarPage = () => {
       const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' :
                          selectedLevel === 'intermediate' ? 'grades 3-5' : 'grades 6-8';
 
-      const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. 
+      const difficultyLevel = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+      const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. The lesson difficulty should be "${difficultyLevel}".
       The response must be in valid JSON format with the following structure:
       {
         "title": "Lesson title",
