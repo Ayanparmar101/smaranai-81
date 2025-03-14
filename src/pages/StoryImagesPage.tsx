@@ -178,7 +178,7 @@ const StoryImagesPage = () => {
                 <DoodleButton
                   color="orange"
                   onClick={generateImage}
-                  loading={loading && prompt}
+                  loading={loading && prompt !== ''}
                   icon={<Send className="w-4 h-4" />}
                 >
                   Generate Image

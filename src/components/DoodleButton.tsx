@@ -9,6 +9,7 @@ interface DoodleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   icon?: React.ReactNode;
   size?: "sm" | "md" | "lg";
   loading?: boolean;
+  variant?: "default" | "outline" | "ghost";
 }
 
 const DoodleButton = ({
@@ -18,6 +19,7 @@ const DoodleButton = ({
   size = "md",
   className,
   loading = false,
+  variant = "default",
   ...props
 }: DoodleButtonProps) => {
   const colors = {
@@ -36,14 +38,33 @@ const DoodleButton = ({
     lg: "text-lg px-6 py-3 rounded-2xl",
   };
 
+  const variants = {
+    default: colors[color],
+    outline: `bg-transparent border-2 border-current text-${color === 'blue' ? 'kid-blue' : 
+      color === 'green' ? 'kid-green' : 
+      color === 'yellow' ? 'kid-yellow' : 
+      color === 'red' ? 'kid-red' : 
+      color === 'purple' ? 'kid-purple' : 
+      color === 'pink' ? 'kid-pink' : 
+      'kid-orange'} hover:bg-gray-50`,
+    ghost: `bg-transparent text-${color === 'blue' ? 'kid-blue' : 
+      color === 'green' ? 'kid-green' : 
+      color === 'yellow' ? 'kid-yellow' : 
+      color === 'red' ? 'kid-red' : 
+      color === 'purple' ? 'kid-purple' : 
+      color === 'pink' ? 'kid-pink' : 
+      'kid-orange'} hover:bg-gray-50`,
+  };
+
   return (
     <Button
       className={cn(
         "font-medium text-white transition-all transform active:scale-95",
         "border-b-4 border-black/20",
         "shadow-md hover:shadow-lg active:border-b-0 active:translate-y-1",
-        colors[color],
+        variant === 'default' ? colors[color] : variants[variant],
         sizes[size],
+        variant !== 'default' && "text-current border-current",
         className
       )}
       disabled={loading}
