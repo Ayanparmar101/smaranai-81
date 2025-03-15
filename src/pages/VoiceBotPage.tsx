@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +18,7 @@ const formSchema = z.object({
 });
 
 const VoiceBotPage = () => {
-  const [apiKey, setApiKey] = useState<string | null>(localStorage.getItem('openai-api-key'));
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string; }[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -48,66 +47,51 @@ const VoiceBotPage = () => {
 
   const handleApiKeySubmit = (key: string) => {
     setApiKey(key);
-    localStorage.setItem('openai-api-key', key);
   };
 
   const startListening = () => {
-    try {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        toast.error("Speech recognition is not supported in your browser");
-        return;
-      }
-
-      recognitionRef.current = new SpeechRecognition();
-      
-      if (!recognitionRef.current) {
-        throw new Error("Could not initialize speech recognition");
-      }
-      
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      
-      recognitionRef.current.onstart = () => {
-        console.log("Speech recognition started");
-        setIsListening(true);
-        setTranscript('');
-      };
-      
-      recognitionRef.current.onresult = (event) => {
-        console.log("Speech recognition result received", event);
-        let interimTranscript = '';
-        let finalTranscript = '';
-        
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
-          }
-        }
-        
-        setTranscript(finalTranscript || interimTranscript);
-      };
-      
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error', event.error);
-        toast.error(`Speech recognition error: ${event.error}`);
-        setIsListening(false);
-      };
-      
-      recognitionRef.current.onend = () => {
-        console.log("Speech recognition ended");
-        setIsListening(false);
-      };
-      
-      recognitionRef.current.start();
-      toast.success("Listening...");
-    } catch (err) {
-      console.error("Error starting speech recognition:", err);
-      toast.error(`Failed to start speech recognition: ${err instanceof Error ? err.message : String(err)}`);
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error("Speech recognition is not supported in your browser");
+      return;
     }
+
+    recognitionRef.current = new SpeechRecognition();
+    
+    recognitionRef.current.continuous = true;
+    recognitionRef.current.interimResults = true;
+    
+    recognitionRef.current.onstart = () => {
+      setIsListening(true);
+      setTranscript('');
+    };
+    
+    recognitionRef.current.onresult = (event) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      
+      setTranscript(finalTranscript || interimTranscript);
+    };
+    
+    recognitionRef.current.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+      setIsListening(false);
+    };
+    
+    recognitionRef.current.onend = () => {
+      setIsListening(false);
+    };
+    
+    recognitionRef.current.start();
   };
 
   const stopListening = async () => {
@@ -158,14 +142,14 @@ const VoiceBotPage = () => {
           messages: [
             {
               role: 'system',
-              content: 'You are a friendly voice assistant for children learning English. Keep your responses simple, encouraging, and suitable for children. Your answers should be detailed, informative and helpful. Avoid giving vague or generic answers. If asked a factual question, provide a proper answer with examples.'
+              content: 'You are a friendly voice assistant for children learning English. Keep your responses simple, encouraging, and suitable for children. Limit your responses to 2-3 sentences.'
             },
             {
               role: 'user',
               content: message
             }
           ],
-          max_tokens: 200
+          max_tokens: 150
         })
       });
       
@@ -183,18 +167,6 @@ const VoiceBotPage = () => {
         const speech = new SpeechSynthesisUtterance(botMessage);
         speech.rate = 0.9; // Slightly slower for children
         speech.pitch = 1.1; // Slightly higher pitch
-        
-        // Get available voices
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-          // Try to find a female English voice
-          const englishVoice = voices.find(voice => 
-            voice.lang.includes('en') && voice.name.includes('Female')
-          ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
-          
-          speech.voice = englishVoice;
-        }
-        
         window.speechSynthesis.speak(speech);
       }
     } catch (error: any) {
@@ -204,16 +176,6 @@ const VoiceBotPage = () => {
       setLoading(false);
     }
   };
-
-  // Load voices when component mounts
-  useEffect(() => {
-    if ('speechSynthesis' in window) {
-      // Get voices (in some browsers, this might need to be done after the voiceschanged event)
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
-    }
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
