@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -72,18 +73,26 @@ const AuthPage = () => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      // Get current origin for proper redirect
-      const origin = window.location.origin;
+      // Get absolute URL for redirect including protocol
+      const redirectUrl = new URL('/auth/callback', window.location.origin).toString();
       
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('Attempting Google login with redirect URL:', redirectUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: redirectUrl,
         }
       });
       
       if (error) throw error;
+      
+      // If there's a URL to redirect to, log it for debugging
+      if (data?.url) {
+        console.log('Google OAuth redirect URL:', data.url);
+      }
     } catch (error: any) {
+      console.error('Google login error:', error);
       toast.error(error.message || 'Google login failed');
       setLoading(false);
     }
