@@ -1,6 +1,6 @@
 
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/App';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -10,12 +10,14 @@ import { toast } from 'sonner';
 
 const AuthButton = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       toast.success('Signed out successfully');
+      navigate('/auth'); // Redirect to login page after sign out
     } catch (error: any) {
       toast.error(error.message || 'Error signing out');
     }

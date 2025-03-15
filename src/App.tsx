@@ -10,6 +10,7 @@ import StoryImagesPage from "./pages/StoryImagesPage";
 import SpokenEnglishPage from "./pages/SpokenEnglishPage";
 import VoiceBotPage from "./pages/VoiceBotPage";
 import SocraticTutorPage from "./pages/SocraticTutorPage";
+import TeacherPage from "./pages/TeacherPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
@@ -60,6 +61,7 @@ const App = () => {
               <Route path="/spoken-english" element={<SpokenEnglishPage />} />
               <Route path="/voice-bot" element={<VoiceBotPage />} />
               <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
+              <Route path="/teacher" element={<TeacherPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
