@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -73,10 +72,13 @@ const AuthPage = () => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
+      // Get current origin for proper redirect
+      const origin = window.location.origin;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/auth/callback',
+          redirectTo: `${origin}/auth/callback`,
         }
       });
       
