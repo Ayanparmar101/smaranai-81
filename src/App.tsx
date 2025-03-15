@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 export const AuthContext = createContext<{
   session: Session | null;
@@ -49,27 +50,29 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={{ session, user: session?.user ?? null }}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/grammar" element={<GrammarPage />} />
-              <Route path="/story-images" element={<StoryImagesPage />} />
-              <Route path="/spoken-english" element={<SpokenEnglishPage />} />
-              <Route path="/voice-bot" element={<VoiceBotPage />} />
-              <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
-              <Route path="/teacher" element={<TeacherPage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/auth/callback" element={<AuthCallbackPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthContext.Provider>
+      <ThemeProvider>
+        <AuthContext.Provider value={{ session, user: session?.user ?? null }}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/grammar" element={<GrammarPage />} />
+                <Route path="/story-images" element={<StoryImagesPage />} />
+                <Route path="/spoken-english" element={<SpokenEnglishPage />} />
+                <Route path="/voice-bot" element={<VoiceBotPage />} />
+                <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
+                <Route path="/teacher" element={<TeacherPage />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthContext.Provider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
