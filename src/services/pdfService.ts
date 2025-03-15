@@ -1,27 +1,87 @@
 
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 class PDFServiceClass {
   async extractTextFromPDF(file: File): Promise<string> {
     try {
-      // In a production environment, you would use a proper PDF parsing library or API
-      // Since we don't want to add a PDF library right now, we'll simulate the text extraction
-      
       // Read the file as an ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
       
       // For now, we'll return a placeholder that indicates the PDF was processed
       // In a real implementation, you would use pdf.js or a similar library to extract text
       return `[PDF Content from ${file.name}] This is a placeholder for the extracted text from the uploaded PDF. In a real implementation, this would contain the actual text extracted from the PDF file.`;
-      
-      // With an OpenAI API integration, you would:
-      // 1. Convert the PDF to an image or extract text
-      // 2. Use OpenAI's vision API or text API to process the content
-      
     } catch (error) {
       console.error("Error extracting text from PDF:", error);
       toast.error("Failed to extract text from PDF");
       return "Error extracting text from PDF. Please try again.";
+    }
+  }
+  
+  // This method uploads a PDF to Supabase storage
+  async uploadPDF(file: File, chapterId: string): Promise<string | null> {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${chapterId}.${fileExt}`;
+      const filePath = `${chapterId}/${fileName}`;
+      
+      // Upload file to Supabase storage
+      const { data, error } = await supabase.storage
+        .from('chapter_pdfs')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+      
+      if (error) {
+        console.error("Error uploading PDF:", error);
+        toast.error(`Failed to upload PDF: ${error.message}`);
+        return null;
+      }
+      
+      // Get the public URL for the uploaded file
+      const { data: { publicUrl } } = supabase.storage
+        .from('chapter_pdfs')
+        .getPublicUrl(filePath);
+      
+      toast.success("PDF uploaded successfully!");
+      return publicUrl;
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+      toast.error("Failed to upload PDF");
+      return null;
+    }
+  }
+  
+  // This method retrieves a PDF from Supabase storage
+  async getPDF(chapterId: string): Promise<Response | null> {
+    try {
+      // Check if PDF exists
+      const { data: files, error } = await supabase.storage
+        .from('chapter_pdfs')
+        .list(`${chapterId}`);
+      
+      if (error || !files || files.length === 0) {
+        console.error("PDF not found:", error);
+        return null;
+      }
+      
+      // Get the public URL
+      const filePath = `${chapterId}/${files[0].name}`;
+      const { data: { publicUrl } } = supabase.storage
+        .from('chapter_pdfs')
+        .getPublicUrl(filePath);
+      
+      // Fetch the PDF
+      const response = await fetch(publicUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch PDF');
+      }
+      
+      return response;
+    } catch (error) {
+      console.error("Error getting PDF:", error);
+      return null;
     }
   }
   

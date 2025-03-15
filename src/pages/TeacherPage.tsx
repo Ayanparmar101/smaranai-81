@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import { openaiService } from '@/services/openaiService';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';
 import { PDFService } from '@/services/pdfService';
+import { AuthContext } from '@/App';
+import { useNavigate } from 'react-router-dom';
 
 // Class 8 English chapters data
 const books = [
@@ -51,6 +53,8 @@ const books = [
 const classOptions = Array.from({ length: 8 }, (_, i) => ({ value: (i + 1).toString(), label: `Class ${i + 1}` }));
 
 const TeacherPage = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState<string>("8");
   const [selectedBook, setSelectedBook] = useState<string>("honeydew");
   const [selectedChapter, setSelectedChapter] = useState<string>("");
@@ -59,10 +63,18 @@ const TeacherPage = () => {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chapterContent, setChapterContent] = useState<string>("");
-  const [uploadedPDFs, setUploadedPDFs] = useState<Record<string, File>>({});
+  const [uploadedPDFs, setUploadedPDFs] = useState<Record<string, { file: File, url: string | null }>>({});
   
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const answerRef = useRef<HTMLDivElement>(null);
+
+  // Check if user is logged in when accessing the page
+  useEffect(() => {
+    if (!user) {
+      toast.error('Please sign in to access the teacher features');
+      navigate('/auth');
+    }
+  }, [user, navigate]);
 
   // Handle API key setup
   const handleApiKeySubmit = (apiKey: string) => {
@@ -151,19 +163,43 @@ const TeacherPage = () => {
     if (selectedChapter) {
       const loadChapterContent = async () => {
         try {
-          // Check if we have an uploaded PDF for this chapter
           const chapterId = `${selectedBook}-${selectedChapter}`;
+          
+          // Check if we have the PDF in our uploadedPDFs state
           if (uploadedPDFs[chapterId]) {
-            const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId]);
+            const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId].file);
             setChapterContent(content);
+            return;
+          }
+          
+          // If not, try to get it from Supabase storage
+          const pdfResponse = await PDFService.getPDF(chapterId);
+          if (pdfResponse) {
+            // Convert the response to a file
+            const blob = await pdfResponse.blob();
+            const file = new File([blob], `${chapterId}.pdf`, { type: 'application/pdf' });
+            
+            // Extract text and update state
+            const content = await PDFService.extractTextFromPDF(file);
+            setChapterContent(content);
+            
+            // Update uploadedPDFs state
+            const { data: { publicUrl } } = supabase.storage
+              .from('chapter_pdfs')
+              .getPublicUrl(`${chapterId}/${chapterId}.pdf`);
+              
+            setUploadedPDFs(prev => ({
+              ...prev,
+              [chapterId]: { file, url: publicUrl }
+            }));
           } else {
-            // If no uploaded PDF, try to load from default location
-            // This would be implemented with actual PDF loading from your codebase
-            setChapterContent("Chapter content will be loaded from PDFs that you upload.");
+            // No PDF found
+            setChapterContent("No PDF uploaded for this chapter yet. Please upload a PDF to view content.");
           }
         } catch (error) {
           console.error('Error loading chapter content:', error);
           toast.error('Failed to load chapter content');
+          setChapterContent("Error loading chapter content. Please try again.");
         }
       };
       
@@ -223,14 +259,19 @@ const TeacherPage = () => {
   };
 
   // Handle file upload
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = (file: File, publicUrl: string | null) => {
     const chapterId = `${selectedBook}-${selectedChapter}`;
     if (file) {
       setUploadedPDFs(prev => ({
         ...prev,
-        [chapterId]: file
+        [chapterId]: { file, url: publicUrl }
       }));
       toast.success(`PDF uploaded for ${chapterId}`);
+      
+      // Update chapter content with extracted text
+      PDFService.extractTextFromPDF(file).then(content => {
+        setChapterContent(content);
+      });
     }
   };
 

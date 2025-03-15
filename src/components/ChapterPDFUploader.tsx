@@ -6,15 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { PDFService } from '@/services/pdfService';
 
 interface ChapterPDFUploaderProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, publicUrl: string | null) => void;
   chapterId: string;
 }
 
 export const ChapterPDFUploader: React.FC<ChapterPDFUploaderProps> = ({ onFileUpload, chapterId }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -30,11 +32,24 @@ export const ChapterPDFUploader: React.FC<ChapterPDFUploaderProps> = ({ onFileUp
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (selectedFile) {
-      onFileUpload(selectedFile);
-      setOpen(false);
-      setSelectedFile(null);
+      setIsUploading(true);
+      try {
+        // Upload to Supabase storage
+        const publicUrl = await PDFService.uploadPDF(selectedFile, chapterId);
+        
+        // Notify parent component
+        onFileUpload(selectedFile, publicUrl);
+        
+        setOpen(false);
+        setSelectedFile(null);
+      } catch (error) {
+        console.error("Error during upload:", error);
+        toast.error('Failed to upload PDF');
+      } finally {
+        setIsUploading(false);
+      }
     } else {
       toast.error('Please select a file first');
     }
@@ -72,10 +87,10 @@ export const ChapterPDFUploader: React.FC<ChapterPDFUploaderProps> = ({ onFileUp
         </div>
         <Button 
           onClick={handleUpload} 
-          disabled={!selectedFile}
+          disabled={!selectedFile || isUploading}
           className="w-full"
         >
-          Upload
+          {isUploading ? 'Uploading...' : 'Upload'}
         </Button>
       </DialogContent>
     </Dialog>
