@@ -79,13 +79,12 @@ const NavBar = () => {
   return (
     <nav className="bg-card shadow-md py-4 px-6 sticky top-0 z-50">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center">
-          {/* Logo and Hamburger Menu */}
-          <div className="flex items-center gap-2">
-            {/* Hamburger Menu for Desktop */}
+        <div className="flex justify-between items-center relative">
+          {/* Hamburger Menu */}
+          <div className="flex items-center">
             <Sheet>
               <SheetTrigger asChild>
-                <button className="hidden md:flex p-2 rounded-md hover:bg-muted focus:outline-none">
+                <button className="p-2 rounded-md hover:bg-muted focus:outline-none">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
                 </button>
@@ -110,8 +109,10 @@ const NavBar = () => {
                 </div>
               </SheetContent>
             </Sheet>
-            
-            {/* Logo */}
+          </div>
+          
+          {/* Logo (Centered) */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
             <Link to="/" className="flex items-center space-x-2">
               <span className="font-bold text-2xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
                 Smaran.ai
@@ -119,26 +120,7 @@ const NavBar = () => {
             </Link>
           </div>
 
-          {/* Navigation Items - Hidden on Mobile */}
-          <div className="hidden md:flex md:items-center md:space-x-2">
-            {navItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavigation(item.path)}
-                className={cn(
-                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 text-left",
-                  location.pathname === item.path
-                    ? `${item.color} text-white font-medium`
-                    : "hover:bg-muted"
-                )}
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Auth Button, Theme Toggle and Mobile Menu Button */}
+          {/* Auth Button and Theme Toggle */}
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <AuthButton />
