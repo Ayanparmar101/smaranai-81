@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, CheckCircle, HelpCircle, RefreshCw } from 'lucide-react';
@@ -200,7 +201,7 @@ const GrammarPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <NavBar />
 
       <main className="flex-1">
@@ -223,7 +224,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedLevel === 'beginner'
                     ? 'bg-kid-green text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Beginner (Grades 1-2)
@@ -233,7 +234,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedLevel === 'intermediate'
                     ? 'bg-kid-blue text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Intermediate (Grades 3-5)
@@ -243,7 +244,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedLevel === 'advanced'
                     ? 'bg-kid-purple text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Advanced (Grades 6-8)
@@ -260,7 +261,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedDifficulty === 'easy'
                     ? 'bg-green-200 text-green-800'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Easy
@@ -270,7 +271,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedDifficulty === 'medium'
                     ? 'bg-yellow-200 text-yellow-800'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Medium
@@ -280,7 +281,7 @@ const GrammarPage = () => {
                 className={`px-4 py-2 rounded-full transition-all ${
                   selectedDifficulty === 'hard'
                     ? 'bg-red-200 text-red-800'
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    : 'bg-muted hover:bg-muted/80 text-foreground'
                 }`}
               >
                 Hard
@@ -300,7 +301,7 @@ const GrammarPage = () => {
                   className={`p-4 border-2 border-dashed rounded-xl transition-all hover:shadow-md ${
                     selectedTopic === topic
                       ? 'bg-kid-green/10 border-kid-green'
-                      : 'bg-white border-gray-200 hover:border-kid-green/50'
+                      : 'bg-card border-border hover:border-kid-green/50 text-card-foreground'
                   }`}
                 >
                   {topic}
@@ -316,7 +317,7 @@ const GrammarPage = () => {
               <p className="mt-4 text-lg">Generating your lesson...</p>
             </div>
           ) : lesson ? (
-            <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green mb-8">
+            <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green mb-8 text-card-foreground">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{lesson.title}</h2>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -328,7 +329,7 @@ const GrammarPage = () => {
                 </span>
               </div>
 
-              <div className="prose max-w-none mb-8">
+              <div className="prose max-w-none mb-8 text-card-foreground">
                 <div dangerouslySetInnerHTML={{ __html: lesson.content.replace(/\n/g, '<br />') }} />
               </div>
 
@@ -363,7 +364,7 @@ const GrammarPage = () => {
 
                 <div className="space-y-6">
                   {lesson.quiz[selectedDifficulty].map((question, qIndex) => ( // Use selectedDifficulty
-                    <div key={qIndex} className="bg-gray-50 p-4 rounded-xl">
+                    <div key={qIndex} className="bg-muted/50 p-4 rounded-xl text-foreground">
                       <p className="font-medium mb-3">{qIndex + 1}. {question.question}</p>
                       <div className="space-y-2">
                         {question.options.map((option, oIndex) => (
@@ -373,18 +374,18 @@ const GrammarPage = () => {
                             className={`p-3 rounded-lg cursor-pointer flex items-center transition-all ${
                               userAnswers[qIndex] === oIndex
                                 ? 'bg-kid-green/20 border-kid-green border-2'
-                                : 'bg-white border-2 border-gray-200 hover:border-kid-green/50'
+                                : 'bg-card text-card-foreground border-2 border-border hover:border-kid-green/50'
                             } ${
                               showResults
                                 ? oIndex === question.correctIndex
-                                  ? 'bg-green-100 border-green-500 border-2'
+                                  ? 'bg-green-100 border-green-500 border-2 text-green-900'
                                   : userAnswers[qIndex] === oIndex && userAnswers[qIndex] !== question.correctIndex
-                                    ? 'bg-red-100 border-red-500 border-2'
+                                    ? 'bg-red-100 border-red-500 border-2 text-red-900'
                                     : ''
                                 : ''
                             }`}
                           >
-                            <span className="mr-3 w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span className="mr-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center">
                               {String.fromCharCode(65 + oIndex)}
                             </span>
                             <span>{option}</span>
@@ -448,7 +449,7 @@ const GrammarPage = () => {
             </div>
           ) : selectedTopic ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 {apiKey ? "Click 'Generate Lesson' to start learning" : "Please enter your OpenAI API key to generate lessons"}
               </p>
             </div>
