@@ -1,9 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, GraduationCap } from 'lucide-react';
+import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, GraduationCap, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AuthButton from './AuthButton';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const NavBar = () => {
   const location = useLocation();
@@ -74,19 +79,53 @@ const NavBar = () => {
     <nav className="bg-white shadow-md py-4 px-6 sticky top-0 z-50">
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-2xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
-              Smaran.ai
-            </span>
-          </Link>
+          {/* Logo and Hamburger Menu */}
+          <div className="flex items-center gap-2">
+            {/* Hamburger Menu for Desktop */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="hidden md:flex p-2 rounded-md hover:bg-gray-100 focus:outline-none">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Open menu</span>
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col space-y-4 py-4">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => handleNavigation(item.path)}
+                      className={cn(
+                        "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full text-left",
+                        location.pathname === item.path
+                          ? `${item.color} text-white font-medium`
+                          : "hover:bg-gray-100"
+                      )}
+                    >
+                      {item.icon}
+                      <span className="text-lg">{item.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <span className="font-bold text-2xl bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
+                Smaran.ai
+              </span>
+            </Link>
+          </div>
 
-          <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-16 left-0 right-0 flex-col bg-white shadow-lg md:relative md:top-0 md:flex md:flex-row md:shadow-none md:items-center md:space-x-4`}>
+          {/* Navigation Items - Hidden on Mobile */}
+          <div className="hidden md:flex md:items-center md:space-x-2">
             {navItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => handleNavigation(item.path)}
                 className={cn(
-                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 md:flex-row md:flex-nowrap w-full md:w-auto text-left",
+                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 text-left",
                   location.pathname === item.path
                     ? `${item.color} text-white font-medium`
                     : "hover:bg-gray-100"
@@ -98,29 +137,37 @@ const NavBar = () => {
             ))}
           </div>
 
+          {/* Auth Button and Mobile Menu Button */}
           <div className="flex items-center gap-4">
             <AuthButton />
             
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button onClick={toggle} className="p-2 rounded-md bg-gray-100">
                 <span className="sr-only">Open menu</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
+                <Menu className="h-6 w-6" />
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-16 left-0 right-0 flex-col bg-white shadow-lg md:hidden`}>
+          {navItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => handleNavigation(item.path)}
+              className={cn(
+                "flex items-center space-x-2 px-6 py-3 rounded-none transition-all duration-300 w-full text-left",
+                location.pathname === item.path
+                  ? `${item.color} text-white font-medium`
+                  : "hover:bg-gray-100"
+              )}
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </button>
+          ))}
         </div>
       </div>
     </nav>
