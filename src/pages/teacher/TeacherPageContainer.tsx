@@ -5,7 +5,6 @@ import { AuthContext } from '@/App';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { openaiService } from '@/services/openaiService';
-import ApiKeyInput from '@/components/ApiKeyInput';
 import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';
 import { PDFService } from '@/services/pdfService';
 import { supabase } from '@/integrations/supabase/client';
@@ -25,6 +24,7 @@ const TeacherPageContainer: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chapterContent, setChapterContent] = useState<string>("");
   const [uploadedPDFs, setUploadedPDFs] = useState<Record<string, { file: File, url: string | null }>>({});
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const answerRef = useRef<HTMLDivElement>(null);
@@ -38,9 +38,17 @@ const TeacherPageContainer: React.FC = () => {
   }, [user, navigate]);
 
   // Handle API key setup
-  const handleApiKeySubmit = (apiKey: string) => {
-    openaiService.setApiKey(apiKey);
-  };
+  useEffect(() => {
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      openaiService.setApiKey(envApiKey);
+    } else {
+      const savedApiKey = localStorage.getItem('openaiApiKey');
+      if (savedApiKey) {
+        openaiService.setApiKey(savedApiKey);
+      }
+    }
+  }, []);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -130,6 +138,7 @@ const TeacherPageContainer: React.FC = () => {
           if (uploadedPDFs[chapterId]) {
             const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId].file);
             setChapterContent(content);
+            setPdfUrl(uploadedPDFs[chapterId].url);
             return;
           }
           
@@ -149,6 +158,8 @@ const TeacherPageContainer: React.FC = () => {
               .from('chapter_pdfs')
               .getPublicUrl(`${chapterId}/${chapterId}.pdf`);
               
+            setPdfUrl(publicUrl);
+            
             setUploadedPDFs(prev => ({
               ...prev,
               [chapterId]: { file, url: publicUrl }
@@ -156,11 +167,13 @@ const TeacherPageContainer: React.FC = () => {
           } else {
             // No PDF found
             setChapterContent("No PDF uploaded for this chapter yet. Please upload a PDF to view content.");
+            setPdfUrl(null);
           }
         } catch (error) {
           console.error('Error loading chapter content:', error);
           toast.error('Failed to load chapter content');
           setChapterContent("Error loading chapter content. Please try again.");
+          setPdfUrl(null);
         }
       };
       
@@ -227,6 +240,7 @@ const TeacherPageContainer: React.FC = () => {
         ...prev,
         [chapterId]: { file, url: publicUrl }
       }));
+      setPdfUrl(publicUrl);
       toast.success(`PDF uploaded for ${chapterId}`);
       
       // Update chapter content with extracted text
@@ -256,9 +270,7 @@ const TeacherPageContainer: React.FC = () => {
           />
           
           <div className="mb-4">
-            <div className="flex justify-between items-center">
-              <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
-              
+            <div className="flex justify-end items-center">
               {selectedChapter && (
                 <ChapterPDFUploader 
                   onFileUpload={handleFileUpload}
@@ -271,7 +283,10 @@ const TeacherPageContainer: React.FC = () => {
       </Card>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChapterContent chapterContent={chapterContent} />
+        <ChapterContent 
+          chapterContent={chapterContent} 
+          pdfUrl={pdfUrl} 
+        />
         
         <QuestionAnswerSection
           question={question}
