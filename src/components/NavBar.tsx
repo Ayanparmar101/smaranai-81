@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AuthButton from './AuthButton';
 
 const NavBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => {
@@ -18,6 +19,11 @@ const NavBar = () => {
     window.addEventListener('resize', closeMenu);
     return () => window.removeEventListener('resize', closeMenu);
   }, []);
+
+  const handleNavigation = (path: string) => {
+    setIsOpen(false);
+    navigate(path);
+  };
 
   const navItems = [
     { 
@@ -70,11 +76,11 @@ const NavBar = () => {
 
           <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-16 left-0 right-0 flex-col bg-white shadow-lg md:relative md:top-0 md:flex md:flex-row md:shadow-none md:items-center md:space-x-4`}>
             {navItems.map((item) => (
-              <Link
+              <button
                 key={item.path}
-                to={item.path}
+                onClick={() => handleNavigation(item.path)}
                 className={cn(
-                  "flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 md:flex-row md:flex-nowrap",
+                  "w-full text-left flex items-center space-x-1 px-3 py-2 rounded-full transition-all duration-300 md:flex-row md:flex-nowrap",
                   location.pathname === item.path
                     ? `${item.color} text-white font-medium`
                     : "hover:bg-gray-100"
@@ -82,7 +88,7 @@ const NavBar = () => {
               >
                 {item.icon}
                 <span>{item.name}</span>
-              </Link>
+              </button>
             ))}
           </div>
 

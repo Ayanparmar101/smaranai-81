@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
@@ -12,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import DoodleButton from '@/components/DoodleButton';
 
 const SpokenEnglishPage = () => {
-  const [isApiKeySet, setIsApiKeySet] = useState(!!openaiService.getApiKey());
+  const [isApiKeySet, setIsApiKeySet] = useState(!!openaiService.getApiKey() || !!localStorage.getItem('openai-api-key'));
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
@@ -22,15 +21,76 @@ const SpokenEnglishPage = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   
   const handleApiKeyChange = (key: string) => {
     openaiService.setApiKey(key);
+    localStorage.setItem('openai-api-key', key);
     setIsApiKeySet(!!key);
     toast.success('API key saved');
   };
   
+  useEffect(() => {
+    // Check if API key is in localStorage and set it
+    const savedKey = localStorage.getItem('openai-api-key');
+    if (savedKey && !openaiService.getApiKey()) {
+      openaiService.setApiKey(savedKey);
+      setIsApiKeySet(true);
+    }
+  }, []);
+  
   const startRecording = async () => {
     try {
+      // First try using Web Speech API for transcription
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        console.log("Using Web Speech API for transcription");
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+        }
+        
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US';
+        
+        recognitionRef.current.onstart = () => {
+          setIsRecording(true);
+          setTranscript('');
+          toast.success('Recording started');
+        };
+        
+        recognitionRef.current.onresult = (event) => {
+          let interimTranscript = '';
+          let finalTranscript = '';
+          
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript;
+            } else {
+              interimTranscript += transcript;
+            }
+          }
+          
+          setTranscript(finalTranscript || interimTranscript);
+        };
+        
+        recognitionRef.current.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          toast.error(`Speech recognition error: ${event.error}`);
+        };
+        
+        recognitionRef.current.onend = () => {
+          setIsRecording(false);
+        };
+        
+        recognitionRef.current.start();
+        return;
+      }
+      
+      // Fallback to MediaRecorder API if Web Speech API is not available
+      console.log("Falling back to MediaRecorder API");
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -45,8 +105,9 @@ const SpokenEnglishPage = () => {
         try {
           setIsLoading(true);
           // Here we would normally use the Whisper API to transcribe
-          // For this demo, we'll use the Web Speech API
-          recognizeSpeech(audioBlob);
+          // For now, we'll just use a placeholder since we already have Web Speech API
+          setTranscript('(Please use Web Speech API transcription)');
+          setIsLoading(false);
         } catch (error) {
           console.error('Error transcribing audio:', error);
           toast.error('Failed to transcribe audio. Please try again.');
@@ -64,6 +125,13 @@ const SpokenEnglishPage = () => {
   };
   
   const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+      toast.success('Recording stopped');
+      return;
+    }
+    
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
@@ -72,27 +140,6 @@ const SpokenEnglishPage = () => {
       // Stop all audio tracks
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
     }
-  };
-  
-  const recognizeSpeech = (audioBlob: Blob) => {
-    // For demo purposes, we're using the Web Speech API
-    // In a real implementation, we would use Whisper API here
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
-    
-    recognition.onresult = (event) => {
-      const result = event.results[0][0].transcript;
-      setTranscript(result);
-      setIsLoading(false);
-    };
-    
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      toast.error('Failed to recognize speech. Please try again.');
-      setIsLoading(false);
-    };
-    
-    recognition.start();
   };
   
   const handleSubmit = async () => {
@@ -104,11 +151,16 @@ const SpokenEnglishPage = () => {
     setIsLoading(true);
     
     try {
+      const savedKey = localStorage.getItem('openai-api-key');
+      if (savedKey && !openaiService.getApiKey()) {
+        openaiService.setApiKey(savedKey);
+      }
+      
       const systemPrompt = `You are a helpful English tutor specializing in teaching young students (grades 1-8). 
       Your responses should be encouraging, simple, and educational. 
       Correct any grammar or pronunciation mistakes in the student's speech, 
       but do it in a gentle, supportive way. Provide examples and explanations when needed. 
-      Keep responses under 150 words and appropriate for children.`;
+      Keep responses under 150 words and appropriate for children. Make sure your answers are detailed, informative and helpful.`;
       
       const result = await openaiService.createCompletion(systemPrompt, transcript);
       setResponse(result);
@@ -168,12 +220,7 @@ const SpokenEnglishPage = () => {
   };
   
   useEffect(() => {
-    // Initialize speech recognition
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
-      toast.error('Speech recognition is not supported in your browser.');
-    }
-    
-    // Initialize speech synthesis
+    // Initialize voices
     if ('speechSynthesis' in window) {
       // Load voices
       window.speechSynthesis.onvoiceschanged = () => {
@@ -186,6 +233,10 @@ const SpokenEnglishPage = () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         mediaRecorderRef.current.stop();
         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
+      
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
       }
       
       if ('speechSynthesis' in window) {
