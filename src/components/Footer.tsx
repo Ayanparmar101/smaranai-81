@@ -5,14 +5,14 @@ import { Heart } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white mt-12 border-t-2 border-dashed border-gray-200 pt-8 pb-6">
+    <footer className="bg-card text-card-foreground mt-12 border-t-2 border-dashed border-border pt-8 pb-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap">
           <div className="w-full md:w-4/12 mb-8 md:mb-0">
             <h4 className="text-xl font-bold mb-4 bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
               Smaran.ai
             </h4>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Making English learning fun and interactive for students in grades 1-8.
             </p>
             <div className="flex space-x-2">
@@ -40,16 +40,16 @@ const Footer: React.FC = () => {
                 <h5 className="text-lg font-semibold mb-4">Quick Links</h5>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/" className="text-gray-600 hover:text-kid-blue">Home</Link>
+                    <Link to="/" className="text-muted-foreground hover:text-kid-blue">Home</Link>
                   </li>
                   <li>
-                    <Link to="/grammar" className="text-gray-600 hover:text-kid-blue">Grammar</Link>
+                    <Link to="/grammar" className="text-muted-foreground hover:text-kid-blue">Grammar</Link>
                   </li>
                   <li>
-                    <Link to="/story-images" className="text-gray-600 hover:text-kid-blue">Story Images</Link>
+                    <Link to="/story-images" className="text-muted-foreground hover:text-kid-blue">Story Images</Link>
                   </li>
                   <li>
-                    <Link to="/spoken-english" className="text-gray-600 hover:text-kid-blue">Spoken English</Link>
+                    <Link to="/spoken-english" className="text-muted-foreground hover:text-kid-blue">Spoken English</Link>
                   </li>
                 </ul>
               </div>
@@ -58,16 +58,16 @@ const Footer: React.FC = () => {
                 <h5 className="text-lg font-semibold mb-4">Features</h5>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/voice-bot" className="text-gray-600 hover:text-kid-blue">Voice Bot</Link>
+                    <Link to="/voice-bot" className="text-muted-foreground hover:text-kid-blue">Voice Bot</Link>
                   </li>
                   <li>
-                    <Link to="/socratic-tutor" className="text-gray-600 hover:text-kid-blue">Socratic Tutor</Link>
+                    <Link to="/socratic-tutor" className="text-muted-foreground hover:text-kid-blue">Socratic Tutor</Link>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Worksheets</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Worksheets</a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Games</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Games</a>
                   </li>
                 </ul>
               </div>
@@ -76,16 +76,16 @@ const Footer: React.FC = () => {
                 <h5 className="text-lg font-semibold mb-4">Resources</h5>
                 <ul className="space-y-2">
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Help Center</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Help Center</a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Privacy Policy</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Privacy Policy</a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Terms of Service</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Terms of Service</a>
                   </li>
                   <li>
-                    <a href="#" className="text-gray-600 hover:text-kid-blue">Contact Us</a>
+                    <a href="#" className="text-muted-foreground hover:text-kid-blue">Contact Us</a>
                   </li>
                 </ul>
               </div>
@@ -93,11 +93,11 @@ const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="border-t border-dashed border-gray-200 mt-6 pt-6 flex flex-col items-center">
-          <p className="text-sm text-gray-600 mb-2 flex items-center">
+        <div className="border-t border-dashed border-border mt-6 pt-6 flex flex-col items-center">
+          <p className="text-sm text-muted-foreground mb-2 flex items-center">
             Made with <Heart className="text-kid-red mx-1 h-4 w-4" /> for young learners
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} Smaran.ai. All rights reserved.
           </p>
         </div>

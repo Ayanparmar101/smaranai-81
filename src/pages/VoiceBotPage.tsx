@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -178,7 +180,7 @@ const VoiceBotPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-background">
       <NavBar />
       
       <main className="flex-1 container mx-auto max-w-4xl p-4">
@@ -187,14 +189,14 @@ const VoiceBotPage = () => {
           <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
         </div>
         
-        <div className="bg-white rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto">
+        <div className="bg-card rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto text-card-foreground">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
               <div className="w-24 h-24 bg-kid-purple/10 rounded-full flex items-center justify-center mb-4">
                 <Mic className="h-12 w-12 text-kid-purple" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Start a Conversation!</h3>
-              <p className="text-gray-500 max-w-md">
+              <p className="text-muted-foreground max-w-md">
                 Click the "Start Recording" button and speak, or type a message below to chat with the voice bot.
               </p>
             </div>
@@ -211,7 +213,7 @@ const VoiceBotPage = () => {
                     className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                       msg.role === 'user'
                         ? 'bg-kid-purple text-white rounded-tr-none'
-                        : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                        : 'bg-muted text-foreground rounded-tl-none'
                     }`}
                   >
                     {msg.text}
@@ -224,7 +226,7 @@ const VoiceBotPage = () => {
         </div>
         
         {transcript && (
-          <div className="bg-gray-100 p-3 rounded-lg mb-4 italic text-gray-700">
+          <div className="bg-muted p-3 rounded-lg mb-4 italic text-muted-foreground">
             "{transcript}"
           </div>
         )}
@@ -261,7 +263,7 @@ const VoiceBotPage = () => {
                       placeholder="Type your message..."
                       {...field}
                       disabled={loading}
-                      className="rounded-full"
+                      className="rounded-full bg-muted text-foreground"
                     />
                   </FormControl>
                 </FormItem>
@@ -278,6 +280,8 @@ const VoiceBotPage = () => {
           </form>
         </Form>
       </main>
+      
+      <Footer />
     </div>
   );
 };

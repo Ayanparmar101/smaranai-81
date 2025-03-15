@@ -195,23 +195,23 @@ const SpokenEnglishPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <NavBar />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Spoken English Tutor
           </h1>
           
-          <p className="text-gray-700 mb-8">
+          <p className="text-muted-foreground mb-8">
             Practice your spoken English with interactive exercises designed for students in grades 1-8.
           </p>
 
           {!isApiKeySet && (
-            <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-              <h3 className="font-bold text-yellow-800 mb-2">OpenAI API Key Required</h3>
-              <p className="text-sm text-yellow-700 mb-4">
+            <div className="mb-8 p-4 bg-yellow-950/20 border border-yellow-800/30 rounded-xl">
+              <h3 className="font-bold text-yellow-400 mb-2">OpenAI API Key Required</h3>
+              <p className="text-sm text-yellow-400/80 mb-4">
                 To use the Spoken English Tutor, you need to provide your OpenAI API key. This key remains in your browser and is never sent to our servers.
               </p>
               <ApiKeyInput onApiKeySubmit={handleApiKeyChange} />
@@ -220,7 +220,7 @@ const SpokenEnglishPage = () => {
 
           {isApiKeySet && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-blue">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-blue text-card-foreground">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold">Your Speech</h2>
                   <div className="flex space-x-2">
@@ -249,7 +249,7 @@ const SpokenEnglishPage = () => {
                   placeholder="Your transcribed speech will appear here..."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
-                  className="min-h-[150px] border-2 border-gray-200 focus:border-kid-blue mb-4"
+                  className="min-h-[150px] border-2 border-input focus:border-kid-blue bg-muted text-foreground mb-4"
                   readOnly={isLoading}
                 />
                 
@@ -265,7 +265,7 @@ const SpokenEnglishPage = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green text-card-foreground">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold">Tutor's Response</h2>
                   <div className="flex space-x-2">
@@ -290,11 +290,11 @@ const SpokenEnglishPage = () => {
                   </div>
                 </div>
                 
-                <div className="min-h-[150px] border-2 border-gray-200 rounded-md p-3 mb-4 overflow-y-auto">
+                <div className="min-h-[150px] border-2 border-input rounded-md p-3 mb-4 overflow-y-auto bg-muted">
                   {response ? (
-                    <p className="text-gray-800">{response}</p>
+                    <p className="text-foreground">{response}</p>
                   ) : (
-                    <p className="text-gray-400 italic">
+                    <p className="text-muted-foreground italic">
                       The tutor's response will appear here after you submit your speech.
                     </p>
                   )}
@@ -308,9 +308,9 @@ const SpokenEnglishPage = () => {
           )}
           
           {isApiKeySet && (
-            <div className="bg-blue-50 p-6 rounded-xl mb-8">
-              <h3 className="font-bold text-blue-800 mb-2">How to use the Spoken English Tutor</h3>
-              <ol className="list-decimal pl-5 space-y-2 text-blue-700">
+            <div className="bg-blue-950/20 p-6 rounded-xl mb-8 border border-blue-800/30">
+              <h3 className="font-bold text-blue-400 mb-2">How to use the Spoken English Tutor</h3>
+              <ol className="list-decimal pl-5 space-y-2 text-blue-400/80">
                 <li>Click the microphone button and speak clearly in English.</li>
                 <li>Click the stop button when you're finished speaking.</li>
                 <li>Review your transcribed speech and click "Get Feedback".</li>

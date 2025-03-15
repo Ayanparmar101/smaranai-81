@@ -108,13 +108,13 @@ const StoryImagesPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <NavBar />
       
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
               <span className="flex items-center gap-2">
                 <Image className="text-kid-yellow" />
                 Story Image Generator
@@ -124,9 +124,9 @@ const StoryImagesPage = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <div>
-              <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-yellow mb-6">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-yellow mb-6 text-card-foreground">
                 <h2 className="text-xl font-bold mb-4">Write Your Story</h2>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Write a short story or describe a scene, and we'll generate an illustration for it!
                 </p>
                 
@@ -135,7 +135,7 @@ const StoryImagesPage = () => {
                     placeholder="Once upon a time, there was a little rabbit who lived in a magical forest..."
                     value={storyText}
                     onChange={(e) => setStoryText(e.target.value)}
-                    className="min-h-[150px] border-2 border-gray-200 focus:border-kid-yellow"
+                    className="min-h-[150px] border-2 border-gray-200 focus:border-kid-yellow bg-muted text-foreground"
                   />
                 </div>
                 
@@ -159,9 +159,9 @@ const StoryImagesPage = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-orange">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-orange text-card-foreground">
                 <h2 className="text-xl font-bold mb-4">Image Prompt</h2>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Edit the prompt or use the generated one to create your image.
                 </p>
                 
@@ -170,7 +170,7 @@ const StoryImagesPage = () => {
                     placeholder="The prompt will appear here..."
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    className="min-h-[100px] border-2 border-gray-200 focus:border-kid-orange"
+                    className="min-h-[100px] border-2 border-gray-200 focus:border-kid-orange bg-muted text-foreground"
                   />
                 </div>
                 
@@ -186,12 +186,12 @@ const StoryImagesPage = () => {
             </div>
             
             <div>
-              <div className="bg-white rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-red h-full flex flex-col">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-red h-full flex flex-col text-card-foreground">
                 <h2 className="text-xl font-bold mb-4">Your Illustration</h2>
                 
                 {generatedImageUrl ? (
                   <div className="flex flex-col flex-grow">
-                    <div className="relative bg-gray-100 rounded-xl overflow-hidden flex-grow flex items-center justify-center">
+                    <div className="relative bg-muted rounded-xl overflow-hidden flex-grow flex items-center justify-center">
                       <img
                         src={generatedImageUrl}
                         alt="Generated illustration"
@@ -210,9 +210,9 @@ const StoryImagesPage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-grow flex flex-col items-center justify-center bg-gray-100 rounded-xl p-8">
-                    <Image className="w-16 h-16 text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-center">
+                  <div className="flex-grow flex flex-col items-center justify-center bg-muted rounded-xl p-8">
+                    <Image className="w-16 h-16 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground text-center">
                       Your generated image will appear here.
                       <br />
                       Write a story and generate an image!
@@ -226,12 +226,12 @@ const StoryImagesPage = () => {
           {/* History section */}
           {history.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">Your Recent Images</h2>
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Your Recent Images</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {history.map((item, index) => (
                   <div 
                     key={index}
-                    className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                    className="bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer text-card-foreground"
                     onClick={() => loadFromHistory(item)}
                   >
                     <div className="h-48 overflow-hidden">
@@ -242,7 +242,7 @@ const StoryImagesPage = () => {
                       />
                     </div>
                     <div className="p-3">
-                      <p className="text-sm text-gray-600 line-clamp-2">{item.prompt}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{item.prompt}</p>
                     </div>
                   </div>
                 ))}
