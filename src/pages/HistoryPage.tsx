@@ -7,7 +7,6 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User } from '@/components/ui/user';
 
 interface ChatMessage {
   id: string;
@@ -15,6 +14,8 @@ interface ChatMessage {
   created_at: string;
   user_id: string;
   timestamp: number;
+  tool_type?: string;
+  image_url?: string;
 }
 
 const HistoryPage = () => {
@@ -55,7 +56,6 @@ const HistoryPage = () => {
 
     fetchMessages();
 
-    // Set up real-time subscription for new messages
     const channel = supabase
       .channel('messages_changes')
       .on(
@@ -87,6 +87,27 @@ const HistoryPage = () => {
     });
   };
 
+  const getFilteredMessages = () => {
+    if (activeTab === 'all') return messages;
+    return messages.filter(message => message.tool_type === activeTab);
+  };
+
+  const MessageContent = ({ message }: { message: ChatMessage }) => {
+    if (message.image_url) {
+      return (
+        <div className="space-y-2">
+          <p className="whitespace-pre-wrap mb-2">{message.text}</p>
+          <img 
+            src={message.image_url} 
+            alt="Generated content"
+            className="rounded-lg max-w-full h-auto"
+          />
+        </div>
+      );
+    }
+    return <p className="whitespace-pre-wrap">{message.text}</p>;
+  };
+
   return (
     <Layout>
       <ProtectedRoute>
@@ -95,9 +116,9 @@ const HistoryPage = () => {
           <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="all">All Messages</TabsTrigger>
-              <TabsTrigger value="story">Story Images</TabsTrigger>
-              <TabsTrigger value="spoken">Spoken English</TabsTrigger>
-              <TabsTrigger value="voice">Voice Bot</TabsTrigger>
+              <TabsTrigger value="story-images">Story Images</TabsTrigger>
+              <TabsTrigger value="spoken-english">Spoken English</TabsTrigger>
+              <TabsTrigger value="voice-bot">Voice Bot</TabsTrigger>
               <TabsTrigger value="teacher">Teacher</TabsTrigger>
             </TabsList>
 
@@ -116,14 +137,14 @@ const HistoryPage = () => {
                     </div>
                   ))}
                 </div>
-              ) : messages.length === 0 ? (
+              ) : getFilteredMessages().length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">
                   No messages found
                 </div>
               ) : (
                 <ScrollArea className="h-[600px] pr-4">
                   <div className="space-y-4">
-                    {messages.map((message) => (
+                    {getFilteredMessages().map((message) => (
                       <div
                         key={message.id}
                         className="p-4 rounded-lg bg-muted"
@@ -131,7 +152,7 @@ const HistoryPage = () => {
                         <p className="text-sm text-muted-foreground mb-2">
                           {formatDate(message.created_at)}
                         </p>
-                        <p className="whitespace-pre-wrap">{message.text}</p>
+                        <MessageContent message={message} />
                       </div>
                     ))}
                   </div>
