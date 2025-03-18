@@ -7,6 +7,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 interface ChatMessage {
   id: string;
@@ -89,23 +90,34 @@ const HistoryPage = () => {
 
   const getFilteredMessages = () => {
     if (activeTab === 'all') return messages;
-    return messages.filter(message => message.tool_type === activeTab);
+    
+    const toolTypeMap: { [key: string]: string } = {
+      'story-images': 'story',
+      'spoken-english': 'spoken',
+      'voice-bot': 'voice',
+      'teacher': 'teacher'
+    };
+    
+    const toolType = toolTypeMap[activeTab] || activeTab;
+    return messages.filter(message => message.tool_type === toolType);
   };
 
   const MessageContent = ({ message }: { message: ChatMessage }) => {
-    if (message.image_url) {
-      return (
-        <div className="space-y-2">
-          <p className="whitespace-pre-wrap mb-2">{message.text}</p>
-          <img 
-            src={message.image_url} 
-            alt="Generated content"
-            className="rounded-lg max-w-full h-auto"
-          />
-        </div>
-      );
-    }
-    return <p className="whitespace-pre-wrap">{message.text}</p>;
+    return (
+      <div className="space-y-2">
+        <p className="whitespace-pre-wrap">{message.text}</p>
+        {message.image_url && (
+          <div className="mt-4">
+            <img 
+              src={message.image_url} 
+              alt="Generated content"
+              className="rounded-lg max-w-full h-auto max-h-[400px] object-contain"
+              loading="lazy"
+            />
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -139,7 +151,7 @@ const HistoryPage = () => {
                 </div>
               ) : getFilteredMessages().length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">
-                  No messages found
+                  No messages found for {activeTab === 'all' ? 'any category' : activeTab.replace('-', ' ')}
                 </div>
               ) : (
                 <ScrollArea className="h-[600px] pr-4">
