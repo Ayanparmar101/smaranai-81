@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Image, Download, RefreshCcw, Undo, Send } from 'lucide-react';
+import { Image } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
-import DoodleButton from '@/components/DoodleButton';
 import { openaiService } from '@/services/openaiService';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContext } from '@/App';
+import StoryInput from '@/components/story-images/StoryInput';
+import PromptGenerator from '@/components/story-images/PromptGenerator';
+import ImageDisplay from '@/components/story-images/ImageDisplay';
+import ImageHistory from '@/components/story-images/ImageHistory';
 
 const StoryImagesPage = () => {
   const { user } = useContext(AuthContext);
@@ -157,131 +158,34 @@ const StoryImagesPage = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <div>
-              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-yellow mb-6 text-card-foreground">
-                <h2 className="text-xl font-bold mb-4">Write Your Story</h2>
-                <p className="text-muted-foreground mb-4">
-                  Write a short story or describe a scene, and we'll generate an illustration for it!
-                </p>
-                
-                <div className="mb-4">
-                  <Textarea
-                    placeholder="Once upon a time, there was a little rabbit who lived in a magical forest..."
-                    value={storyText}
-                    onChange={(e) => setStoryText(e.target.value)}
-                    className="min-h-[150px] border-2 border-gray-200 focus:border-kid-yellow bg-muted text-foreground"
-                  />
-                </div>
-                
-                <div className="flex space-x-3">
-                  <DoodleButton
-                    color="yellow"
-                    onClick={generatePrompt}
-                    loading={loading && !prompt}
-                  >
-                    Create Prompt
-                  </DoodleButton>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={clearStory}
-                    title="Clear story"
-                  >
-                    <Undo className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <StoryInput
+                storyText={storyText}
+                onStoryChange={setStoryText}
+                onGeneratePrompt={generatePrompt}
+                onClear={clearStory}
+                loading={loading && !prompt}
+              />
               
-              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-orange text-card-foreground">
-                <h2 className="text-xl font-bold mb-4">Image Prompt</h2>
-                <p className="text-muted-foreground mb-4">
-                  Edit the prompt or use the generated one to create your image.
-                </p>
-                
-                <div className="mb-4">
-                  <Textarea
-                    placeholder="The prompt will appear here..."
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    className="min-h-[100px] border-2 border-gray-200 focus:border-kid-orange bg-muted text-foreground"
-                  />
-                </div>
-                
-                <DoodleButton
-                  color="orange"
-                  onClick={generateImage}
-                  loading={loading && prompt !== ''}
-                  icon={<Send className="w-4 h-4" />}
-                >
-                  Generate Image
-                </DoodleButton>
-              </div>
+              <PromptGenerator
+                prompt={prompt}
+                onPromptChange={setPrompt}
+                onGenerateImage={generateImage}
+                loading={loading}
+              />
             </div>
             
             <div>
-              <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-red h-full flex flex-col text-card-foreground">
-                <h2 className="text-xl font-bold mb-4">Your Illustration</h2>
-                
-                {generatedImageUrl ? (
-                  <div className="flex flex-col flex-grow">
-                    <div className="relative bg-muted rounded-xl overflow-hidden flex-grow flex items-center justify-center">
-                      <img
-                        src={generatedImageUrl}
-                        alt="Generated illustration"
-                        className="max-w-full max-h-full object-contain"
-                      />
-                    </div>
-                    
-                    <div className="mt-4 flex justify-center">
-                      <DoodleButton
-                        color="red"
-                        onClick={downloadImage}
-                        icon={<Download className="w-4 h-4" />}
-                      >
-                        Download Image
-                      </DoodleButton>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex-grow flex flex-col items-center justify-center bg-muted rounded-xl p-8">
-                    <Image className="w-16 h-16 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground text-center">
-                      Your generated image will appear here.
-                      <br />
-                      Write a story and generate an image!
-                    </p>
-                  </div>
-                )}
-              </div>
+              <ImageDisplay
+                imageUrl={generatedImageUrl}
+                onDownload={downloadImage}
+              />
             </div>
           </div>
           
-          {/* History section */}
-          {history.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold mb-6 text-foreground">Your Recent Images</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {history.map((item, index) => (
-                  <div 
-                    key={index}
-                    className="bg-card rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer text-card-foreground"
-                    onClick={() => loadFromHistory(item)}
-                  >
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={item.imageUrl} 
-                        alt={`History item ${index}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <p className="text-sm text-muted-foreground line-clamp-2">{item.prompt}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <ImageHistory 
+            history={history}
+            onSelectHistory={loadFromHistory}
+          />
         </div>
       </main>
       
