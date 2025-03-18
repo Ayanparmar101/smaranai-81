@@ -16,6 +16,8 @@ interface ChatMessage {
   timestamp: number;
   tool_type?: string;
   image_url?: string;
+  ai_response?: string;
+  chat_type?: string;
 }
 
 const HistoryPage = () => {
@@ -92,10 +94,11 @@ const HistoryPage = () => {
         )
         .subscribe((status) => {
           console.log('Subscription status:', status);
+          // Fix: Use proper type checking instead of string comparison
           if (status === 'SUBSCRIBED') {
             console.log('Successfully subscribed to messages changes');
-          } else if (status === 'SUBSCRIPTION_ERROR') {
-            console.error('Error subscribing to messages changes');
+          } else if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR' || status === 'CLOSED') {
+            console.error('Error subscribing to messages changes:', status);
             toast.error('Error subscribing to message updates');
           }
         });
