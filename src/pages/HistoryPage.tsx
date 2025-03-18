@@ -32,6 +32,7 @@ const HistoryPage = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
+        console.log('Fetched messages:', data); // For debugging
         setMessages(data || []);
       } catch (error) {
         console.error('Error fetching messages:', error);
@@ -41,6 +42,28 @@ const HistoryPage = () => {
     };
 
     fetchMessages();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('messages_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `user_id=eq.${user?.id}`
+        },
+        (payload) => {
+          console.log('New message:', payload);
+          setMessages(prev => [payload.new as ChatMessage, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   const formatDate = (date: string) => {
