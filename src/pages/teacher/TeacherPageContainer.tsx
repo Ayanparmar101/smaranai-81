@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AuthContext } from '@/App';
@@ -29,7 +28,6 @@ const TeacherPageContainer: React.FC = () => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const answerRef = useRef<HTMLDivElement>(null);
 
-  // Check if user is logged in when accessing the page
   useEffect(() => {
     if (!user) {
       toast.error('Please sign in to access the teacher features');
@@ -37,7 +35,6 @@ const TeacherPageContainer: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Handle API key setup
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
@@ -50,7 +47,6 @@ const TeacherPageContainer: React.FC = () => {
     }
   }, []);
 
-  // Initialize speech recognition
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -106,7 +102,6 @@ const TeacherPageContainer: React.FC = () => {
     };
   }, [isListening]);
 
-  // Toggle speech recognition
   const toggleListening = () => {
     if (!recognitionRef.current) {
       toast.error('Speech recognition is not supported in this browser');
@@ -127,14 +122,12 @@ const TeacherPageContainer: React.FC = () => {
     }
   };
 
-  // Load chapter content when a chapter is selected
   useEffect(() => {
     if (selectedChapter) {
       const loadChapterContent = async () => {
         try {
           const chapterId = `${selectedBook}-${selectedChapter}`;
           
-          // Check if we have the PDF in our uploadedPDFs state
           if (uploadedPDFs[chapterId]) {
             const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId].file);
             setChapterContent(content);
@@ -142,18 +135,14 @@ const TeacherPageContainer: React.FC = () => {
             return;
           }
           
-          // If not, try to get it from Supabase storage
           const pdfResponse = await PDFService.getPDF(chapterId);
           if (pdfResponse) {
-            // Convert the response to a file
             const blob = await pdfResponse.blob();
             const file = new File([blob], `${chapterId}.pdf`, { type: 'application/pdf' });
             
-            // Extract text and update state
             const content = await PDFService.extractTextFromPDF(file);
             setChapterContent(content);
             
-            // Update uploadedPDFs state
             const { data: { publicUrl } } = supabase.storage
               .from('chapter_pdfs')
               .getPublicUrl(`${chapterId}/${chapterId}.pdf`);
@@ -165,7 +154,6 @@ const TeacherPageContainer: React.FC = () => {
               [chapterId]: { file, url: publicUrl }
             }));
           } else {
-            // No PDF found
             setChapterContent("No PDF uploaded for this chapter yet. Please upload a PDF to view content.");
             setPdfUrl(null);
           }
@@ -181,7 +169,28 @@ const TeacherPageContainer: React.FC = () => {
     }
   }, [selectedChapter, selectedBook, uploadedPDFs]);
 
-  // Ask a question about the chapter
+  const saveMessage = async (text: string, isUserMessage: boolean) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          text,
+          user_id: user.id,
+          timestamp: Math.floor(Date.now() / 1000)
+        });
+
+      if (error) {
+        console.error('Error saving message:', error);
+        toast.error('Failed to save message history');
+      }
+    } catch (error) {
+      console.error('Error in saveMessage:', error);
+      toast.error('Failed to save message history');
+    }
+  };
+
   const askQuestion = async () => {
     if (!question.trim()) {
       toast.error('Please enter a question');
@@ -200,6 +209,8 @@ const TeacherPageContainer: React.FC = () => {
     
     setIsLoading(true);
     setAnswer("");
+
+    await saveMessage(question, true);
     
     try {
       const book = books.find(b => b.id === selectedBook);
@@ -210,13 +221,14 @@ const TeacherPageContainer: React.FC = () => {
       Be thorough but keep your explanations at an appropriate level for the student's grade. 
       Always base your responses on the provided chapter content.`;
       
-      // Use streaming to show answer as it's generated
+      let fullResponse = '';
       await openaiService.createCompletion(
         systemPrompt,
         `Chapter Content: ${chapterContent}\n\nQuestion: ${question}`,
         {
           stream: true,
           onChunk: (chunk) => {
+            fullResponse += chunk;
             setAnswer(prev => prev + chunk);
             if (answerRef.current) {
               answerRef.current.scrollTop = answerRef.current.scrollHeight;
@@ -224,6 +236,8 @@ const TeacherPageContainer: React.FC = () => {
           }
         }
       );
+
+      await saveMessage(fullResponse, false);
     } catch (error) {
       console.error('Error getting answer:', error);
       toast.error('Failed to get answer. Please try again.');
@@ -232,7 +246,6 @@ const TeacherPageContainer: React.FC = () => {
     }
   };
 
-  // Handle file upload
   const handleFileUpload = (file: File, publicUrl: string | null) => {
     const chapterId = `${selectedBook}-${selectedChapter}`;
     if (file) {
@@ -243,7 +256,6 @@ const TeacherPageContainer: React.FC = () => {
       setPdfUrl(publicUrl);
       toast.success(`PDF uploaded for ${chapterId}`);
       
-      // Update chapter content with extracted text
       PDFService.extractTextFromPDF(file).then(content => {
         setChapterContent(content);
       });

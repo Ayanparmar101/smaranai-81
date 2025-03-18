@@ -1,18 +1,20 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
-import { useContext } from 'react';
 import { AuthContext } from '@/App';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { User } from '@/components/ui/user';
 
 interface ChatMessage {
   id: string;
   text: string;
   created_at: string;
   user_id: string;
+  timestamp: number;
 }
 
 const HistoryPage = () => {
@@ -27,14 +29,17 @@ const HistoryPage = () => {
       if (!user?.id) return;
 
       try {
-        const { data, error } = await supabase
+        setLoading(true);
+        setError(null);
+
+        const { data, error: fetchError } = await supabase
           .from('messages')
           .select('*')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .order('timestamp', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching messages:', error);
+        if (fetchError) {
+          console.error('Error fetching messages:', fetchError);
           setError('Failed to load messages');
           return;
         }
@@ -100,7 +105,17 @@ const HistoryPage = () => {
               {error ? (
                 <div className="text-center py-4 text-red-500">{error}</div>
               ) : loading ? (
-                <div className="text-center py-4">Loading messages...</div>
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex items-center space-x-4">
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : messages.length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">
                   No messages found
