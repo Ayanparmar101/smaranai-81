@@ -73,6 +73,18 @@ const NavBar = () => {
       path: '/teacher',
       icon: <GraduationCap className="w-6 h-6" />,
       color: 'bg-kid-blue'
+    },
+    { 
+      name: 'Profile', 
+      path: '/profile',
+      icon: <User className="w-6 h-6" />,
+      color: 'bg-kid-purple'
+    },
+    { 
+      name: 'History', 
+      path: '/history',
+      icon: <History className="w-6 h-6" />,
+      color: 'bg-kid-green'
     }
   ];
 

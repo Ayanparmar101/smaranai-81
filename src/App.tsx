@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,11 +12,14 @@ import SocraticTutorPage from "./pages/SocraticTutorPage";
 import TeacherPage from "./pages/TeacherPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import ProfilePage from "./pages/ProfilePage";
+import HistoryPage from "./pages/HistoryPage";
 import NotFound from "./pages/NotFound";
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { ThemeProvider } from "./components/ThemeProvider";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export const AuthContext = createContext<{
   session: Session | null;
@@ -33,12 +35,10 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -58,15 +58,72 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/grammar" element={<GrammarPage />} />
-                <Route path="/story-images" element={<StoryImagesPage />} />
-                <Route path="/spoken-english" element={<SpokenEnglishPage />} />
-                <Route path="/voice-bot" element={<VoiceBotPage />} />
-                <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
-                <Route path="/teacher" element={<TeacherPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route 
+                  path="/grammar" 
+                  element={
+                    <ProtectedRoute>
+                      <GrammarPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/story-images" 
+                  element={
+                    <ProtectedRoute>
+                      <StoryImagesPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/spoken-english" 
+                  element={
+                    <ProtectedRoute>
+                      <SpokenEnglishPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/voice-bot" 
+                  element={
+                    <ProtectedRoute>
+                      <VoiceBotPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/socratic-tutor" 
+                  element={
+                    <ProtectedRoute>
+                      <SocraticTutorPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/teacher" 
+                  element={
+                    <ProtectedRoute>
+                      <TeacherPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/history" 
+                  element={
+                    <ProtectedRoute>
+                      <HistoryPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
