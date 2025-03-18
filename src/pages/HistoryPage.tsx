@@ -100,12 +100,6 @@ const HistoryPage = () => {
         } else if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR' || status === 'CLOSED') {
           console.error('Error subscribing to messages changes:', status);
           setSubscriptionError(true);
-          
-          toast.error('Error subscribing to message updates', {
-            position: 'top-right',
-            duration: 4000,
-            closeButton: true,
-          });
         }
       });
       
