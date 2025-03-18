@@ -42,13 +42,38 @@ const ProfilePage = () => {
     
     setLoading(true);
     try {
-      const { error } = await supabase
+      // First, check if the profile exists
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          username: username,
-          updated_at: new Date().toISOString(),
-        });
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      let error;
+      
+      if (!existingProfile) {
+        // If profile doesn't exist, insert
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: user.id,
+              username: username,
+              updated_at: new Date().toISOString(),
+            }
+          ]);
+        error = insertError;
+      } else {
+        // If profile exists, update
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            username: username,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+        error = updateError;
+      }
 
       if (error) throw error;
       toast.success('Profile updated successfully!');
