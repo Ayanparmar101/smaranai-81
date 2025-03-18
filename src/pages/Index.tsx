@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Image, Mic, MessageCircle, HelpCircle } from 'lucide-react';
@@ -7,10 +6,8 @@ import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
-
 const Index = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <NavBar />
       
       <main className="flex-1">
@@ -43,11 +40,7 @@ const Index = () => {
               </div>
               <div className="md:w-1/2 relative">
                 <div className="relative">
-                  <img 
-                    src="https://img.freepik.com/free-vector/hand-drawn-colorful-doodle-background_23-2149019438.jpg" 
-                    alt="Colorful doodles" 
-                    className="rounded-2xl shadow-lg" 
-                  />
+                  <img alt="Colorful doodles" src="/lovable-uploads/43cda320-2d3f-46eb-b10e-2bc9ce6e1854.png" className="rounded-3xl shadow-lg object-fill" />
                   <div className="absolute -top-6 -right-6">
                     <DoodleDecoration type="star" color="yellow" size="lg" />
                   </div>
@@ -73,45 +66,15 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <h2 className="section-title">Learn With Fun Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              <DoodleCard
-                title="English Grammar"
-                description="Learn grammar rules with interactive lessons and fun exercises."
-                icon={<BookOpen className="w-8 h-8" />}
-                color="green"
-                to="/grammar"
-              />
+              <DoodleCard title="English Grammar" description="Learn grammar rules with interactive lessons and fun exercises." icon={<BookOpen className="w-8 h-8" />} color="green" to="/grammar" />
               
-              <DoodleCard
-                title="Story Image Generator"
-                description="Create beautiful images to illustrate your stories and writing."
-                icon={<Image className="w-8 h-8" />}
-                color="yellow"
-                to="/story-images"
-              />
+              <DoodleCard title="Story Image Generator" description="Create beautiful images to illustrate your stories and writing." icon={<Image className="w-8 h-8" />} color="yellow" to="/story-images" />
               
-              <DoodleCard
-                title="Spoken English"
-                description="Practice pronunciation and speaking with audio lessons."
-                icon={<Mic className="w-8 h-8" />}
-                color="red"
-                to="/spoken-english"
-              />
+              <DoodleCard title="Spoken English" description="Practice pronunciation and speaking with audio lessons." icon={<Mic className="w-8 h-8" />} color="red" to="/spoken-english" />
               
-              <DoodleCard
-                title="Voice Chat Bot"
-                description="Talk with an AI tutor that listens and responds to your voice."
-                icon={<MessageCircle className="w-8 h-8" />}
-                color="purple"
-                to="/voice-bot"
-              />
+              <DoodleCard title="Voice Chat Bot" description="Talk with an AI tutor that listens and responds to your voice." icon={<MessageCircle className="w-8 h-8" />} color="purple" to="/voice-bot" />
               
-              <DoodleCard
-                title="Socratic Tutor"
-                description="Learn through guided questions that help you discover answers."
-                icon={<HelpCircle className="w-8 h-8" />}
-                color="orange"
-                to="/socratic-tutor"
-              />
+              <DoodleCard title="Socratic Tutor" description="Learn through guided questions that help you discover answers." icon={<HelpCircle className="w-8 h-8" />} color="orange" to="/socratic-tutor" />
               
               <div className="card-doodle border-kid-pink flex flex-col items-center justify-center bg-gradient-to-br from-white to-pink-100 p-6">
                 <DoodleDecoration type="heart" color="pink" size="md" />
@@ -127,16 +90,23 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <h2 className="section-title">For All Age Groups</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
-              {[
-                { grade: '1-2', title: 'Early Learners', color: 'bg-kid-green' },
-                { grade: '3-4', title: 'Building Skills', color: 'bg-kid-blue' },
-                { grade: '5-6', title: 'Growing Confident', color: 'bg-kid-purple' },
-                { grade: '7-8', title: 'Advanced English', color: 'bg-kid-red' },
-              ].map((group, index) => (
-                <div 
-                  key={index} 
-                  className="card-doodle transition-all duration-300 hover:scale-105"
-                >
+              {[{
+              grade: '1-2',
+              title: 'Early Learners',
+              color: 'bg-kid-green'
+            }, {
+              grade: '3-4',
+              title: 'Building Skills',
+              color: 'bg-kid-blue'
+            }, {
+              grade: '5-6',
+              title: 'Growing Confident',
+              color: 'bg-kid-purple'
+            }, {
+              grade: '7-8',
+              title: 'Advanced English',
+              color: 'bg-kid-red'
+            }].map((group, index) => <div key={index} className="card-doodle transition-all duration-300 hover:scale-105">
                   <div className={`${group.color} text-white text-sm font-medium px-3 py-1 rounded-full w-fit mb-4`}>
                     Grades {group.grade}
                   </div>
@@ -144,8 +114,7 @@ const Index = () => {
                   <p className="text-gray-600">
                     Lessons and activities specifically designed for this age group's learning needs.
                   </p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -165,8 +134,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
