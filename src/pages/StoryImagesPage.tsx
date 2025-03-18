@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Image, Download, RefreshCcw, Undo, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -9,30 +8,62 @@ import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import DoodleButton from '@/components/DoodleButton';
 import { openaiService } from '@/services/openaiService';
+import { supabase } from '@/integrations/supabase/client';
+import { AuthContext } from '@/App';
 
 const StoryImagesPage = () => {
+  const { user } = useContext(AuthContext);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [storyText, setStoryText] = useState('');
   const [prompt, setPrompt] = useState('');
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<Array<{ prompt: string; imageUrl: string }>>([]);
-  
+
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
       setApiKey(envApiKey);
       openaiService.setApiKey(envApiKey);
+    } else {
+      const savedApiKey = localStorage.getItem('openaiApiKey');
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+        openaiService.setApiKey(savedApiKey);
+      }
     }
   }, []);
+
+  const saveMessage = async (text: string, isUser: boolean = true) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          text,
+          user_id: user.id,
+          timestamp: Math.floor(Date.now() / 1000)
+        });
+
+      if (error) {
+        console.error('Error saving message:', error);
+        toast.error('Failed to save message history');
+      }
+    } catch (error) {
+      console.error('Error in saveMessage:', error);
+    }
+  };
 
   const handleApiKeySubmit = (key: string) => {
     setApiKey(key);
     openaiService.setApiKey(key);
+    localStorage.setItem('openaiApiKey', key);
+    toast.success('API key saved successfully');
   };
 
   const generatePrompt = async () => {
-    if (!apiKey) {
+    if (!openaiService.getApiKey()) {
       toast.error('Please enter your OpenAI API key first');
       return;
     }
@@ -49,6 +80,7 @@ const StoryImagesPage = () => {
       
       const result = await openaiService.createCompletion(systemPrompt, storyText);
       setPrompt(result);
+      await saveMessage(`Story: ${storyText}\nGenerated Prompt: ${result}`, true);
     } catch (error) {
       console.error('Error generating prompt:', error);
       toast.error('Failed to generate a prompt. Please try again.');
@@ -58,7 +90,7 @@ const StoryImagesPage = () => {
   };
 
   const generateImage = async () => {
-    if (!apiKey) {
+    if (!openaiService.getApiKey()) {
       toast.error('Please enter your OpenAI API key first');
       return;
     }
@@ -75,6 +107,7 @@ const StoryImagesPage = () => {
       const imageUrl = await openaiService.generateImage(enhancedPrompt);
       
       setGeneratedImageUrl(imageUrl);
+      await saveMessage(`Generated image from prompt: ${prompt}\nImage URL: ${imageUrl}`, false);
       
       // Add to history
       setHistory(prev => [{ prompt, imageUrl }, ...prev.slice(0, 5)]);
