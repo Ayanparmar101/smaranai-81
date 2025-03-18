@@ -6,6 +6,7 @@ import { AuthContext } from '@/App';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 interface ChatMessage {
   id: string;
@@ -43,6 +44,7 @@ const HistoryPage = () => {
           return;
         }
 
+        console.log('Fetched messages:', data?.length || 0);
         setMessages(data || []);
       } catch (error) {
         console.error('Error in messages fetch:', error);
@@ -54,27 +56,60 @@ const HistoryPage = () => {
 
     fetchMessages();
 
-    // Set up real-time subscription for new messages
-    const channel = supabase
-      .channel('messages_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `user_id=eq.${user?.id}`
-        },
-        (payload) => {
-          console.log('New message received:', payload.new);
-          setMessages(prev => [payload.new as ChatMessage, ...prev]);
-        }
-      )
-      .subscribe();
+    // Set up real-time subscription for all message changes
+    const subscribeToChanges = () => {
+      console.log('Setting up real-time subscription for user:', user?.id);
+      
+      const channel = supabase
+        .channel('messages_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+            schema: 'public',
+            table: 'messages',
+            filter: `user_id=eq.${user?.id}`
+          },
+          (payload) => {
+            console.log('Real-time event received:', payload.eventType, payload);
+            
+            if (payload.eventType === 'INSERT') {
+              console.log('New message received:', payload.new);
+              setMessages(prev => [payload.new as ChatMessage, ...prev]);
+              toast.success('New message received');
+            } else if (payload.eventType === 'UPDATE') {
+              console.log('Message updated:', payload.new);
+              setMessages(prev => 
+                prev.map(msg => msg.id === payload.new.id ? payload.new as ChatMessage : msg)
+              );
+            } else if (payload.eventType === 'DELETE') {
+              console.log('Message deleted:', payload.old);
+              setMessages(prev => 
+                prev.filter(msg => msg.id !== payload.old.id)
+              );
+            }
+          }
+        )
+        .subscribe((status) => {
+          console.log('Subscription status:', status);
+          if (status === 'SUBSCRIBED') {
+            console.log('Successfully subscribed to messages changes');
+          } else if (status === 'SUBSCRIPTION_ERROR') {
+            console.error('Error subscribing to messages changes');
+            toast.error('Error subscribing to message updates');
+          }
+        });
+
+      return channel;
+    };
+
+    const channel = subscribeToChanges();
 
     return () => {
       console.log('Cleaning up subscription');
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, [user]);
 
@@ -98,6 +133,11 @@ const HistoryPage = () => {
             alt="Generated content"
             className="rounded-lg max-w-full h-auto"
             loading="lazy"
+            onError={(e) => {
+              console.error('Image failed to load:', message.image_url);
+              e.currentTarget.src = '/placeholder.svg';
+              e.currentTarget.alt = 'Image failed to load';
+            }}
           />
         </div>
       );
