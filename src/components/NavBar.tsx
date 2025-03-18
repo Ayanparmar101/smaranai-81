@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, GraduationCap, Menu } from 'lucide-react';
+import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, GraduationCap, Menu, UserRound, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
@@ -77,7 +76,7 @@ const NavBar = () => {
     { 
       name: 'Profile', 
       path: '/profile',
-      icon: <User className="w-6 h-6" />,
+      icon: <UserRound className="w-6 h-6" />,
       color: 'bg-kid-purple'
     },
     { 
