@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,6 +12,8 @@ import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
+import { AuthContext } from '@/App';
+import { saveMessage } from '@/utils/messageUtils';
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -20,6 +22,7 @@ const formSchema = z.object({
 });
 
 const VoiceBotPage = () => {
+  const { user } = useContext(AuthContext);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string; }[]>([]);
   const [isListening, setIsListening] = useState(false);
@@ -163,6 +166,16 @@ const VoiceBotPage = () => {
       const data = await response.json();
       const botMessage = data.choices[0].message.content;
       addMessage(botMessage, 'bot');
+      
+      // Save to message history if user is logged in
+      if (user) {
+        await saveMessage({
+          text: message,
+          userId: user.id,
+          aiResponse: botMessage,
+          chatType: 'voice-bot'
+        });
+      }
       
       // Text-to-speech for bot response
       if ('speechSynthesis' in window) {

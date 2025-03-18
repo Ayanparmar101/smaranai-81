@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ChapterSelector, { books } from './ChapterSelector';
 import ChapterContent from './ChapterContent';
 import QuestionAnswerSection from './QuestionAnswerSection';
+import { saveMessage } from '@/utils/messageUtils';
 
 const TeacherPageContainer: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -169,24 +170,18 @@ const TeacherPageContainer: React.FC = () => {
     }
   }, [selectedChapter, selectedBook, uploadedPDFs]);
 
-  const saveMessage = async (text: string, isUserMessage: boolean) => {
+  const saveToHistory = async (text: string, isUserMessage: boolean, aiResponse?: string) => {
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          text,
-          user_id: user.id,
-          timestamp: Math.floor(Date.now() / 1000)
-        });
-
-      if (error) {
-        console.error('Error saving message:', error);
-        toast.error('Failed to save message history');
-      }
+      await saveMessage({
+        text,
+        userId: user.id,
+        aiResponse: isUserMessage ? undefined : aiResponse,
+        chatType: 'teacher'
+      });
     } catch (error) {
-      console.error('Error in saveMessage:', error);
+      console.error('Error in saveToHistory:', error);
       toast.error('Failed to save message history');
     }
   };
@@ -210,7 +205,7 @@ const TeacherPageContainer: React.FC = () => {
     setIsLoading(true);
     setAnswer("");
 
-    await saveMessage(question, true);
+    await saveToHistory(question, true);
     
     try {
       const book = books.find(b => b.id === selectedBook);
@@ -237,7 +232,7 @@ const TeacherPageContainer: React.FC = () => {
         }
       );
 
-      await saveMessage(fullResponse, false);
+      await saveToHistory(question, false, fullResponse);
     } catch (error) {
       console.error('Error getting answer:', error);
       toast.error('Failed to get answer. Please try again.');

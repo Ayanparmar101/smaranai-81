@@ -11,24 +11,36 @@ export type Database = {
     Tables: {
       messages: {
         Row: {
+          ai_response: string | null
+          chat_type: string | null
           created_at: string | null
           id: string
+          image_url: string | null
           text: string
           timestamp: number
+          tool_type: string | null
           user_id: string
         }
         Insert: {
+          ai_response?: string | null
+          chat_type?: string | null
           created_at?: string | null
           id?: string
+          image_url?: string | null
           text: string
           timestamp?: number
+          tool_type?: string | null
           user_id: string
         }
         Update: {
+          ai_response?: string | null
+          chat_type?: string | null
           created_at?: string | null
           id?: string
+          image_url?: string | null
           text?: string
           timestamp?: number
+          tool_type?: string | null
           user_id?: string
         }
         Relationships: []

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { Image } from 'lucide-react';
 import { toast } from 'sonner';
@@ -5,12 +6,12 @@ import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import { openaiService } from '@/services/openaiService';
-import { supabase } from '@/integrations/supabase/client';
 import { AuthContext } from '@/App';
 import StoryInput from '@/components/story-images/StoryInput';
 import PromptGenerator from '@/components/story-images/PromptGenerator';
 import ImageDisplay from '@/components/story-images/ImageDisplay';
 import ImageHistory from '@/components/story-images/ImageHistory';
+import { saveMessage } from '@/utils/messageUtils';
 
 const StoryImagesPage = () => {
   const { user } = useContext(AuthContext);
@@ -34,27 +35,6 @@ const StoryImagesPage = () => {
       }
     }
   }, []);
-
-  const saveMessage = async (text: string, isUser: boolean = true) => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          text,
-          user_id: user.id,
-          timestamp: Math.floor(Date.now() / 1000)
-        });
-
-      if (error) {
-        console.error('Error saving message:', error);
-        toast.error('Failed to save message history');
-      }
-    } catch (error) {
-      console.error('Error in saveMessage:', error);
-    }
-  };
 
   const handleApiKeySubmit = (key: string) => {
     setApiKey(key);
@@ -81,7 +61,17 @@ const StoryImagesPage = () => {
       
       const result = await openaiService.createCompletion(systemPrompt, storyText);
       setPrompt(result);
-      await saveMessage(`Story: ${storyText}\nGenerated Prompt: ${result}`, true);
+
+      // Save the user's story and the generated prompt to history
+      if (user) {
+        await saveMessage({
+          text: storyText,
+          userId: user.id,
+          aiResponse: result,
+          chatType: 'story-images',
+          toolType: 'prompt-generator'
+        });
+      }
     } catch (error) {
       console.error('Error generating prompt:', error);
       toast.error('Failed to generate a prompt. Please try again.');
@@ -108,7 +98,17 @@ const StoryImagesPage = () => {
       const imageUrl = await openaiService.generateImage(enhancedPrompt);
       
       setGeneratedImageUrl(imageUrl);
-      await saveMessage(`Generated image from prompt: ${prompt}\nImage URL: ${imageUrl}`, false);
+      
+      // Save the image generation to history
+      if (user) {
+        await saveMessage({
+          text: `Generated image from prompt: ${prompt}`,
+          userId: user.id,
+          chatType: 'story-images',
+          imageUrl: imageUrl,
+          toolType: 'image-generator'
+        });
+      }
       
       // Add to history
       setHistory(prev => [{ prompt, imageUrl }, ...prev.slice(0, 5)]);
