@@ -86,7 +86,7 @@ const Index = () => {
         </section>
         
         {/* Age Groups Section */}
-        <section className="py-16">
+        <section className="px-0 py-[40px]">
           <div className="container mx-auto px-4">
             <h2 className="section-title">For All Age Groups</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
@@ -120,8 +120,8 @@ const Index = () => {
         </section>
         
         {/* Call to Action */}
-        <section className="py-16 bg-gradient-to-r from-kid-blue/10 to-kid-purple/10">
-          <div className="container mx-auto px-4 text-center">
+        <section className="bg-gradient-to-r from-kid-blue/10 to-kid-purple/10 px-0 my-0 py-[28px] mx-0">
+          <div className="container mx-auto text-center py-0 px-[16px]">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Learning?</h2>
             <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
               Begin your English learning journey with our interactive and fun tools designed for students of all levels.
