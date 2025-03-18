@@ -7,6 +7,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 interface ChatMessage {
   id: string;
@@ -25,6 +27,7 @@ const HistoryPage = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("all");
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -99,7 +102,14 @@ const HistoryPage = () => {
             console.log('Successfully subscribed to messages changes');
           } else if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR' || status === 'CLOSED') {
             console.error('Error subscribing to messages changes:', status);
-            toast.error('Error subscribing to message updates');
+            // Use Sonner toast directly without affecting UI - better user experience
+            toast.error('Error subscribing to message updates', {
+              position: 'top-right',
+              duration: 3000,
+              closeButton: true,
+              // This ensures the toast is shown briefly and doesn't stay too long
+              onAutoClose: () => console.log('Toast closed')
+            });
           }
         });
 
@@ -126,26 +136,66 @@ const HistoryPage = () => {
     });
   };
 
-  const MessageContent = ({ message }: { message: ChatMessage }) => {
-    if (message.image_url) {
-      return (
-        <div className="space-y-2">
-          <p className="whitespace-pre-wrap mb-2">{message.text}</p>
-          <img 
-            src={message.image_url} 
-            alt="Generated content"
-            className="rounded-lg max-w-full h-auto"
-            loading="lazy"
-            onError={(e) => {
-              console.error('Image failed to load:', message.image_url);
-              e.currentTarget.src = '/placeholder.svg';
-              e.currentTarget.alt = 'Image failed to load';
-            }}
-          />
-        </div>
-      );
+  const getChatTypeLabel = (chatType: string | undefined) => {
+    switch (chatType) {
+      case 'story-images': return 'Story Images';
+      case 'spoken-english': return 'Spoken English';
+      case 'voice-bot': return 'Voice Bot';
+      case 'socratic-tutor': return 'Socratic Tutor';
+      case 'teacher': return 'Teacher';
+      default: return 'Chat';
     }
-    return <p className="whitespace-pre-wrap">{message.text}</p>;
+  };
+
+  const getFilteredMessages = () => {
+    if (activeTab === "all") {
+      return messages;
+    }
+    return messages.filter(message => message.chat_type === activeTab);
+  };
+
+  const MessageContent = ({ message }: { message: ChatMessage }) => {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Badge variant="outline">{getChatTypeLabel(message.chat_type)}</Badge>
+            <p className="text-xs text-muted-foreground">{formatDate(message.created_at)}</p>
+          </div>
+
+          {/* User message */}
+          <div className="bg-primary-foreground p-3 rounded-lg">
+            <p className="font-medium">You:</p>
+            <p className="whitespace-pre-wrap">{message.text}</p>
+          </div>
+
+          {/* AI response - show only if exists */}
+          {message.ai_response && (
+            <div className="bg-muted p-3 rounded-lg">
+              <p className="font-medium">AI Assistant:</p>
+              <p className="whitespace-pre-wrap">{message.ai_response}</p>
+            </div>
+          )}
+
+          {/* Image - show only if exists */}
+          {message.image_url && (
+            <div className="mt-2">
+              <img 
+                src={message.image_url} 
+                alt="Generated content"
+                className="rounded-lg max-w-full h-auto"
+                loading="lazy"
+                onError={(e) => {
+                  console.error('Image failed to load:', message.image_url);
+                  e.currentTarget.src = '/placeholder.svg';
+                  e.currentTarget.alt = 'Image failed to load';
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -154,43 +204,58 @@ const HistoryPage = () => {
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold mb-6">Chat History</h1>
           
-          <div className="bg-card rounded-lg shadow-md p-6">
-            {error ? (
-              <div className="text-center py-4 text-red-500">{error}</div>
-            ) : loading ? (
-              <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-[250px]" />
-                      <Skeleton className="h-4 w-[200px]" />
-                    </div>
+          <Tabs 
+            defaultValue="all" 
+            className="mb-6"
+            value={activeTab}
+            onValueChange={setActiveTab}
+          >
+            <TabsList className="mb-4">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="story-images">Story Images</TabsTrigger>
+              <TabsTrigger value="spoken-english">Spoken English</TabsTrigger>
+              <TabsTrigger value="voice-bot">Voice Bot</TabsTrigger>
+              <TabsTrigger value="socratic-tutor">Socratic Tutor</TabsTrigger>
+              <TabsTrigger value="teacher">Teacher</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value={activeTab} className="mt-0">
+              <div className="bg-card rounded-lg shadow-md p-6">
+                {error ? (
+                  <div className="text-center py-4 text-red-500">{error}</div>
+                ) : loading ? (
+                  <div className="space-y-4">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="flex items-center space-x-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[250px]" />
+                          <Skeleton className="h-4 w-[200px]" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : messages.length === 0 ? (
-              <div className="text-center py-4 text-muted-foreground">
-                No messages found
-              </div>
-            ) : (
-              <ScrollArea className="h-[600px] pr-4">
-                <div className="space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className="p-4 rounded-lg bg-muted"
-                    >
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {formatDate(message.created_at)}
-                      </p>
-                      <MessageContent message={message} />
+                ) : getFilteredMessages().length === 0 ? (
+                  <div className="text-center py-4 text-muted-foreground">
+                    No messages found for this category
+                  </div>
+                ) : (
+                  <ScrollArea className="h-[600px] pr-4">
+                    <div className="space-y-6">
+                      {getFilteredMessages().map((message) => (
+                        <div
+                          key={message.id}
+                          className="p-4 rounded-lg bg-card border"
+                        >
+                          <MessageContent message={message} />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
-          </div>
+                  </ScrollArea>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </ProtectedRoute>
     </Layout>
