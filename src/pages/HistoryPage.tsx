@@ -19,6 +19,8 @@ const HistoryPage = () => {
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -31,11 +33,16 @@ const HistoryPage = () => {
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        console.log('Fetched messages:', data); // For debugging
+        if (error) {
+          console.error('Error fetching messages:', error);
+          setError('Failed to load messages');
+          return;
+        }
+
         setMessages(data || []);
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error('Error in messages fetch:', error);
+        setError('An unexpected error occurred');
       } finally {
         setLoading(false);
       }
@@ -43,7 +50,7 @@ const HistoryPage = () => {
 
     fetchMessages();
 
-    // Set up real-time subscription
+    // Set up real-time subscription for new messages
     const channel = supabase
       .channel('messages_changes')
       .on(
@@ -55,7 +62,6 @@ const HistoryPage = () => {
           filter: `user_id=eq.${user?.id}`
         },
         (payload) => {
-          console.log('New message:', payload);
           setMessages(prev => [payload.new as ChatMessage, ...prev]);
         }
       )
@@ -81,7 +87,7 @@ const HistoryPage = () => {
       <ProtectedRoute>
         <div className="container mx-auto py-8">
           <h1 className="text-3xl font-bold mb-6">Chat History</h1>
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="all">All Messages</TabsTrigger>
               <TabsTrigger value="story">Story Images</TabsTrigger>
@@ -91,7 +97,9 @@ const HistoryPage = () => {
             </TabsList>
 
             <div className="bg-card rounded-lg shadow-md p-6">
-              {loading ? (
+              {error ? (
+                <div className="text-center py-4 text-red-500">{error}</div>
+              ) : loading ? (
                 <div className="text-center py-4">Loading messages...</div>
               ) : messages.length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">

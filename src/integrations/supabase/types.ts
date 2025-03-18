@@ -21,7 +21,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           text: string
-          timestamp: number
+          timestamp?: number
           user_id: string
         }
         Update: {
