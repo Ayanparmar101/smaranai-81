@@ -1,127 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Image, Mic, MessageCircle, HelpCircle, Home, GraduationCap, Menu, UserRound, History } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '@/App';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import AnimationToggle from './AnimationToggle';
+
 const NavBar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
-  useEffect(() => {
-    const closeMenu = () => setIsOpen(false);
-    window.addEventListener('resize', closeMenu);
-    return () => window.removeEventListener('resize', closeMenu);
-  }, []);
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    setIsOpen(false);
-  };
-  const navItems = [{
-    name: 'Home',
-    path: '/',
-    icon: <Home className="w-6 h-6" />,
-    color: 'bg-kid-blue'
-  }, {
-    name: 'Grammar',
-    path: '/grammar',
-    icon: <BookOpen className="w-6 h-6" />,
-    color: 'bg-kid-green'
-  }, {
-    name: 'Story Images',
-    path: '/story-images',
-    icon: <Image className="w-6 h-6" />,
-    color: 'bg-kid-yellow'
-  }, {
-    name: 'Spoken English',
-    path: '/spoken-english',
-    icon: <Mic className="w-6 h-6" />,
-    color: 'bg-kid-red'
-  }, {
-    name: 'Voice Bot',
-    path: '/voice-bot',
-    icon: <MessageCircle className="w-6 h-6" />,
-    color: 'bg-kid-purple'
-  }, {
-    name: 'Socratic Tutor',
-    path: '/socratic-tutor',
-    icon: <HelpCircle className="w-6 h-6" />,
-    color: 'bg-kid-orange'
-  }, {
-    name: 'Teacher',
-    path: '/teacher',
-    icon: <GraduationCap className="w-6 h-6" />,
-    color: 'bg-kid-blue'
-  }, {
-    name: 'Profile',
-    path: '/profile',
-    icon: <UserRound className="w-6 h-6" />,
-    color: 'bg-kid-purple'
-  }, {
-    name: 'History',
-    path: '/history',
-    icon: <History className="w-6 h-6" />,
-    color: 'bg-kid-green'
-  }];
-  return <nav className="bg-card shadow-md py-4 px-6 sticky top-0 z-50">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center relative">
-          {/* Hamburger Menu */}
-          <div className="flex items-center">
-            <Sheet>
-              <SheetTrigger asChild>
-                <button className="p-2 rounded-md hover:bg-muted focus:outline-none">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Open menu</span>
-                </button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col space-y-4 py-4">
-                  {navItems.map(item => <button key={item.path} onClick={() => handleNavigation(item.path)} className={cn("flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 w-full text-left", location.pathname === item.path ? `${item.color} text-white font-medium` : "hover:bg-muted")}>
-                      {item.icon}
-                      <span className="text-lg">{item.name}</span>
-                    </button>)}
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-          
-          {/* Logo (Centered) */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <Link to="/" className="flex items-center space-x-2">
-              <span className="font-bold bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent text-4xl">
-                Smaran.ai
-              </span>
-            </Link>
-          </div>
-
-          {/* Auth Button and Theme Toggle */}
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <AuthButton />
-            
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button onClick={toggle} className="p-2 rounded-md bg-muted">
-                <span className="sr-only">Open menu</span>
-                <Menu className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
+  const { user } = useContext(AuthContext);
+  
+  return (
+    <header className="w-full py-4 px-4 md:px-8 bg-background border-b border-border/40">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Link to="/" className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <span className="text-primary">English</span>
+            <span className="text-accent">Fun</span>
+          </Link>
         </div>
-
-        {/* Mobile Navigation Menu */}
-        <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-16 left-0 right-0 flex-col bg-card shadow-lg md:hidden`}>
-          {navItems.map(item => <button key={item.path} onClick={() => handleNavigation(item.path)} className={cn("flex items-center space-x-2 px-6 py-3 rounded-none transition-all duration-300 w-full text-left", location.pathname === item.path ? `${item.color} text-white font-medium` : "hover:bg-muted")}>
-              {item.icon}
-              <span>{item.name}</span>
-            </button>)}
+        
+        <nav className="hidden md:flex items-center gap-6 text-muted-foreground">
+          <Link to="/grammar" className="hover:text-foreground transition-colors">Grammar</Link>
+          <Link to="/story-images" className="hover:text-foreground transition-colors">Story Images</Link>
+          <Link to="/spoken-english" className="hover:text-foreground transition-colors">Spoken English</Link>
+          <Link to="/voice-bot" className="hover:text-foreground transition-colors">Voice Bot</Link>
+          <Link to="/socratic-tutor" className="hover:text-foreground transition-colors">Socratic Tutor</Link>
+          {user && (
+            <Link to="/teacher" className="hover:text-foreground transition-colors">Teacher Tools</Link>
+          )}
+        </nav>
+        
+        <div className="flex items-center gap-2">
+          <AnimationToggle />
+          <ThemeToggle />
+          <AuthButton />
         </div>
       </div>
-    </nav>;
+    </header>
+  );
 };
+
 export default NavBar;
