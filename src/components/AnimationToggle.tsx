@@ -22,7 +22,7 @@ const AnimationToggle = () => {
       aria-label={animationsEnabled ? "Disable animations" : "Enable animations"}
       pressed={animationsEnabled}
       onPressedChange={toggleAnimations}
-      className="h-9 w-9 rounded-full p-0"
+      className="h-9 w-9 rounded-full p-0 text-white"
       title="Toggle background animations"
     >
       <CloudSun className="h-4 w-4" />
