@@ -12,8 +12,8 @@ const NavBar = () => {
   return <header className="w-full py-4 px-4 md:px-8 bg-background border-b border-border/40">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Link to="/" className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <span className="text-primary">English</span>
+          <Link to="/" className="text-2xl font-bold text-foreground flex items-center gap-2 py-[6px] px-[26px] my-0 mx-0">
+            <span className="text-primary">Smaran</span>
             <span className="text-accent">ai</span>
           </Link>
         </div>
