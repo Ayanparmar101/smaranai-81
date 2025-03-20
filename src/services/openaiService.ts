@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // OpenAI API interface
@@ -22,11 +21,24 @@ interface CompletionOptions {
 }
 
 class OpenAIService {
-  private apiKey: string | null = null;
+  // Change this to your actual OpenAI API key
+  private apiKey: string | null = "YOUR_OPENAI_API_KEY_HERE";
 
   constructor() {
     // Try to get the API key from env
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || null;
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      this.apiKey = envApiKey;
+    } else if (this.apiKey === "YOUR_OPENAI_API_KEY_HERE") {
+      // If no key is set in the code or env, try to get from localStorage as fallback
+      const savedApiKey = localStorage.getItem("openaiApiKey");
+      if (savedApiKey) {
+        this.apiKey = savedApiKey;
+      }
+    } else {
+      // Save the hardcoded key to localStorage for future use
+      localStorage.setItem("openaiApiKey", this.apiKey);
+    }
   }
 
   setApiKey(key: string): void {
