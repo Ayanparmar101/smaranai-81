@@ -101,17 +101,23 @@ const GrammarPage = () => {
   const generateLesson = async (topic: string) => {
     setLoading(true);
     setLesson(null);
+    setUserAnswers([]); // Reset user answers when generating a new lesson
 
     try {
       const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' :
                          selectedLevel === 'intermediate' ? 'grades 3-5' : 'grades 6-8';
 
       const difficultyLevel = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+      
+      // Ensure we request exactly the number of questions specified by the slider
+      const questionCount = Math.max(1, Math.min(10, numQuestions)); // Ensure between 1-10
+      
       const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. The lesson difficulty should be "${difficultyLevel}".
-      The response must be in valid JSON format with the following structure:
+      
+      Your response must follow this exact JSON format without any markdown formatting or extra text:
       {
         "title": "Lesson title",
-        "content": "A clear, simple explanation of the grammar concept with examples",
+        "content": "A clear, simple explanation of the grammar concept",
         "level": "Easy/Medium/Hard",
         "examples": ["Example 1", "Example 2", "Example 3"],
         "quiz": {
@@ -120,7 +126,7 @@ const GrammarPage = () => {
               "question": "Question text",
               "options": ["Option A", "Option B", "Option C", "Option D"],
               "correctIndex": 0,
-              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+              "explanations": ["Explanation for A", "Explanation for B", "Explanation for C", "Explanation for D"]
             }
           ],
           "medium": [
@@ -128,7 +134,7 @@ const GrammarPage = () => {
               "question": "Question text",
               "options": ["Option A", "Option B", "Option C", "Option D"],
               "correctIndex": 0,
-              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+              "explanations": ["Explanation for A", "Explanation for B", "Explanation for C", "Explanation for D"]
             }
           ],
           "hard": [
@@ -136,21 +142,34 @@ const GrammarPage = () => {
               "question": "Question text",
               "options": ["Option A", "Option B", "Option C", "Option D"],
               "correctIndex": 0,
-              "explanations":["Explanation for why option A is wrong", "Explanation for why option B is wrong", "Explanation for why option C is wrong", "Explanation for why option D is wrong"]
+              "explanations": ["Explanation for A", "Explanation for B", "Explanation for C", "Explanation for D"]
             }
           ]
         }
       }
-      Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to. Include EXACTLY ${numQuestions} quiz questions for each difficulty level.`;
-
+      
+      Make the explanation fun and use simple language appropriate for children. Include EXACTLY ${questionCount} quiz questions for each difficulty level.`;
 
       const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
-      // Remove any markdown formatting and extract just the JSON
-      const jsonStr = result.replace(/```json\n|\n```/g, '').trim();
-      const lessonData: GrammarLesson = JSON.parse(jsonStr);
-
-      setLesson(lessonData);
-      setUserAnswers(new Array(lessonData.quiz[selectedDifficulty].length).fill(-1)); // Initialize answers for selected difficulty
+      
+      try {
+        // Clean up the response - remove any markdown or extra text
+        const jsonStr = result.replace(/```json\n|\n```|```|\n/g, '').trim();
+        console.log("Raw JSON string:", jsonStr); // Log the raw JSON for debugging
+        
+        const lessonData: GrammarLesson = JSON.parse(jsonStr);
+        
+        // Validate that we received the proper number of questions
+        const receivedQuestions = lessonData.quiz[selectedDifficulty].length;
+        console.log(`Received ${receivedQuestions} questions for ${selectedDifficulty} difficulty`);
+        
+        setLesson(lessonData);
+        // Initialize user answers array with the correct length
+        setUserAnswers(new Array(lessonData.quiz[selectedDifficulty].length).fill(-1));
+      } catch (jsonError) {
+        console.error("JSON parsing error:", jsonError);
+        toast.error("Failed to parse lesson content. Please try again.");
+      }
     } catch (error) {
       console.error('Error generating lesson:', error);
       toast.error('Failed to generate lesson. Please try again.');
@@ -296,11 +315,14 @@ const GrammarPage = () => {
             <h2 className="text-xl font-semibold mb-4">Number of Questions: {numQuestions}</h2>
             <div className="px-4 py-2">
               <Slider
-                defaultValue={[3]}
+                value={[numQuestions]}
                 max={10}
                 min={1}
                 step={1}
-                onValueChange={(value) => setNumQuestions(value[0])}
+                onValueChange={(value) => {
+                  console.log("Slider value changed to:", value[0]);
+                  setNumQuestions(value[0]);
+                }}
                 className="w-full"
               />
               <div className="flex justify-between mt-2 text-sm text-muted-foreground">
