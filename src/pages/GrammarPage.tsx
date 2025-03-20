@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, CheckCircle, HelpCircle, RefreshCw } from 'lucide-react';
@@ -40,7 +39,7 @@ const GrammarPage = () => {
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
-  const [numQuestions, setNumQuestions] = useState<number>(3); // Default to 3 questions
+  const [numQuestions, setNumQuestions] = useState<number>(3);
 
   const grammarTopics = {
     beginner: [
@@ -78,7 +77,6 @@ const GrammarPage = () => {
       navigate('/');
     }
 
-    // Reset state when component mounts
     setLesson(null);
     setUserAnswers([]);
     setShowResults(false);
@@ -101,7 +99,7 @@ const GrammarPage = () => {
   const generateLesson = async (topic: string) => {
     setLoading(true);
     setLesson(null);
-    setUserAnswers([]); // Reset user answers when generating a new lesson
+    setUserAnswers([]);
 
     try {
       const promptLevel = selectedLevel === 'beginner' ? 'grades 1-2' :
@@ -109,35 +107,18 @@ const GrammarPage = () => {
 
       const difficultyLevel = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
       
-      // Ensure we request exactly the number of questions specified by the slider
-      const questionCount = Math.max(1, Math.min(10, numQuestions)); // Ensure between 1-10
-      
+      const questionCount = Math.max(1, Math.min(10, numQuestions));
+
       const systemPrompt = `You are an expert English teacher for elementary school students. Create an engaging English grammar lesson about "${topic}" for ${promptLevel}. The lesson difficulty should be "${difficultyLevel}".
       
       Your response must follow this exact JSON format without any markdown formatting or extra text:
       {
         "title": "Lesson title",
-        "content": "A clear, simple explanation of the grammar concept",
-        "level": "Easy/Medium/Hard",
+        "content": "A clear, simple explanation of the grammar concept (keep it concise)",
+        "level": "${difficultyLevel}",
         "examples": ["Example 1", "Example 2", "Example 3"],
         "quiz": {
-          "easy": [
-            {
-              "question": "Question text",
-              "options": ["Option A", "Option B", "Option C", "Option D"],
-              "correctIndex": 0,
-              "explanations": ["Explanation for A", "Explanation for B", "Explanation for C", "Explanation for D"]
-            }
-          ],
-          "medium": [
-            {
-              "question": "Question text",
-              "options": ["Option A", "Option B", "Option C", "Option D"],
-              "correctIndex": 0,
-              "explanations": ["Explanation for A", "Explanation for B", "Explanation for C", "Explanation for D"]
-            }
-          ],
-          "hard": [
+          "${selectedDifficulty}": [
             {
               "question": "Question text",
               "options": ["Option A", "Option B", "Option C", "Option D"],
@@ -148,38 +129,116 @@ const GrammarPage = () => {
         }
       }
       
-      Make the explanation fun and use simple language appropriate for children. Include EXACTLY ${questionCount} quiz questions for each difficulty level.`;
+      Important instructions:
+      1. Generate EXACTLY ${questionCount} quiz questions for the "${selectedDifficulty}" difficulty.
+      2. Keep the explanation and content brief and simple.
+      3. Return only in strict JSON format with no extra text, markdown, or code blocks.
+      4. Make sure all JSON is properly formatted and closed.`;
 
-      const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
+      const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson', {
+        max_tokens: 3000,
+        temperature: 0.7
+      });
       
       try {
-        // Clean up the response - remove any markdown or extra text
-        const jsonStr = result.replace(/```json\n|\n```|```|\n/g, '').trim();
-        console.log("Raw JSON string:", jsonStr); // Log the raw JSON for debugging
+        let jsonStr = result
+          .replace(/```json\n|\n```|```|\n/g, '')
+          .trim();
+          
+        console.log("Raw JSON string length:", jsonStr.length);
         
-        const lessonData: GrammarLesson = JSON.parse(jsonStr);
-        
-        // Validate that we received the proper number of questions
-        const receivedQuestions = lessonData.quiz[selectedDifficulty].length;
-        console.log(`Received ${receivedQuestions} questions for ${selectedDifficulty} difficulty`);
-        
-        setLesson(lessonData);
-        // Initialize user answers array with the correct length
-        setUserAnswers(new Array(lessonData.quiz[selectedDifficulty].length).fill(-1));
-      } catch (jsonError) {
-        console.error("JSON parsing error:", jsonError);
-        toast.error("Failed to parse lesson content. Please try again.");
+        try {
+          const parsedLesson = JSON.parse(jsonStr);
+          
+          const receivedQuestions = parsedLesson.quiz[selectedDifficulty]?.length || 0;
+          console.log(`Received ${receivedQuestions} questions for ${selectedDifficulty} difficulty`);
+          
+          if (!parsedLesson.title || !parsedLesson.content || !parsedLesson.examples || 
+              !parsedLesson.quiz || !parsedLesson.quiz[selectedDifficulty]) {
+            throw new Error("Lesson data is missing required fields");
+          }
+
+          if (receivedQuestions < questionCount) {
+            console.warn(`Received ${receivedQuestions} questions, but ${questionCount} were requested. Adding fallback questions.`);
+            
+            const fallbackQuestions = generateFallbackQuestions(
+              questionCount - receivedQuestions,
+              topic,
+              selectedDifficulty
+            );
+            
+            parsedLesson.quiz[selectedDifficulty] = [
+              ...parsedLesson.quiz[selectedDifficulty],
+              ...fallbackQuestions
+            ];
+          }
+          
+          if (receivedQuestions > questionCount) {
+            parsedLesson.quiz[selectedDifficulty] = parsedLesson.quiz[selectedDifficulty].slice(0, questionCount);
+          }
+
+          setLesson(parsedLesson);
+          setUserAnswers(new Array(parsedLesson.quiz[selectedDifficulty].length).fill(-1));
+        } catch (jsonError) {
+          console.error("JSON parsing error:", jsonError);
+          
+          if (jsonStr.length > 500) {
+            console.log("JSON preview (first 500 chars):", jsonStr.substring(0, 500));
+            console.log("JSON preview (last 100 chars):", jsonStr.substring(jsonStr.length - 100));
+          }
+          
+          const fallbackLesson = createFallbackLesson(topic, questionCount, selectedDifficulty);
+          setLesson(fallbackLesson);
+          setUserAnswers(new Array(fallbackLesson.quiz[selectedDifficulty].length).fill(-1));
+          toast.warning("Had trouble generating a perfect lesson, but created a simple version for you.");
+        }
+      } catch (error) {
+        console.error("Error processing lesson content:", error);
+        toast.error("Failed to parse lesson content. Please try a different topic or fewer questions.");
       }
     } catch (error) {
       console.error('Error generating lesson:', error);
-      toast.error('Failed to generate lesson. Please try again.');
+      toast.error('Failed to generate lesson. Please try again with fewer questions.');
     } finally {
       setLoading(false);
     }
   };
 
+  const generateFallbackQuestions = (count: number, topic: string, difficulty: 'easy' | 'medium' | 'hard'): QuizQuestion[] => {
+    const fallbackQuestions: QuizQuestion[] = [];
+    
+    for (let i = 0; i < count; i++) {
+      fallbackQuestions.push({
+        question: `Practice question ${i + 1} about ${topic}`,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+        correctIndex: 0,
+        explanations: ["This is correct", "This is incorrect", "This is incorrect", "This is incorrect"]
+      });
+    }
+    
+    return fallbackQuestions;
+  };
+
+  const createFallbackLesson = (topic: string, questionCount: number, difficulty: 'easy' | 'medium' | 'hard'): GrammarLesson => {
+    const fallbackLesson: GrammarLesson = {
+      title: `Lesson about ${topic}`,
+      content: `This is a basic lesson about ${topic}. Let's learn together!`,
+      level: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+      examples: ["Example 1", "Example 2", "Example 3"],
+      quiz: {
+        easy: [],
+        medium: [],
+        hard: []
+      }
+    };
+    
+    fallbackLesson.quiz[difficulty] = generateFallbackQuestions(questionCount, topic, difficulty);
+    
+    return fallbackLesson;
+  };
+
   const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
-    if (showResults) return; // Don't allow changes after submission
+    if (showResults) return;
 
     const newAnswers = [...userAnswers];
     newAnswers[questionIndex] = answerIndex;
@@ -189,7 +248,6 @@ const GrammarPage = () => {
   const handleQuizSubmit = () => {
     if (!lesson) return;
 
-    // Check if all questions are answered
     if (userAnswers.includes(-1)) {
       toast.error('Please answer all questions before submitting');
       return;
@@ -197,10 +255,9 @@ const GrammarPage = () => {
 
     setShowResults(true);
 
-    // Calculate score
     let correctAnswers = 0;
     userAnswers.forEach((answer, index) => {
-      if (answer === lesson.quiz[selectedDifficulty][index].correctIndex) { // Access quiz based on selectedDifficulty
+      if (answer === lesson.quiz[selectedDifficulty][index].correctIndex) {
         correctAnswers++;
       }
     });
@@ -236,7 +293,6 @@ const GrammarPage = () => {
             </h1>
           </div>
 
-          {/* Level selection */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Select your level:</h2>
             <div className="flex flex-wrap gap-4">
@@ -273,7 +329,6 @@ const GrammarPage = () => {
             </div>
           </div>
 
-          {/* Difficulty selection */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Select Difficulty:</h2>
             <div className="flex flex-wrap gap-4">
@@ -310,7 +365,6 @@ const GrammarPage = () => {
             </div>
           </div>
 
-          {/* Number of Questions Slider */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Number of Questions: {numQuestions}</h2>
             <div className="px-4 py-2">
@@ -333,7 +387,6 @@ const GrammarPage = () => {
             </div>
           </div>
 
-          {/* Topics grid */}
           <div className="mb-12">
             <h2 className="text-xl font-semibold mb-4">Choose a topic to study:</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -353,7 +406,6 @@ const GrammarPage = () => {
             </div>
           </div>
 
-          {/* Lesson content */}
           {loading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-kid-green border-t-transparent"></div>
@@ -406,7 +458,7 @@ const GrammarPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {lesson.quiz[selectedDifficulty].map((question, qIndex) => ( // Use selectedDifficulty
+                  {lesson.quiz[selectedDifficulty].map((question, qIndex) => (
                     <div key={qIndex} className="bg-muted/50 p-4 rounded-xl text-foreground">
                       <p className="font-medium mb-3">{qIndex + 1}. {question.question}</p>
                       <div className="space-y-2">

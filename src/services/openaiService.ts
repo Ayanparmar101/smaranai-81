@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // OpenAI API interface
@@ -58,7 +59,7 @@ class OpenAIService {
     const { temperature = 0.7, max_tokens = 1000, stream = false, onChunk } = options;
 
     const payload: OpenAICompletion = {
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini", // Using the mini model for efficiency
       messages: [
         {
           role: "system",
@@ -78,6 +79,8 @@ class OpenAIService {
       if (stream && onChunk) {
         return await this.streamCompletion(payload, onChunk);
       } else {
+        console.log(`Making request with max_tokens: ${max_tokens}`);
+        
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -89,6 +92,7 @@ class OpenAIService {
 
         if (!response.ok) {
           const error = await response.json();
+          console.error("OpenAI API error response:", error);
           throw new Error(error.error?.message || "Error calling OpenAI API");
         }
 
