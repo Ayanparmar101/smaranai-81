@@ -78,7 +78,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySubmit }) => {
             </DialogDescription>
           </DialogHeader>
           
-          <Alert variant="warning" className="my-4">
+          <Alert variant="destructive" className="my-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               For production use, we recommend setting the VITE_OPENAI_API_KEY environment variable 
