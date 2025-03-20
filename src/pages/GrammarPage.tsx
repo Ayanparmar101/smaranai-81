@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
+import { Slider } from '@/components/ui/slider';
 import { openaiService } from '@/services/openaiService';
 
 interface QuizQuestion {
@@ -38,7 +39,8 @@ const GrammarPage = () => {
   const [lesson, setLesson] = useState<GrammarLesson | null>(null);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy'); // Added difficulty selection
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [numQuestions, setNumQuestions] = useState<number>(3); // Default to 3 questions
 
   const grammarTopics = {
     beginner: [
@@ -139,7 +141,7 @@ const GrammarPage = () => {
           ]
         }
       }
-      Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to. Include 3-5 quiz questions for each difficulty level.`;
+      Make the explanation fun and use simple language appropriate for children. Use colorful examples that kids can relate to. Include EXACTLY ${numQuestions} quiz questions for each difficulty level.`;
 
 
       const result = await openaiService.createCompletion(systemPrompt, 'Generate a grammar lesson');
@@ -289,6 +291,25 @@ const GrammarPage = () => {
             </div>
           </div>
 
+          {/* Number of Questions Slider */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Number of Questions: {numQuestions}</h2>
+            <div className="px-4 py-2">
+              <Slider
+                defaultValue={[3]}
+                max={10}
+                min={1}
+                step={1}
+                onValueChange={(value) => setNumQuestions(value[0])}
+                className="w-full"
+              />
+              <div className="flex justify-between mt-2 text-sm text-muted-foreground">
+                <span>1</span>
+                <span>5</span>
+                <span>10</span>
+              </div>
+            </div>
+          </div>
 
           {/* Topics grid */}
           <div className="mb-12">
