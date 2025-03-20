@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Key } from 'lucide-react';
+import { Key, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ApiKeyInputProps {
   onApiKeySubmit: (apiKey: string) => void;
@@ -76,6 +77,17 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySubmit }) => {
               </a>.
             </DialogDescription>
           </DialogHeader>
+          
+          <Alert variant="warning" className="my-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              For production use, we recommend setting the VITE_OPENAI_API_KEY environment variable 
+              instead of using this form. Create a .env file at the root of your project with:
+              <code className="block bg-muted p-2 mt-2 rounded text-sm">
+                VITE_OPENAI_API_KEY=your_api_key_here
+              </code>
+            </AlertDescription>
+          </Alert>
           
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">

@@ -21,23 +21,19 @@ interface CompletionOptions {
 }
 
 class OpenAIService {
-  // Change this to your actual OpenAI API key
-  private apiKey: string | null = "YOUR_OPENAI_API_KEY_HERE";
+  private apiKey: string | null = null;
 
   constructor() {
     // Try to get the API key from env
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
       this.apiKey = envApiKey;
-    } else if (this.apiKey === "YOUR_OPENAI_API_KEY_HERE") {
-      // If no key is set in the code or env, try to get from localStorage as fallback
+    } else {
+      // If no key is set in env, try to get from localStorage as fallback
       const savedApiKey = localStorage.getItem("openaiApiKey");
       if (savedApiKey) {
         this.apiKey = savedApiKey;
       }
-    } else {
-      // Save the hardcoded key to localStorage for future use
-      localStorage.setItem("openaiApiKey", this.apiKey);
     }
   }
 
@@ -168,7 +164,6 @@ class OpenAIService {
     return fullText;
   }
 
-  // Generate images using DALL-E
   async generateImage(prompt: string, size: "1024x1024" | "1024x1792" | "1792x1024" = "1024x1024"): Promise<string> {
     if (!this.apiKey) {
       throw new Error("API key not set");
