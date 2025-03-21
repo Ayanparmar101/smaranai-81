@@ -75,7 +75,7 @@ const NavBar = () => {
         </Sheet>
         
         <div className="flex-1 flex justify-center md:justify-start">
-          <Link to="/" className="bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
+          <Link to="/" className="text-2xl font-bold flex items-center gap-1 px-[19px]">
             <span className="text-[#5B86E5]">Smaran</span>
             <span className="text-[#ff6b8b]">.ai</span>
           </Link>
