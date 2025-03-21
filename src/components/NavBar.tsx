@@ -7,6 +7,7 @@ import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 const NavBar = () => {
   const {
     user
@@ -16,6 +17,7 @@ const NavBar = () => {
     e.preventDefault();
     navigate(path);
   };
+  
   return <header className="w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40">
       <div className="container mx-auto flex justify-between items-center">
         <Sheet>
@@ -63,6 +65,10 @@ const NavBar = () => {
                     <span className="text-lg font-medium">Study Planner</span>
                   </button>
                   
+                  <button onClick={handleNavigation("/pomodoro")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
+                    <span className="text-lg font-medium">Pomodoro Timer</span>
+                  </button>
+                  
                   {user && <button onClick={handleNavigation("/teacher")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left px-[27px] py-0">
                       <span className="text-lg font-medium">Teacher Tools</span>
                     </button>}
@@ -94,4 +100,5 @@ const NavBar = () => {
       </div>
     </header>;
 };
+
 export default NavBar;

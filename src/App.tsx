@@ -12,6 +12,7 @@ import VoiceBotPage from "./pages/VoiceBotPage";
 import SocraticTutorPage from "./pages/SocraticTutorPage";
 import TeacherPage from "./pages/TeacherPage";
 import StudyPlannerPage from "./pages/StudyPlannerPage";
+import PomodoroPage from "./pages/PomodoroPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -107,6 +108,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <StudyPlannerPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/pomodoro" 
+                  element={
+                    <ProtectedRoute>
+                      <PomodoroPage />
                     </ProtectedRoute>
                   } 
                 />
