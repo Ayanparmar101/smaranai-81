@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import ChapterSelector from '../teacher/ChapterSelector';
+import ChapterSelector, { books } from '../teacher/ChapterSelector';
 import StudyPlanDisplay from './StudyPlanDisplay';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Book, Brain, CheckCheck } from 'lucide-react';
@@ -11,10 +11,13 @@ import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 
 const StudyPlannerContainer = () => {
-  const [selectedChapter, setSelectedChapter] = useState<{ text: string; title: string } | null>(null);
+  const [selectedClass, setSelectedClass] = useState<string>("8");
+  const [selectedBook, setSelectedBook] = useState<string>("honeydew");
+  const [selectedChapter, setSelectedChapter] = useState<string>("");
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [chapterContent, setChapterContent] = useState<string>("");
 
   // Define study plan interface
   interface StudyPlanStep {
@@ -34,8 +37,19 @@ const StudyPlannerContainer = () => {
     completionPercentage: number;
   }
 
-  const handleChapterSelect = (chapterText: string, chapterTitle: string) => {
-    setSelectedChapter({ text: chapterText, title: chapterTitle });
+  const handleChapterSelect = (chapterId: string) => {
+    setSelectedChapter(chapterId);
+    
+    // Find the chapter details
+    const book = books.find(b => b.id === selectedBook);
+    const chapter = book?.chapters.find(c => c.id === chapterId);
+    
+    if (chapter) {
+      // For now, we'll use the chapter name as content
+      // In a real implementation, we would fetch actual content
+      setChapterContent(`Content for ${chapter.name}`);
+    }
+    
     setStudyPlan(null);
     setProgress(0);
   };
@@ -48,6 +62,17 @@ const StudyPlannerContainer = () => {
 
     try {
       setIsGenerating(true);
+      
+      // Find the chapter details to include in the prompt
+      const book = books.find(b => b.id === selectedBook);
+      const chapter = book?.chapters.find(c => c.id === selectedChapter);
+      
+      if (!chapter) {
+        toast.error("Chapter information not found");
+        setIsGenerating(false);
+        return;
+      }
+      
       const systemPrompt = `You are an expert educational consultant specializing in creating personalized study plans for students. 
       Create a detailed, structured study plan for the provided chapter. The response should be in JSON format with the following structure:
       
@@ -90,7 +115,7 @@ const StudyPlannerContainer = () => {
       
       You must respond with ONLY the valid JSON, nothing else.`;
 
-      const userPrompt = `Here is the chapter content to create a study plan for:\n\nTitle: ${selectedChapter.title}\n\nContent: ${selectedChapter.text}`;
+      const userPrompt = `Here is the chapter to create a study plan for:\n\nTitle: ${chapter.name}\n\nContent: ${chapterContent || "Create a general study plan for this chapter based on its title."}`;
 
       let jsonResponse;
       
@@ -173,7 +198,14 @@ const StudyPlannerContainer = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ChapterSelector onChapterSelect={handleChapterSelect} />
+            <ChapterSelector
+              selectedClass={selectedClass}
+              setSelectedClass={setSelectedClass}
+              selectedBook={selectedBook}
+              setSelectedBook={setSelectedBook}
+              selectedChapter={selectedChapter}
+              setSelectedChapter={handleChapterSelect}
+            />
             
             {selectedChapter && (
               <div className="mt-4 flex justify-end">
