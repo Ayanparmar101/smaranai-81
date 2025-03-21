@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Slider } from "@/components/ui/slider";
 import { NeoButton } from "@/components/NeoButton";
-import { Play, Pause, RotateCcw, Timer } from "lucide-react";
+import { Play, Pause, RotateCcw, Timer, Clock, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import CircularTimer from "./CircularTimer";
 
 const BREAK_DURATION = 10; // 10 minutes break
 
@@ -100,11 +101,14 @@ const PomodoroTimer = () => {
         
         <Card className="p-6 mb-8 bg-gradient-to-r from-[#4E9BF5]/10 to-[#76D394]/10 border-black border-3 shadow-neo">
           <div className="flex flex-col items-center">
-            <div className="text-7xl font-bold mb-6 font-mono">
-              {formatTime(timeLeft)}
-            </div>
+            {/* Replace the text timer with the circular timer */}
+            <CircularTimer 
+              timeLeft={timeLeft} 
+              totalTime={isBreak ? BREAK_DURATION * 60 : duration * 60}
+              isBreak={isBreak}
+            />
             
-            <div className="flex gap-4 mb-8">
+            <div className="flex gap-4 mb-6">
               <NeoButton 
                 onClick={toggleTimer} 
                 variant={isRunning ? "warning" : "success"}
@@ -124,7 +128,8 @@ const PomodoroTimer = () => {
               </NeoButton>
             </div>
             
-            <div className="text-lg font-semibold mb-2">
+            <div className="text-lg font-semibold mb-2 flex items-center gap-2">
+              {isBreak ? <Bell className="text-blue-500" /> : <Clock className="text-green-500" />}
               {isBreak ? "Break Time!" : "Work Session"}
             </div>
           </div>

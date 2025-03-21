@@ -6,7 +6,9 @@ import PomodoroTimer from './pomodoro/PomodoroTimer';
 const PomodoroPage = () => {
   return (
     <Layout>
-      <PomodoroTimer />
+      <div className="max-w-4xl mx-auto">
+        <PomodoroTimer />
+      </div>
     </Layout>
   );
 };
