@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
@@ -5,6 +6,11 @@ import { AuthContext } from '@/App';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
 import { Menu, X } from 'lucide-react';
+import { 
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const NavBar = () => {
   const { user } = useContext(AuthContext);
@@ -15,128 +21,111 @@ const NavBar = () => {
   };
   
   return (
-    <>
-      <header className="w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40">
-        <div className="container mx-auto flex justify-between items-center">
-          <button 
-            className="text-white md:hidden"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <Menu size={24} />
-          </button>
-          
-          <div className="flex items-center gap-2 mx-auto md:mx-0">
-            <Link to="/" className="text-2xl font-bold flex items-center gap-1">
-              <span className="text-[#5B86E5]">Smaran</span>
-              <span className="text-[#ff6b8b]">.ai</span>
-            </Link>
-          </div>
-          
-          <nav className="hidden md:flex items-center gap-6 text-white">
-            <Link to="/grammar" className="hover:text-[#5B86E5] transition-colors">Grammar</Link>
-            <Link to="/story-images" className="hover:text-[#5B86E5] transition-colors">Story Images</Link>
-            <Link to="/spoken-english" className="hover:text-[#5B86E5] transition-colors">Spoken English</Link>
-            <Link to="/voice-bot" className="hover:text-[#5B86E5] transition-colors">Voice Bot</Link>
-            <Link to="/socratic-tutor" className="hover:text-[#5B86E5] transition-colors">Socratic Tutor</Link>
-            {user && (
-              <Link to="/teacher" className="hover:text-[#5B86E5] transition-colors">Teacher Tools</Link>
-            )}
-          </nav>
-          
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <AuthButton />
-          </div>
-        </div>
-      </header>
-      
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-[#121212] z-50 overflow-y-auto md:hidden">
-          <div className="p-4 flex justify-end">
-            <button onClick={toggleMenu} aria-label="Close menu">
-              <X size={24} className="text-white" />
+    <header className="w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40">
+      <div className="container mx-auto flex justify-between items-center">
+        <Sheet>
+          <SheetTrigger asChild>
+            <button 
+              className="text-white hover:text-[#5B86E5] transition-colors focus:outline-none focus:ring-2 focus:ring-[#5B86E5] rounded-md"
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
             </button>
-          </div>
-          
-          <nav className="flex flex-col gap-6 p-6">
-            <Link 
-              to="/" 
-              className="flex items-center gap-2 text-white p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5]" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Home</span>
-            </Link>
-            
-            <Link 
-              to="/grammar" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Grammar</span>
-            </Link>
-            
-            <Link 
-              to="/story-images" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Story Images</span>
-            </Link>
-            
-            <Link 
-              to="/spoken-english" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Spoken English</span>
-            </Link>
-            
-            <Link 
-              to="/voice-bot" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Voice Bot</span>
-            </Link>
-            
-            <Link 
-              to="/socratic-tutor" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Socratic Tutor</span>
-            </Link>
-            
-            {user && (
-              <Link 
-                to="/teacher" 
-                className="flex items-center gap-2 text-white p-4" 
-                onClick={toggleMenu}
-              >
-                <span className="text-xl font-medium">Teacher</span>
-              </Link>
-            )}
-            
-            <Link 
-              to="/profile" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">Profile</span>
-            </Link>
-            
-            <Link 
-              to="/history" 
-              className="flex items-center gap-2 text-white p-4" 
-              onClick={toggleMenu}
-            >
-              <span className="text-xl font-medium">History</span>
-            </Link>
-          </nav>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[300px] bg-[#121212] text-white p-0">
+            <nav className="flex flex-col h-full">
+              <div className="p-4 border-b border-border/40">
+                <Link to="/" className="text-2xl font-bold flex items-center gap-1">
+                  <span className="text-[#5B86E5]">Smaran</span>
+                  <span className="text-[#ff6b8b]">.ai</span>
+                </Link>
+              </div>
+              
+              <div className="flex-1 overflow-auto py-6 px-4">
+                <div className="space-y-6">
+                  <Link 
+                    to="/" 
+                    className="flex items-center gap-2 p-3 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-colors w-full" 
+                  >
+                    <span className="text-lg font-medium">Home</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/grammar" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Grammar</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/story-images" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Story Images</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/spoken-english" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Spoken English</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/voice-bot" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Voice Bot</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/socratic-tutor" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Socratic Tutor</span>
+                  </Link>
+                  
+                  {user && (
+                    <Link 
+                      to="/teacher" 
+                      className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                    >
+                      <span className="text-lg font-medium">Teacher Tools</span>
+                    </Link>
+                  )}
+                  
+                  <Link 
+                    to="/profile" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">Profile</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/history" 
+                    className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full" 
+                  >
+                    <span className="text-lg font-medium">History</span>
+                  </Link>
+                </div>
+              </div>
+            </nav>
+          </SheetContent>
+        </Sheet>
+        
+        <div className="flex-1 flex justify-center md:justify-start">
+          <Link to="/" className="text-2xl font-bold flex items-center gap-1">
+            <span className="text-[#5B86E5]">Smaran</span>
+            <span className="text-[#ff6b8b]">.ai</span>
+          </Link>
         </div>
-      )}
-    </>
+        
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <AuthButton />
+        </div>
+      </div>
+    </header>
   );
 };
 
