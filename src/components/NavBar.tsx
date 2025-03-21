@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '@/App';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
-import AnimationToggle from './AnimationToggle';
 import { Menu, X } from 'lucide-react';
 
 const NavBar = () => {
@@ -47,7 +45,6 @@ const NavBar = () => {
           </nav>
           
           <div className="flex items-center gap-2">
-            <AnimationToggle />
             <ThemeToggle />
             <AuthButton />
           </div>
