@@ -10,7 +10,7 @@ interface ChapterContentProps {
 
 const ChapterContent: React.FC<ChapterContentProps> = ({ chapterContent, pdfUrl }) => {
   return (
-    <Card className="h-[500px] flex flex-col">
+    <Card className="h-[500px] flex flex-col neo-card">
       <CardHeader>
         <CardTitle className="text-xl">Chapter Content</CardTitle>
       </CardHeader>
@@ -18,13 +18,13 @@ const ChapterContent: React.FC<ChapterContentProps> = ({ chapterContent, pdfUrl 
         {pdfUrl ? (
           <iframe 
             src={pdfUrl} 
-            className="w-full h-[380px] border-0"
+            className="w-full h-[380px] border-3 border-black rounded-md shadow-neo-sm"
             title="Chapter PDF"
           />
         ) : (
-          <ScrollArea className="h-[380px] w-full pr-4">
+          <ScrollArea className="h-[380px] w-full pr-4 border-3 border-black rounded-md shadow-neo-sm">
             {chapterContent ? (
-              <div className="prose max-w-none">
+              <div className="prose max-w-none p-4">
                 {chapterContent}
               </div>
             ) : (

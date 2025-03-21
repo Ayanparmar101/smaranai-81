@@ -3,6 +3,7 @@ import React from 'react';
 import { Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { NeoButton } from '@/components/NeoButton';
+import { Toggle } from '@/components/ui/toggle';
 
 interface PromptGeneratorProps {
   prompt: string;
@@ -33,14 +34,25 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         />
       </div>
       
-      <NeoButton
-        variant="accent"
-        onClick={onGenerateImage}
-        loading={loading && prompt !== ''}
-        icon={<Send className="w-4 h-4" />}
-      >
-        Generate Image
-      </NeoButton>
+      <div className="flex gap-2">
+        <NeoButton
+          variant="accent"
+          onClick={onGenerateImage}
+          loading={loading && prompt !== ''}
+          icon={<Send className="w-4 h-4" />}
+          className="flex-grow"
+        >
+          Generate Image
+        </NeoButton>
+        
+        <Toggle
+          variant="neobrutalism"
+          aria-label="Auto generate"
+          className="data-[state=on]:bg-[#F97316] data-[state=on]:text-white"
+        >
+          Auto
+        </Toggle>
+      </div>
     </div>
   );
 };

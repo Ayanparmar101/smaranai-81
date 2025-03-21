@@ -1,10 +1,10 @@
 
 import React, { useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Mic, MicOff } from 'lucide-react';
+import { NeoButton } from '@/components/NeoButton';
 
 interface QuestionAnswerSectionProps {
   question: string;
@@ -30,7 +30,7 @@ const QuestionAnswerSection: React.FC<QuestionAnswerSectionProps> = ({
   const answerRef = useRef<HTMLDivElement>(null);
   
   return (
-    <Card className="h-[500px] flex flex-col">
+    <Card className="h-[500px] flex flex-col neo-card">
       <CardHeader>
         <CardTitle className="text-xl">Ask Questions</CardTitle>
       </CardHeader>
@@ -40,30 +40,32 @@ const QuestionAnswerSection: React.FC<QuestionAnswerSectionProps> = ({
             placeholder="Type your question about the chapter..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            className="flex-1"
+            className="flex-1 neo-input"
           />
-          <Button 
+          <NeoButton 
             variant={isListening ? "destructive" : "secondary"}
-            size="icon"
+            size="sm"
             onClick={toggleListening}
             className="flex-shrink-0"
-            title={isListening ? "Stop speaking" : "Start speaking"}
+            icon={isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
           >
-            {isListening ? <MicOff /> : <Mic />}
-          </Button>
+            {isListening ? "" : ""}
+          </NeoButton>
         </div>
         
-        <Button 
+        <NeoButton 
           onClick={askQuestion} 
           disabled={!selectedChapter || isLoading || !question.trim()}
           className="mb-4"
+          variant="primary"
+          loading={isLoading}
         >
           {isLoading ? "Thinking..." : "Ask Question"}
-        </Button>
+        </NeoButton>
         
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-[250px] w-full pr-4" ref={answerRef}>
-            <div className="prose max-w-none">
+          <ScrollArea className="h-[250px] w-full pr-4 border-3 border-black rounded-md shadow-neo-sm" ref={answerRef}>
+            <div className="prose max-w-none p-4">
               {answer ? answer : (
                 <div className="text-center text-muted-foreground p-4">
                   <p>Your answer will appear here</p>

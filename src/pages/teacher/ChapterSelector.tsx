@@ -57,12 +57,12 @@ const ChapterSelector: React.FC<ChapterSelectorProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
       <div>
-        <Label htmlFor="class-select">Select Class</Label>
+        <Label htmlFor="class-select" className="mb-2 block">Select Class</Label>
         <Select value={selectedClass} onValueChange={setSelectedClass}>
-          <SelectTrigger id="class-select">
+          <SelectTrigger id="class-select" className="neo-input">
             <SelectValue placeholder="Select Class" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-3 border-black">
             {classOptions.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -73,12 +73,12 @@ const ChapterSelector: React.FC<ChapterSelectorProps> = ({
       </div>
       
       <div>
-        <Label htmlFor="book-select">Select Book</Label>
+        <Label htmlFor="book-select" className="mb-2 block">Select Book</Label>
         <Select value={selectedBook} onValueChange={setSelectedBook}>
-          <SelectTrigger id="book-select">
+          <SelectTrigger id="book-select" className="neo-input">
             <SelectValue placeholder="Select Book" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-3 border-black">
             {books.map(book => (
               <SelectItem key={book.id} value={book.id}>
                 {book.name}
@@ -89,16 +89,16 @@ const ChapterSelector: React.FC<ChapterSelectorProps> = ({
       </div>
       
       <div>
-        <Label htmlFor="chapter-select">Select Chapter</Label>
+        <Label htmlFor="chapter-select" className="mb-2 block">Select Chapter</Label>
         <Select 
           value={selectedChapter} 
           onValueChange={setSelectedChapter}
           disabled={!selectedBook}
         >
-          <SelectTrigger id="chapter-select">
+          <SelectTrigger id="chapter-select" className="neo-input">
             <SelectValue placeholder="Select Chapter" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-3 border-black">
             {books.find(b => b.id === selectedBook)?.chapters.map(chapter => (
               <SelectItem key={chapter.id} value={chapter.id}>
                 {chapter.name}
