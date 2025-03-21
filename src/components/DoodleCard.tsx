@@ -1,101 +1,73 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import DoodleDecoration from './DoodleDecoration';
 
-interface DoodleCardProps {
+type DoodleCardProps = {
   title: string;
   description: string;
-  icon: React.ReactNode;
-  color: 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'pink' | 'orange';
-  to: string;
+  icon?: React.ReactNode;
+  color?: 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink';
+  to?: string;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
-}
+  children?: React.ReactNode;
+};
 
-const DoodleCard: React.FC<DoodleCardProps> = ({
+const colorClasses = {
+  green: 'border-kid-green hover:shadow-kid-green/50',
+  blue: 'border-kid-blue hover:shadow-kid-blue/50',
+  red: 'border-kid-red hover:shadow-kid-red/50',
+  yellow: 'border-kid-yellow hover:shadow-kid-yellow/50',
+  purple: 'border-kid-purple hover:shadow-kid-purple/50',
+  orange: 'border-kid-orange hover:shadow-kid-orange/50',
+  pink: 'border-kid-pink hover:shadow-kid-pink/50'
+};
+
+const DoodleCard = ({
   title,
   description,
   icon,
-  color,
+  color = 'blue',
   to,
+  onClick,
   className,
-}) => {
-  const colorClasses = {
-    blue: 'border-kid-blue',
-    green: 'border-kid-green',
-    yellow: 'border-kid-yellow',
-    red: 'border-kid-red',
-    purple: 'border-kid-purple',
-    pink: 'border-kid-pink',
-    orange: 'border-kid-orange',
+  children
+}: DoodleCardProps) => {
+  const navigate = useNavigate();
+  
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (onClick) {
+      onClick(e);
+      return;
+    }
+    
+    if (to) {
+      e.preventDefault();
+      navigate(to);
+    }
   };
-
-  const backgroundGradients = {
-    blue: 'bg-gradient-to-br from-white to-blue-100',
-    green: 'bg-gradient-to-br from-white to-green-100',
-    yellow: 'bg-gradient-to-br from-white to-yellow-100',
-    red: 'bg-gradient-to-br from-white to-red-100',
-    purple: 'bg-gradient-to-br from-white to-purple-100',
-    pink: 'bg-gradient-to-br from-white to-pink-100',
-    orange: 'bg-gradient-to-br from-white to-orange-100',
-  };
-
-  const colorText = {
-    blue: 'text-kid-blue',
-    green: 'text-kid-green',
-    yellow: 'text-kid-yellow',
-    red: 'text-kid-red',
-    purple: 'text-kid-purple',
-    pink: 'text-kid-pink',
-    orange: 'text-kid-orange',
-  };
-
-  const decorationTypes = ['star', 'cloud', 'heart', 'circle', 'squiggle'] as const;
-  const randomDecoration = decorationTypes[Math.floor(Math.random() * decorationTypes.length)];
 
   return (
-    <Link
-      to={to}
+    <div
       className={cn(
-        "relative group p-6 rounded-2xl border-4 border-dashed overflow-hidden transition-all duration-300",
-        "hover:shadow-xl hover:-translate-y-1",
-        backgroundGradients[color],
+        'card-doodle flex flex-col p-6 cursor-pointer transition-all duration-300 hover:scale-105',
         colorClasses[color],
         className
       )}
+      onClick={handleCardClick}
     >
-      <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
-        <DoodleDecoration type={randomDecoration} color={color} size="sm" />
+      <div className="flex items-center mb-4">
+        {icon && (
+          <div className={`text-${color === 'yellow' ? 'kid-orange' : `kid-${color}`} mr-3`}>
+            {icon}
+          </div>
+        )}
+        <h3 className="text-xl font-bold">{title}</h3>
       </div>
-      
-      <div className="flex flex-col h-full">
-        <div className={cn("p-3 rounded-full w-16 h-16 mb-4 flex items-center justify-center", colorText[color])}>
-          {icon}
-        </div>
-        
-        <h3 className="text-xl font-bold mb-2">{title}</h3>
-        <p className="text-gray-600 flex-grow mb-4">{description}</p>
-        
-        <div className={cn("mt-auto text-sm font-medium flex items-center", colorText[color])}>
-          Start Learning
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      </div>
-    </Link>
+      <p className="text-gray-600">{description}</p>
+      {children}
+    </div>
   );
 };
 

@@ -1,12 +1,21 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Image, Mic, MessageCircle, HelpCircle } from 'lucide-react';
 import DoodleCard from '@/components/DoodleCard';
 import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
+
 const Index = () => {
+  const navigate = useNavigate();
+  
+  const handleNavigation = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(path);
+  };
+
   return <div className="min-h-screen flex flex-col">
       <NavBar />
       
@@ -26,16 +35,16 @@ const Index = () => {
                   Interactive lessons, story generators, and AI tutors to help students in grades 1-8 master English.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Link to="/grammar">
+                  <button onClick={handleNavigation("/grammar")} className="inline-block">
                     <DoodleButton color="blue" size="lg">
                       Get Started
                     </DoodleButton>
-                  </Link>
-                  <Link to="/grammar">
+                  </button>
+                  <button onClick={handleNavigation("/grammar")} className="inline-block">
                     <DoodleButton color="purple" size="lg" variant="outline">
                       Explore Lessons
                     </DoodleButton>
-                  </Link>
+                  </button>
                 </div>
               </div>
               <div className="md:w-1/2 relative">
@@ -66,15 +75,50 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <h2 className="section-title">Learn With Fun Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              <DoodleCard title="English Grammar" description="Learn grammar rules with interactive lessons and fun exercises." icon={<BookOpen className="w-8 h-8" />} color="green" to="/grammar" />
+              <DoodleCard 
+                title="English Grammar" 
+                description="Learn grammar rules with interactive lessons and fun exercises." 
+                icon={<BookOpen className="w-8 h-8" />} 
+                color="green" 
+                to="/grammar" 
+                onClick={handleNavigation("/grammar")}
+              />
               
-              <DoodleCard title="Story Image Generator" description="Create beautiful images to illustrate your stories and writing." icon={<Image className="w-8 h-8" />} color="yellow" to="/story-images" />
+              <DoodleCard 
+                title="Story Image Generator" 
+                description="Create beautiful images to illustrate your stories and writing." 
+                icon={<Image className="w-8 h-8" />} 
+                color="yellow" 
+                to="/story-images" 
+                onClick={handleNavigation("/story-images")}
+              />
               
-              <DoodleCard title="Spoken English" description="Practice pronunciation and speaking with audio lessons." icon={<Mic className="w-8 h-8" />} color="red" to="/spoken-english" />
+              <DoodleCard 
+                title="Spoken English" 
+                description="Practice pronunciation and speaking with audio lessons." 
+                icon={<Mic className="w-8 h-8" />} 
+                color="red" 
+                to="/spoken-english" 
+                onClick={handleNavigation("/spoken-english")}
+              />
               
-              <DoodleCard title="Voice Chat Bot" description="Talk with an AI tutor that listens and responds to your voice." icon={<MessageCircle className="w-8 h-8" />} color="purple" to="/voice-bot" />
+              <DoodleCard 
+                title="Voice Chat Bot" 
+                description="Talk with an AI tutor that listens and responds to your voice." 
+                icon={<MessageCircle className="w-8 h-8" />} 
+                color="purple" 
+                to="/voice-bot" 
+                onClick={handleNavigation("/voice-bot")}
+              />
               
-              <DoodleCard title="Socratic Tutor" description="Learn through guided questions that help you discover answers." icon={<HelpCircle className="w-8 h-8" />} color="orange" to="/socratic-tutor" />
+              <DoodleCard 
+                title="Socratic Tutor" 
+                description="Learn through guided questions that help you discover answers." 
+                icon={<HelpCircle className="w-8 h-8" />} 
+                color="orange" 
+                to="/socratic-tutor" 
+                onClick={handleNavigation("/socratic-tutor")}
+              />
               
               <div className="card-doodle border-kid-pink flex flex-col items-center justify-center bg-gradient-to-br from-white to-pink-100 p-6">
                 <DoodleDecoration type="heart" color="pink" size="md" />
@@ -126,9 +170,11 @@ const Index = () => {
             <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
               Begin your English learning journey with our interactive and fun tools designed for students of all levels.
             </p>
-            <DoodleButton color="purple" size="lg">
-              Get Started Now
-            </DoodleButton>
+            <button onClick={handleNavigation("/grammar")} className="inline-block">
+              <DoodleButton color="purple" size="lg">
+                Get Started Now
+              </DoodleButton>
+            </button>
           </div>
         </section>
       </main>
