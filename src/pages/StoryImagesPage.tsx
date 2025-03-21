@@ -10,8 +10,10 @@ import { AuthContext } from '@/App';
 import StoryInput from '@/components/story-images/StoryInput';
 import PromptGenerator from '@/components/story-images/PromptGenerator';
 import ImageDisplay from '@/components/story-images/ImageDisplay';
+import MultiImageDisplay from '@/components/story-images/MultiImageDisplay';
 import ImageHistory from '@/components/story-images/ImageHistory';
 import { saveMessage } from '@/utils/messageUtils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StoryImagesPage = () => {
   const { user } = useContext(AuthContext);
@@ -19,8 +21,10 @@ const StoryImagesPage = () => {
   const [storyText, setStoryText] = useState('');
   const [prompt, setPrompt] = useState('');
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [multipleImageUrls, setMultipleImageUrls] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<Array<{ prompt: string; imageUrl: string }>>([]);
+  const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('single');
 
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
@@ -92,6 +96,7 @@ const StoryImagesPage = () => {
     }
     
     setLoading(true);
+    setActiveTab('single');
     
     try {
       const enhancedPrompt = prompt + ", children's book illustration style, colorful doodles, cute characters, happy mood";
@@ -120,12 +125,73 @@ const StoryImagesPage = () => {
     }
   };
 
+  const generateMultipleImages = async () => {
+    if (!openaiService.getApiKey()) {
+      toast.error('Please enter your OpenAI API key first');
+      return;
+    }
+    
+    if (!storyText.trim()) {
+      toast.error('Please write a story first');
+      return;
+    }
+    
+    setLoading(true);
+    setActiveTab('multiple');
+    
+    try {
+      toast.info('Dividing your story into segments...', { duration: 3000 });
+      
+      // Step 1: Divide the story into segments
+      const segments = await openaiService.generateStorySegments(storyText);
+      
+      // Step 2: Generate consistent prompts for each segment
+      toast.info('Creating consistent image prompts...', { duration: 3000 });
+      const prompts = await openaiService.generateConsistentImagePrompts(storyText, segments);
+      
+      // Step 3: Generate images for each prompt
+      toast.info('Generating story illustrations...', { duration: 5000 });
+      const imageUrls = await openaiService.generateMultipleImages(prompts);
+      
+      setMultipleImageUrls(imageUrls);
+      
+      // Save to history if user is logged in
+      if (user) {
+        await saveMessage({
+          text: `Generated story series from: ${storyText.substring(0, 100)}...`,
+          userId: user.id,
+          chatType: 'story-images',
+          imageUrl: imageUrls[0], // Save first image as thumbnail
+          toolType: 'story-series-generator'
+        });
+      }
+      
+      toast.success('Story illustrations generated successfully!');
+    } catch (error) {
+      console.error('Error generating multiple images:', error);
+      toast.error('Failed to generate story illustrations. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const downloadImage = () => {
     if (!generatedImageUrl) return;
     
     const link = document.createElement('a');
     link.href = generatedImageUrl;
     link.download = 'story-illustration.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadMultipleImage = (index: number) => {
+    if (!multipleImageUrls || !multipleImageUrls[index]) return;
+    
+    const link = document.createElement('a');
+    link.href = multipleImageUrls[index];
+    link.download = `story-illustration-${index + 1}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -139,6 +205,7 @@ const StoryImagesPage = () => {
   const loadFromHistory = (item: { prompt: string; imageUrl: string }) => {
     setPrompt(item.prompt);
     setGeneratedImageUrl(item.imageUrl);
+    setActiveTab('single');
   };
 
   return (
@@ -170,15 +237,24 @@ const StoryImagesPage = () => {
                 prompt={prompt}
                 onPromptChange={setPrompt}
                 onGenerateImage={generateImage}
+                onGenerateMultipleImages={generateMultipleImages}
                 loading={loading}
               />
             </div>
             
             <div>
-              <ImageDisplay
-                imageUrl={generatedImageUrl}
-                onDownload={downloadImage}
-              />
+              {activeTab === 'single' ? (
+                <ImageDisplay
+                  imageUrl={generatedImageUrl}
+                  onDownload={downloadImage}
+                />
+              ) : (
+                <MultiImageDisplay
+                  imageUrls={multipleImageUrls}
+                  loading={loading}
+                  onDownload={downloadMultipleImage}
+                />
+              )}
             </div>
           </div>
           
