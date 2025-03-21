@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChapterSelector, { books } from '../teacher/ChapterSelector';
 import StudyPlanDisplay from './StudyPlanDisplay';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,10 @@ import ApiKeyInput from '@/components/ApiKeyInput';
 import { openaiService } from '@/services/openaiService';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
+import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';
+import { PDFService } from '@/services/pdfService';
+import { supabase } from '@/integrations/supabase/client';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const StudyPlannerContainer = () => {
   const [selectedClass, setSelectedClass] = useState<string>("8");
@@ -18,6 +22,8 @@ const StudyPlannerContainer = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [chapterContent, setChapterContent] = useState<string>("");
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [uploadedPDFs, setUploadedPDFs] = useState<Record<string, { file: File, url: string | null }>>({});
 
   // Define study plan interface
   interface StudyPlanStep {
@@ -37,26 +43,95 @@ const StudyPlannerContainer = () => {
     completionPercentage: number;
   }
 
+  useEffect(() => {
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      openaiService.setApiKey(envApiKey);
+    } else {
+      const savedApiKey = localStorage.getItem('openaiApiKey');
+      if (savedApiKey) {
+        openaiService.setApiKey(savedApiKey);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedChapter) {
+      const loadChapterContent = async () => {
+        try {
+          const chapterId = `${selectedBook}-${selectedChapter}`;
+          
+          if (uploadedPDFs[chapterId]) {
+            const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId].file);
+            setChapterContent(content);
+            setPdfUrl(uploadedPDFs[chapterId].url);
+            return;
+          }
+          
+          const pdfResponse = await PDFService.getPDF(chapterId);
+          if (pdfResponse) {
+            const blob = await pdfResponse.blob();
+            const file = new File([blob], `${chapterId}.pdf`, { type: 'application/pdf' });
+            
+            const content = await PDFService.extractTextFromPDF(file);
+            setChapterContent(content);
+            
+            const { data: { publicUrl } } = supabase.storage
+              .from('chapter_pdfs')
+              .getPublicUrl(`${chapterId}/${chapterId}.pdf`);
+              
+            setPdfUrl(publicUrl);
+            
+            setUploadedPDFs(prev => ({
+              ...prev,
+              [chapterId]: { file, url: publicUrl }
+            }));
+          } else {
+            setChapterContent("No PDF uploaded for this chapter yet. Please upload a PDF to generate a study plan.");
+            setPdfUrl(null);
+          }
+        } catch (error) {
+          console.error('Error loading chapter content:', error);
+          toast.error('Failed to load chapter content');
+          setChapterContent("Error loading chapter content. Please try again.");
+          setPdfUrl(null);
+        }
+      };
+      
+      loadChapterContent();
+    }
+  }, [selectedChapter, selectedBook, uploadedPDFs]);
+
   const handleChapterSelect = (chapterId: string) => {
     setSelectedChapter(chapterId);
-    
-    // Find the chapter details
-    const book = books.find(b => b.id === selectedBook);
-    const chapter = book?.chapters.find(c => c.id === chapterId);
-    
-    if (chapter) {
-      // For now, we'll use the chapter name as content
-      // In a real implementation, we would fetch actual content
-      setChapterContent(`Content for ${chapter.name}`);
-    }
-    
     setStudyPlan(null);
     setProgress(0);
+  };
+
+  const handleFileUpload = (file: File, publicUrl: string | null) => {
+    const chapterId = `${selectedBook}-${selectedChapter}`;
+    if (file) {
+      setUploadedPDFs(prev => ({
+        ...prev,
+        [chapterId]: { file, url: publicUrl }
+      }));
+      setPdfUrl(publicUrl);
+      toast.success(`PDF uploaded for ${chapterId}`);
+      
+      PDFService.extractTextFromPDF(file).then(content => {
+        setChapterContent(content);
+      });
+    }
   };
 
   const generateStudyPlan = async () => {
     if (!selectedChapter) {
       toast.error("Please select a chapter first");
+      return;
+    }
+
+    if (!chapterContent || chapterContent.includes("No PDF uploaded") || chapterContent.includes("Error loading")) {
+      toast.error("Please upload a PDF for this chapter first");
       return;
     }
 
@@ -115,7 +190,7 @@ const StudyPlannerContainer = () => {
       
       You must respond with ONLY the valid JSON, nothing else.`;
 
-      const userPrompt = `Here is the chapter to create a study plan for:\n\nTitle: ${chapter.name}\n\nContent: ${chapterContent || "Create a general study plan for this chapter based on its title."}`;
+      const userPrompt = `Here is the chapter to create a study plan for:\n\nTitle: ${chapter.name}\n\nContent: ${chapterContent}`;
 
       let jsonResponse;
       
@@ -208,7 +283,11 @@ const StudyPlannerContainer = () => {
             />
             
             {selectedChapter && (
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-between items-center">
+                <ChapterPDFUploader 
+                  onFileUpload={handleFileUpload}
+                  chapterId={`${selectedBook}-${selectedChapter}`}
+                />
                 <DoodleButton 
                   onClick={generateStudyPlan}
                   loading={isGenerating}
@@ -221,6 +300,42 @@ const StudyPlannerContainer = () => {
             )}
           </CardContent>
         </Card>
+        
+        {selectedChapter && pdfUrl && (
+          <Card className="border-3 border-black shadow-neo-md">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold">Chapter PDF</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <iframe 
+                src={pdfUrl} 
+                className="w-full h-[400px] border-3 border-black rounded-md shadow-neo-sm"
+                title="Chapter PDF"
+              />
+            </CardContent>
+          </Card>
+        )}
+        
+        {selectedChapter && !pdfUrl && (
+          <Card className="border-3 border-black shadow-neo-md">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold">Chapter Content</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[300px] w-full pr-4 border-3 border-black rounded-md shadow-neo-sm">
+                <div className="p-4">
+                  {chapterContent ? (
+                    <p className="whitespace-pre-line">{chapterContent}</p>
+                  ) : (
+                    <p className="text-center text-muted-foreground">
+                      Upload a PDF to view the chapter content
+                    </p>
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        )}
         
         {studyPlan && (
           <StudyPlanDisplay 
