@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -56,6 +57,10 @@ const NavBar = () => {
                   
                   <button onClick={handleNavigation("/socratic-tutor")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
                     <span className="text-lg font-medium">Socratic Tutor</span>
+                  </button>
+                  
+                  <button onClick={handleNavigation("/study-planner")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
+                    <span className="text-lg font-medium">Study Planner</span>
                   </button>
                   
                   {user && <button onClick={handleNavigation("/teacher")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left px-[27px] py-0">
