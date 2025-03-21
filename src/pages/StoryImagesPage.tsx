@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { Image } from 'lucide-react';
 import { toast } from 'sonner';
@@ -162,9 +161,19 @@ const StoryImagesPage = () => {
           userId: user.id,
           chatType: 'story-images',
           imageUrl: imageUrls[0], // Save first image as thumbnail
-          toolType: 'story-series-generator'
+          toolType: 'story-series-generator',
+          additionalData: {
+            image_urls: imageUrls
+          }
         });
       }
+      
+      // Add to local history
+      setHistory(prev => [{
+        prompt: `Story series: ${storyText.substring(0, 50)}...`,
+        imageUrl: imageUrls[0],
+        multipleImageUrls: imageUrls
+      }, ...prev.slice(0, 5)]);
       
       toast.success('Story illustrations generated successfully!');
     } catch (error) {
@@ -202,10 +211,16 @@ const StoryImagesPage = () => {
     setPrompt('');
   };
 
-  const loadFromHistory = (item: { prompt: string; imageUrl: string }) => {
+  const loadFromHistory = (item: { prompt: string; imageUrl: string; multipleImageUrls?: string[] }) => {
     setPrompt(item.prompt);
-    setGeneratedImageUrl(item.imageUrl);
-    setActiveTab('single');
+    
+    if (item.multipleImageUrls) {
+      setMultipleImageUrls(item.multipleImageUrls);
+      setActiveTab('multiple');
+    } else {
+      setGeneratedImageUrl(item.imageUrl);
+      setActiveTab('single');
+    }
   };
 
   return (

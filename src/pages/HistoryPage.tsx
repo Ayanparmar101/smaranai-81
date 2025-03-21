@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carousel';
 
 interface ChatMessage {
   id: string;
@@ -21,6 +29,7 @@ interface ChatMessage {
   image_url?: string;
   ai_response?: string;
   chat_type?: string;
+  additional_data?: any;
 }
 
 const HistoryPage = () => {
@@ -190,6 +199,10 @@ const HistoryPage = () => {
   };
 
   const MessageContent = ({ message }: { message: ChatMessage; }) => {
+    // Check if we have multiple images
+    const hasMultipleImages = message.tool_type === 'story-series-generator' && message.additional_data && 
+      message.additional_data.image_urls && Array.isArray(message.additional_data.image_urls);
+
     return <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
@@ -207,13 +220,50 @@ const HistoryPage = () => {
               <p className="whitespace-pre-wrap">{message.ai_response}</p>
             </div>}
 
-          {message.image_url && <div className="mt-2">
-              <img src={message.image_url} alt="Generated content" className="rounded-lg max-w-full h-auto" loading="lazy" onError={e => {
-            console.error('Image failed to load:', message.image_url);
-            e.currentTarget.src = '/placeholder.svg';
-            e.currentTarget.alt = 'Image failed to load';
-          }} />
-            </div>}
+          {hasMultipleImages ? (
+            <div className="mt-4">
+              <p className="font-medium mb-2">Story Illustrations:</p>
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {message.additional_data.image_urls.map((url: string, idx: number) => (
+                    <CarouselItem key={idx} className="basis-full md:basis-1/2 lg:basis-1/3">
+                      <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-white p-1 h-[200px] flex items-center justify-center">
+                        <img 
+                          src={url} 
+                          alt={`Story illustration ${idx + 1}`} 
+                          className="max-h-full max-w-full object-contain"
+                          onError={e => {
+                            console.error('Image failed to load:', url);
+                            e.currentTarget.src = '/placeholder.svg';
+                            e.currentTarget.alt = 'Image failed to load';
+                          }}
+                        />
+                        <div className="absolute top-2 left-2 bg-black text-white text-xs py-1 px-2 rounded-full">
+                          {idx + 1}/{message.additional_data.image_urls.length}
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex" />
+                <CarouselNext className="hidden md:flex" />
+              </Carousel>
+            </div>
+          ) : message.image_url ? (
+            <div className="mt-2">
+              <img 
+                src={message.image_url} 
+                alt="Generated content" 
+                className="rounded-lg max-w-full h-auto" 
+                loading="lazy" 
+                onError={e => {
+                  console.error('Image failed to load:', message.image_url);
+                  e.currentTarget.src = '/placeholder.svg';
+                  e.currentTarget.alt = 'Image failed to load';
+                }} 
+              />
+            </div>
+          ) : null}
         </div>
       </div>;
   };
