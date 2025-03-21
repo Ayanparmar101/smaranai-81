@@ -3,10 +3,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/App';
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogIn, LogOut, UserRound } from 'lucide-react';
 import { toast } from 'sonner';
+import { NeoButton } from '@/components/NeoButton';
 
 const AuthButton = () => {
   const { user } = useContext(AuthContext);
@@ -48,10 +48,13 @@ const AuthButton = () => {
   if (!user) {
     return (
       <Link to="/auth">
-        <Button variant="outline" className="flex items-center gap-2">
-          <LogIn className="h-4 w-4" />
-          <span>Sign In</span>
-        </Button>
+        <NeoButton 
+          variant="primary" 
+          size="sm" 
+          icon={<LogIn className="h-4 w-4" />}
+        >
+          Sign In
+        </NeoButton>
       </Link>
     );
   }
@@ -59,12 +62,15 @@ const AuthButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <UserRound className="h-4 w-4" />
+        <NeoButton 
+          variant="outline" 
+          size="sm" 
+          icon={<UserRound className="h-4 w-4" />}
+        >
           <span className="max-w-[100px] truncate">
             {username || 'User'}
           </span>
-        </Button>
+        </NeoButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleSignOut} className="text-red-500 cursor-pointer">

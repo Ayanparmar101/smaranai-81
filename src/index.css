@@ -129,11 +129,28 @@
     animation: movePolkaDots 30s linear infinite;
   }
 
-  /* Add animation control class for accessibility */
-  .reduce-motion body::before {
-    animation: none;
+  /* Neobrutalism specific styles */
+  .border-3 {
+    border-width: 3px;
   }
 
+  .shadow-neo-sm {
+    box-shadow: 3px 3px 0 0 #000;
+  }
+
+  .shadow-neo-md {
+    box-shadow: 5px 5px 0 0 #000;
+  }
+
+  .shadow-neo-lg {
+    box-shadow: 7px 7px 0 0 #000;
+  }
+
+  .shadow-neo {
+    box-shadow: 5px 5px 0 0 #000;
+  }
+
+  /* The rest of the existing styles */
   .dark .prose {
     color: hsl(var(--card-foreground));
   }
@@ -232,5 +249,18 @@
   .section-title::after {
     content: "";
     @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-kid-yellow rounded-full;
+  }
+
+  /* Neobrutalism specific components */
+  .neo-card {
+    @apply bg-white border-3 border-black p-6 rounded-md shadow-neo transition-all duration-200;
+  }
+  
+  .neo-card:hover {
+    @apply shadow-neo-lg;
+  }
+  
+  .neo-input {
+    @apply bg-white border-3 border-black rounded-md px-4 py-2 shadow-neo-sm focus:outline-none focus:shadow-none focus:translate-y-1;
   }
 }

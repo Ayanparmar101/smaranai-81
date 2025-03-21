@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -71,6 +70,15 @@ export default {
 					purple: '#B07CF8',
 					pink: '#FF8FD2',
 					orange: '#FFA245',
+				},
+				neo: {
+					blue: '#0EA5E9',
+					purple: '#8B5CF6',
+					pink: '#D946EF',
+					orange: '#F97316',
+					green: '#10B981',
+					yellow: '#F59E0B',
+					red: '#EF4444',
 				}
 			},
 			borderRadius: {

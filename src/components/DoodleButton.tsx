@@ -1,7 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { NeoButton } from "@/components/NeoButton";
 
 interface DoodleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: "blue" | "green" | "yellow" | "red" | "purple" | "pink" | "orange";
@@ -10,6 +10,7 @@ interface DoodleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   variant?: "default" | "outline" | "ghost";
+  fullWidth?: boolean;
 }
 
 const DoodleButton = ({
@@ -20,86 +21,56 @@ const DoodleButton = ({
   className,
   loading = false,
   variant = "default",
+  fullWidth = false,
   ...props
 }: DoodleButtonProps) => {
-  const colors = {
-    blue: "bg-kid-blue hover:bg-blue-600",
-    green: "bg-kid-green hover:bg-green-600",
-    yellow: "bg-kid-yellow hover:bg-amber-500",
-    red: "bg-kid-red hover:bg-red-600",
-    purple: "bg-kid-purple hover:bg-purple-600",
-    pink: "bg-kid-pink hover:bg-pink-600",
-    orange: "bg-kid-orange hover:bg-orange-600",
+  // Map the doodle colors to neobrutalism colors
+  const variantMap: Record<string, any> = {
+    blue: "primary",
+    green: "success",
+    yellow: "warning",
+    red: "destructive",
+    purple: "secondary",
+    pink: "accent",
+    orange: "accent",
+    default: "default",
+    outline: "outline",
   };
 
-  const sizes = {
-    sm: "text-sm px-3 py-1.5 rounded-lg",
-    md: "text-base px-4 py-2 rounded-xl",
-    lg: "text-lg px-6 py-3 rounded-2xl",
+  // Map size to NeoButton sizes
+  const sizeMap: Record<string, any> = {
+    sm: "sm",
+    md: "md",
+    lg: "lg",
   };
 
-  // Create text color classes
-  const textColors = {
-    blue: "text-kid-blue",
-    green: "text-kid-green",
-    yellow: "text-kid-yellow",
-    red: "text-kid-red",
-    purple: "text-kid-purple",
-    pink: "text-kid-pink",
-    orange: "text-kid-orange",
-  };
-
-  const variants = {
-    default: colors[color],
-    outline: `bg-transparent border-2 border-current ${textColors[color]} hover:bg-gray-50`,
-    ghost: `bg-transparent ${textColors[color]} hover:bg-gray-50`,
-  };
+  // Determine the actual variant to use
+  const buttonVariant = variant === "default" ? variantMap[color] : "outline";
 
   return (
-    <Button
+    <NeoButton
+      variant={buttonVariant}
+      size={sizeMap[size]}
+      loading={loading}
+      icon={icon}
+      fullWidth={fullWidth}
       className={cn(
-        "font-medium text-white transition-all transform active:scale-95",
-        "border-b-4 border-black/20",
-        "shadow-md hover:shadow-lg active:border-b-0 active:translate-y-1",
-        variant === 'default' ? colors[color] : variants[variant],
-        sizes[size],
-        variant !== 'default' && "text-current border-current",
+        buttonVariant === "outline" && {
+          "text-kid-blue": color === "blue",
+          "text-kid-green": color === "green",
+          "text-kid-yellow": color === "yellow",
+          "text-kid-red": color === "red",
+          "text-kid-purple": color === "purple",
+          "text-kid-pink": color === "pink",
+          "text-kid-orange": color === "orange",
+        },
         className
       )}
       disabled={loading}
       {...props}
     >
-      {loading ? (
-        <div className="flex items-center gap-2">
-          <svg
-            className="animate-spin h-4 w-4 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <span>Loading...</span>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          {icon && <span>{icon}</span>}
-          <span>{children}</span>
-        </div>
-      )}
-    </Button>
+      {children}
+    </NeoButton>
   );
 };
 

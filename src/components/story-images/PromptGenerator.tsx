@@ -2,7 +2,7 @@
 import React from 'react';
 import { Send } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import DoodleButton from '@/components/DoodleButton';
+import { NeoButton } from '@/components/NeoButton';
 
 interface PromptGeneratorProps {
   prompt: string;
@@ -18,7 +18,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
   loading
 }) => {
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-orange text-card-foreground">
+    <div className="neo-card bg-white border-3 border-black rounded-md">
       <h2 className="text-xl font-bold mb-4">Image Prompt</h2>
       <p className="text-muted-foreground mb-4">
         Edit the prompt or use the generated one to create your image.
@@ -29,18 +29,18 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
           placeholder="The prompt will appear here..."
           value={prompt}
           onChange={(e) => onPromptChange(e.target.value)}
-          className="min-h-[100px] border-2 border-gray-200 focus:border-kid-orange bg-muted text-foreground"
+          className="min-h-[100px] border-3 border-black focus:border-[#F97316] bg-white text-foreground shadow-neo-sm"
         />
       </div>
       
-      <DoodleButton
-        color="orange"
+      <NeoButton
+        variant="accent"
         onClick={onGenerateImage}
         loading={loading && prompt !== ''}
         icon={<Send className="w-4 h-4" />}
       >
         Generate Image
-      </DoodleButton>
+      </NeoButton>
     </div>
   );
 };

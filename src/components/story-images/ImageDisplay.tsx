@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Image, Download } from 'lucide-react';
-import DoodleButton from '@/components/DoodleButton';
+import { NeoButton } from '@/components/NeoButton';
 
 interface ImageDisplayProps {
   imageUrl: string | null;
@@ -10,12 +10,12 @@ interface ImageDisplayProps {
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, onDownload }) => {
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-red h-full flex flex-col text-card-foreground">
+    <div className="neo-card bg-white border-3 border-black rounded-md h-full flex flex-col">
       <h2 className="text-xl font-bold mb-4">Your Illustration</h2>
       
       {imageUrl ? (
         <div className="flex flex-col flex-grow">
-          <div className="relative bg-muted rounded-xl overflow-hidden flex-grow flex items-center justify-center">
+          <div className="relative bg-muted rounded-md border-3 border-black overflow-hidden flex-grow flex items-center justify-center">
             <img
               src={imageUrl}
               alt="Generated illustration"
@@ -24,17 +24,17 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, onDownload }) => 
           </div>
           
           <div className="mt-4 flex justify-center">
-            <DoodleButton
-              color="red"
+            <NeoButton
+              variant="destructive"
               onClick={onDownload}
               icon={<Download className="w-4 h-4" />}
             >
               Download Image
-            </DoodleButton>
+            </NeoButton>
           </div>
         </div>
       ) : (
-        <div className="flex-grow flex flex-col items-center justify-center bg-muted rounded-xl p-8">
+        <div className="flex-grow flex flex-col items-center justify-center bg-muted rounded-md border-3 border-black p-8">
           <Image className="w-16 h-16 text-muted-foreground mb-4" />
           <p className="text-muted-foreground text-center">
             Your generated image will appear here.

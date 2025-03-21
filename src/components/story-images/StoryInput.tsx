@@ -3,7 +3,7 @@ import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Undo } from 'lucide-react';
-import DoodleButton from '@/components/DoodleButton';
+import { NeoButton } from '@/components/NeoButton';
 
 interface StoryInputProps {
   storyText: string;
@@ -21,7 +21,7 @@ const StoryInput: React.FC<StoryInputProps> = ({
   loading
 }) => {
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-yellow mb-6 text-card-foreground">
+    <div className="neo-card bg-white border-3 border-black rounded-md mb-6">
       <h2 className="text-xl font-bold mb-4">Write Your Story</h2>
       <p className="text-muted-foreground mb-4">
         Write a short story or describe a scene, and we'll generate an illustration for it!
@@ -32,24 +32,25 @@ const StoryInput: React.FC<StoryInputProps> = ({
           placeholder="Once upon a time, there was a little rabbit who lived in a magical forest..."
           value={storyText}
           onChange={(e) => onStoryChange(e.target.value)}
-          className="min-h-[150px] border-2 border-gray-200 focus:border-kid-yellow bg-muted text-foreground"
+          className="min-h-[150px] border-3 border-black focus:border-[#F59E0B] bg-white text-foreground shadow-neo-sm"
         />
       </div>
       
       <div className="flex space-x-3">
-        <DoodleButton
-          color="yellow"
+        <NeoButton
+          variant="warning"
           onClick={onGeneratePrompt}
           loading={loading}
         >
           Create Prompt
-        </DoodleButton>
+        </NeoButton>
         
         <Button
           variant="outline"
           size="icon"
           onClick={onClear}
           title="Clear story"
+          className="border-3 border-black shadow-neo-sm hover:translate-y-1 hover:shadow-none"
         >
           <Undo className="h-4 w-4" />
         </Button>
