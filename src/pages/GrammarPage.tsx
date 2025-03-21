@@ -8,6 +8,9 @@ import ApiKeyInput from '@/components/ApiKeyInput';
 import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
 import { Slider } from '@/components/ui/slider';
+import { Toggle, toggleVariants } from '@/components/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { NeoButton } from '@/components/NeoButton';
 import { openaiService } from '@/services/openaiService';
 
 interface QuizQuestion {
@@ -295,79 +298,37 @@ const GrammarPage = () => {
 
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Select your level:</h2>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => setSelectedLevel('beginner')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedLevel === 'beginner'
-                    ? 'bg-kid-green text-white'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+            <ToggleGroup type="single" value={selectedLevel} onValueChange={(value) => value && setSelectedLevel(value as any)}>
+              <ToggleGroupItem value="beginner" className="flex-1">
                 Beginner (Grades 1-2)
-              </button>
-              <button
-                onClick={() => setSelectedLevel('intermediate')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedLevel === 'intermediate'
-                    ? 'bg-kid-blue text-white'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+              </ToggleGroupItem>
+              <ToggleGroupItem value="intermediate" className="flex-1">
                 Intermediate (Grades 3-5)
-              </button>
-              <button
-                onClick={() => setSelectedLevel('advanced')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedLevel === 'advanced'
-                    ? 'bg-kid-purple text-white'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+              </ToggleGroupItem>
+              <ToggleGroupItem value="advanced" className="flex-1">
                 Advanced (Grades 6-8)
-              </button>
-            </div>
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Select Difficulty:</h2>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => setSelectedDifficulty('easy')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedDifficulty === 'easy'
-                    ? 'bg-green-200 text-green-800'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+            <ToggleGroup type="single" value={selectedDifficulty} onValueChange={(value) => value && setSelectedDifficulty(value as any)}>
+              <ToggleGroupItem value="easy" className="flex-1 bg-green-200/30 text-green-800 data-[state=on]:bg-green-200 data-[state=on]:text-green-800">
                 Easy
-              </button>
-              <button
-                onClick={() => setSelectedDifficulty('medium')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedDifficulty === 'medium'
-                    ? 'bg-yellow-200 text-yellow-800'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+              </ToggleGroupItem>
+              <ToggleGroupItem value="medium" className="flex-1 bg-yellow-200/30 text-yellow-800 data-[state=on]:bg-yellow-200 data-[state=on]:text-yellow-800">
                 Medium
-              </button>
-              <button
-                onClick={() => setSelectedDifficulty('hard')}
-                className={`px-4 py-2 rounded-full transition-all ${
-                  selectedDifficulty === 'hard'
-                    ? 'bg-red-200 text-red-800'
-                    : 'bg-muted hover:bg-muted/80 text-foreground'
-                }`}
-              >
+              </ToggleGroupItem>
+              <ToggleGroupItem value="hard" className="flex-1 bg-red-200/30 text-red-800 data-[state=on]:bg-red-200 data-[state=on]:text-red-800">
                 Hard
-              </button>
-            </div>
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Number of Questions: {numQuestions}</h2>
-            <div className="px-4 py-2">
+            <div className="px-4 py-2 bg-white border-3 border-black rounded-md shadow-neo-sm">
               <Slider
                 value={[numQuestions]}
                 max={10}
@@ -394,10 +355,10 @@ const GrammarPage = () => {
                 <button
                   key={topic}
                   onClick={() => selectTopic(topic)}
-                  className={`p-4 border-2 border-dashed rounded-xl transition-all hover:shadow-md ${
+                  className={`p-4 border-3 border-black rounded-xl transition-all ${
                     selectedTopic === topic
-                      ? 'bg-kid-green/10 border-kid-green'
-                      : 'bg-card border-border hover:border-kid-green/50 text-card-foreground'
+                      ? 'bg-kid-green text-white shadow-none translate-y-1'
+                      : 'bg-white shadow-neo-sm hover:shadow-none hover:translate-y-1'
                   }`}
                 >
                   {topic}
@@ -412,10 +373,10 @@ const GrammarPage = () => {
               <p className="mt-4 text-lg">Generating your lesson...</p>
             </div>
           ) : lesson ? (
-            <div className="bg-card rounded-2xl p-6 shadow-lg border-4 border-dashed border-kid-green mb-8 text-card-foreground">
+            <div className="bg-white rounded-2xl p-6 shadow-neo border-3 border-black mb-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{lesson.title}</h2>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                <span className={`px-3 py-1 rounded-full text-sm font-medium border-2 border-black ${
                   lesson.level === 'Easy' ? 'bg-green-100 text-green-800' :
                   lesson.level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
@@ -424,7 +385,7 @@ const GrammarPage = () => {
                 </span>
               </div>
 
-              <div className="prose max-w-none mb-8 text-card-foreground">
+              <div className="prose max-w-none mb-8">
                 <div dangerouslySetInnerHTML={{ __html: lesson.content.replace(/\n/g, '<br />') }} />
               </div>
 
@@ -433,7 +394,7 @@ const GrammarPage = () => {
                 <ul className="space-y-2">
                   {lesson.examples.map((example, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="bg-kid-yellow text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5">
+                      <span className="bg-kid-yellow text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 border-2 border-black">
                         {index + 1}
                       </span>
                       <span>{example}</span>
@@ -446,41 +407,41 @@ const GrammarPage = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Practice Quiz:</h3>
                   {showResults && (
-                    <DoodleButton
-                      color="green"
+                    <NeoButton
+                      variant="success"
                       size="sm"
                       onClick={resetQuiz}
                       icon={<RefreshCw className="w-4 h-4" />}
                     >
                       Try Again
-                    </DoodleButton>
+                    </NeoButton>
                   )}
                 </div>
 
                 <div className="space-y-6">
                   {lesson.quiz[selectedDifficulty].map((question, qIndex) => (
-                    <div key={qIndex} className="bg-muted/50 p-4 rounded-xl text-foreground">
+                    <div key={qIndex} className="bg-muted/50 p-4 rounded-xl border-3 border-black shadow-neo-sm">
                       <p className="font-medium mb-3">{qIndex + 1}. {question.question}</p>
                       <div className="space-y-2">
                         {question.options.map((option, oIndex) => (
                           <div
                             key={oIndex}
                             onClick={() => handleAnswerSelect(qIndex, oIndex)}
-                            className={`p-3 rounded-lg cursor-pointer flex items-center transition-all ${
+                            className={`p-3 rounded-lg cursor-pointer flex items-center transition-all border-3 ${
                               userAnswers[qIndex] === oIndex
-                                ? 'bg-kid-green/20 border-kid-green border-2'
-                                : 'bg-card text-card-foreground border-2 border-border hover:border-kid-green/50'
+                                ? 'border-black bg-kid-green/20 shadow-none translate-y-1'
+                                : 'border-black bg-white shadow-neo-sm hover:shadow-none hover:translate-y-1'
                             } ${
                               showResults
                                 ? oIndex === question.correctIndex
-                                  ? 'bg-green-100 border-green-500 border-2 text-green-900'
+                                  ? 'bg-green-100 border-black text-green-900 shadow-none translate-y-1'
                                   : userAnswers[qIndex] === oIndex && userAnswers[qIndex] !== question.correctIndex
-                                    ? 'bg-red-100 border-red-500 border-2 text-red-900'
+                                    ? 'bg-red-100 border-black text-red-900 shadow-none translate-y-1'
                                     : ''
                                 : ''
                             }`}
                           >
-                            <span className="mr-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center">
+                            <span className="mr-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center border-2 border-black">
                               {String.fromCharCode(65 + oIndex)}
                             </span>
                             <span>{option}</span>
@@ -494,7 +455,7 @@ const GrammarPage = () => {
                         ))}
                       </div>
                       {showResults && (
-                        <div className="mt-2">
+                        <div className="mt-2 p-3 border-3 border-black rounded-lg bg-white shadow-neo-sm">
                           {userAnswers[qIndex] === question.correctIndex ? (
                             <span className="text-green-600 flex items-center gap-1">
                               <CheckCircle size={16} /> Correct!
@@ -517,19 +478,19 @@ const GrammarPage = () => {
 
                 {!showResults && (
                   <div className="mt-8 flex justify-center gap-4">
-                    <DoodleButton
-                      color="green"
+                    <NeoButton
+                      variant="success"
                       size="lg"
                       onClick={handleQuizSubmit}
                     >
                       Submit Answers
-                    </DoodleButton>
+                    </NeoButton>
                   </div>
                 )}
                 {showResults && (
                   <div className="mt-8 flex justify-center gap-4">
-                    <DoodleButton
-                      color="purple"
+                    <NeoButton
+                      variant="secondary"
                       size="lg"
                       onClick={() => {
                         setShowResults(false);
@@ -537,7 +498,7 @@ const GrammarPage = () => {
                       }}
                     >
                       New Practice
-                    </DoodleButton>
+                    </NeoButton>
                   </div>
                 )}
               </div>
@@ -558,3 +519,4 @@ const GrammarPage = () => {
 };
 
 export default GrammarPage;
+
