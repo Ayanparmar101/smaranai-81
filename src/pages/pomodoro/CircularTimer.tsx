@@ -2,7 +2,7 @@
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { CircleClock } from "lucide-react";
+import { Clock } from "lucide-react";
 
 interface CircularTimerProps {
   timeLeft: number;
@@ -39,7 +39,7 @@ const CircularTimer: React.FC<CircularTimerProps> = ({ timeLeft, totalTime, isBr
       
       {/* Inner circle with time display */}
       <div className="absolute flex flex-col items-center justify-center w-[85%] h-[85%] bg-card rounded-full border-3 border-black shadow-neo">
-        <CircleClock size={30} className="mb-2" />
+        <Clock size={30} className="mb-2" />
         <div className="text-4xl font-bold font-mono tracking-wider">
           {Math.floor(timeLeft / 60).toString().padStart(2, '0')}:
           {(timeLeft % 60).toString().padStart(2, '0')}
