@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { ChapterSelector } from '../teacher/ChapterSelector';
+import ChapterSelector from '../teacher/ChapterSelector';
 import StudyPlanDisplay from './StudyPlanDisplay';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Book, Brain, CheckCheck } from 'lucide-react';
-import { DoodleButton } from '@/components/DoodleButton';
+import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import { openaiService } from '@/services/openaiService';
 import { toast } from 'sonner';
