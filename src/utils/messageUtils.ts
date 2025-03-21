@@ -9,6 +9,7 @@ export interface SaveMessageParams {
   chatType: 'story-images' | 'spoken-english' | 'voice-bot' | 'socratic-tutor' | 'teacher';
   imageUrl?: string;
   toolType?: string;
+  additionalData?: Record<string, any>; // Add this line to support additional data
 }
 
 export const saveMessage = async ({
@@ -17,7 +18,8 @@ export const saveMessage = async ({
   aiResponse,
   chatType,
   imageUrl,
-  toolType
+  toolType,
+  additionalData
 }: SaveMessageParams): Promise<boolean> => {
   try {
     const { error } = await supabase
@@ -29,6 +31,7 @@ export const saveMessage = async ({
         chat_type: chatType,
         image_url: imageUrl,
         tool_type: toolType,
+        additional_data: additionalData, // Add this to pass additional data to Supabase
         timestamp: Math.floor(Date.now() / 1000)
       });
 
