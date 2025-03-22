@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
@@ -21,10 +20,12 @@ const SpokenEnglishPage = () => {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [useWebSpeech, setUseWebSpeech] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const handleApiKeyChange = (key: string) => {
     openaiService.setApiKey(key);
@@ -47,8 +48,6 @@ const SpokenEnglishPage = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         try {
           setIsLoading(true);
-          // Here we would normally use the Whisper API to transcribe
-          // For this demo, we'll use the Web Speech API
           recognizeSpeech(audioBlob);
         } catch (error) {
           console.error('Error transcribing audio:', error);
@@ -72,14 +71,11 @@ const SpokenEnglishPage = () => {
       setIsRecording(false);
       toast.success('Recording stopped');
       
-      // Stop all audio tracks
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
     }
   };
   
   const recognizeSpeech = (audioBlob: Blob) => {
-    // For demo purposes, we're using the Web Speech API
-    // In a real implementation, we would use Whisper API here
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'en-US';
     
@@ -116,7 +112,6 @@ const SpokenEnglishPage = () => {
       const result = await openaiService.createCompletion(systemPrompt, transcript);
       setResponse(result);
       
-      // Save to message history if user is logged in
       if (user) {
         await saveMessage({
           text: transcript,
@@ -126,8 +121,11 @@ const SpokenEnglishPage = () => {
         });
       }
       
-      // Speak the response
-      speakText(result);
+      if (!useWebSpeech) {
+        await speakTextWithOpenAI(result);
+      } else {
+        speakTextWithWebSpeech(result);
+      }
     } catch (error) {
       console.error('Error getting response:', error);
       toast.error('Failed to get a response. Please try again.');
@@ -136,20 +134,59 @@ const SpokenEnglishPage = () => {
     }
   };
   
-  const speakText = (text: string) => {
-    // Using the Web Speech API for text-to-speech
+  const speakTextWithOpenAI = async (text: string) => {
+    try {
+      setIsSpeaking(true);
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      
+      const audioData = await openaiService.generateSpeech(text, {
+        voice: "nova",
+        speed: 0.9,
+      });
+      
+      const blob = new Blob([audioData], { type: 'audio/mpeg' });
+      const url = URL.createObjectURL(blob);
+      
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(url);
+      };
+      
+      audio.onerror = (e) => {
+        console.error('Audio playback error:', e);
+        setIsSpeaking(false);
+        toast.error('Failed to play the audio. Please try again.');
+        URL.revokeObjectURL(url);
+      };
+      
+      await audio.play();
+    } catch (error) {
+      console.error('Error with OpenAI TTS:', error);
+      setIsSpeaking(false);
+      
+      toast.error('OpenAI TTS failed. Falling back to browser TTS.');
+      setUseWebSpeech(true);
+      speakTextWithWebSpeech(text);
+    }
+  };
+  
+  const speakTextWithWebSpeech = (text: string) => {
     if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 0.9; // Slightly slower than normal
+      utterance.rate = 0.9;
       
-      // Get all available voices
       const voices = window.speechSynthesis.getVoices();
       
-      // Try to find a female English voice
       const englishVoice = voices.find(voice => 
         voice.lang.includes('en') && voice.name.includes('Female')
       ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
@@ -174,31 +211,36 @@ const SpokenEnglishPage = () => {
   };
   
   const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setIsSpeaking(false);
+    } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
     }
   };
   
   useEffect(() => {
-    // Initialize speech recognition
     if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
       toast.error('Speech recognition is not supported in your browser.');
     }
     
-    // Initialize speech synthesis
     if ('speechSynthesis' in window) {
-      // Load voices
       window.speechSynthesis.onvoiceschanged = () => {
         window.speechSynthesis.getVoices();
       };
     }
     
-    // Cleanup on unmount
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         mediaRecorderRef.current.stop();
         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
       
       if ('speechSynthesis' in window) {
@@ -286,7 +328,7 @@ const SpokenEnglishPage = () => {
                       <Button
                         variant="outline"
                         className="rounded-full bg-kid-green text-white hover:bg-green-600"
-                        onClick={() => speakText(response)}
+                        onClick={() => useWebSpeech ? speakTextWithWebSpeech(response) : speakTextWithOpenAI(response)}
                         disabled={!response || isLoading}
                       >
                         <Play className="h-5 w-5" />
@@ -327,7 +369,7 @@ const SpokenEnglishPage = () => {
                 <li>Click the microphone button and speak clearly in English.</li>
                 <li>Click the stop button when you're finished speaking.</li>
                 <li>Review your transcribed speech and click "Get Feedback".</li>
-                <li>The tutor will provide feedback that you can read or listen to.</li>
+                <li>The tutor will provide feedback that you can read or listen to with OpenAI's realistic speech.</li>
                 <li>Practice regularly to improve your pronunciation and grammar!</li>
               </ol>
             </div>
