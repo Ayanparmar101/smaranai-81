@@ -15,6 +15,15 @@ const Index = () => {
     navigate(path);
   };
 
+  const handleSubjectClick = (subject: string) => {
+    if (subject === 'English') {
+      window.location.href = 'https://smaran.ai';
+    } else {
+      // For future implementation of other subjects
+      console.log(`Selected subject: ${subject}`);
+    }
+  };
+
   return <div className="min-h-screen flex flex-col">
       <NavBar />
       
@@ -124,6 +133,36 @@ const Index = () => {
                 <h3 className="text-xl font-bold mt-4 mb-2">Coming Soon</h3>
                 <p className="text-gray-600 text-center">More exciting features are on the way!</p>
               </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Subjects Selection Section */}
+        <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container mx-auto px-4">
+            <h2 className="section-title">Choose Your Subject</h2>
+            <p className="text-center text-gray-600 max-w-2xl mx-auto mt-4 mb-10">
+              Select a subject to start learning with our interactive tools and AI tutors.
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-8">
+              {[
+                { name: 'Mathematics', color: 'blue', icon: '➗' },
+                { name: 'English', color: 'green', icon: '📚' },
+                { name: 'Science', color: 'purple', icon: '🔬' },
+                { name: 'Social Science', color: 'yellow', icon: '🌍' },
+                { name: 'Hindi', color: 'red', icon: 'अ' },
+                { name: 'Gujarati', color: 'orange', icon: 'ગુ' }
+              ].map((subject, index) => (
+                <div 
+                  key={index}
+                  onClick={() => handleSubjectClick(subject.name)}
+                  className={`card-doodle flex flex-col items-center justify-center gap-3 p-5 rounded-xl bg-transparent hover:bg-kid-${subject.color} transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-${subject.color}/50 h-32 cursor-pointer hover:text-white`}
+                >
+                  <span className="text-3xl">{subject.icon}</span>
+                  <span className="text-sm font-medium text-center">{subject.name}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
