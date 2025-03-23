@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calculator, Sigma, Pi, SquareRoot, BrainCircuit, GraduationCap, BookOpen, PenTool } from 'lucide-react';
+import { Calculator, Sigma, Pi, SquareDot, BrainCircuit, GraduationCap, BookOpen, PenTool } from 'lucide-react';
 import DoodleCard from '@/components/DoodleCard';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
@@ -23,7 +24,7 @@ const MathematicsPage = () => {
     },
     { 
       name: 'Algebra', 
-      icon: <SquareRoot className="w-10 h-10" />, 
+      icon: <SquareDot className="w-10 h-10" />, 
       color: 'purple',
       description: 'Learn equations, variables, and algebraic expressions'
     },
@@ -102,7 +103,7 @@ const MathematicsPage = () => {
           </div>
           <div className="absolute bottom-20 right-10 opacity-20">
             <div className="text-kid-purple">
-              <SquareRoot size={64} />
+              <SquareDot size={64} />
             </div>
           </div>
         </section>
