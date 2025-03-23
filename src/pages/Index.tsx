@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, Image, Mic, MessageCircle, HelpCircle } from 'lucide-react';
+import { BookOpen, Image, Mic, MessageCircle, HelpCircle, BookText, Atom, GraduationCap, Globe, Flag, FlaskConical } from 'lucide-react';
 import DoodleCard from '@/components/DoodleCard';
 import DoodleButton from '@/components/DoodleButton';
 import DoodleDecoration from '@/components/DoodleDecoration';
@@ -14,6 +14,55 @@ const Index = () => {
     e.preventDefault();
     navigate(path);
   };
+
+  const handleSubjectClick = (subject: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (subject === 'English') {
+      window.location.href = 'https://smaran.ai';
+    } else {
+      console.log(`Clicked on ${subject}`);
+      // Future implementation for other subjects
+    }
+  };
+
+  const subjects = [
+    { 
+      name: 'Mathematics', 
+      icon: <GraduationCap className="w-10 h-10" />, 
+      color: 'blue',
+      description: 'Explore numbers, shapes, and patterns with interactive math lessons'
+    },
+    { 
+      name: 'English', 
+      icon: <BookText className="w-10 h-10" />, 
+      color: 'green',
+      description: 'Master language skills with grammar, vocabulary, and writing exercises'
+    },
+    { 
+      name: 'Science', 
+      icon: <Atom className="w-10 h-10" />, 
+      color: 'purple',
+      description: 'Discover the natural world through biology, chemistry, and physics'
+    },
+    { 
+      name: 'Social Science', 
+      icon: <Globe className="w-10 h-10" />, 
+      color: 'yellow',
+      description: 'Learn about history, geography, civics, and economics'
+    },
+    { 
+      name: 'Hindi', 
+      icon: <Flag className="w-10 h-10" />, 
+      color: 'orange',
+      description: 'Develop Hindi language skills with comprehensive lessons'
+    },
+    { 
+      name: 'Gujarati', 
+      icon: <BookOpen className="w-10 h-10" />, 
+      color: 'red',
+      description: 'Learn Gujarati with interactive lessons and cultural insights'
+    }
+  ];
 
   return <div className="min-h-screen flex flex-col">
       <NavBar />
@@ -69,8 +118,40 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Features Section */}
+        {/* Subject Selection Section */}
         <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="section-title">Choose Your Subject</h2>
+            <p className="text-center text-gray-700 mb-10 max-w-2xl mx-auto">
+              Select a subject to start learning with interactive lessons, exercises, and AI-powered tutoring
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+              {subjects.map((subject, index) => (
+                <DoodleCard 
+                  key={index}
+                  title={subject.name} 
+                  description={subject.description} 
+                  icon={subject.icon} 
+                  color={subject.color as 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink'} 
+                  onClick={handleSubjectClick(subject.name)}
+                  className="hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <button 
+                      onClick={handleSubjectClick(subject.name)} 
+                      className="text-kid-blue font-medium hover:underline"
+                    >
+                      Start Learning &rarr;
+                    </button>
+                  </div>
+                </DoodleCard>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Features Section */}
+        <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
             <h2 className="section-title">Learn With Fun Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
