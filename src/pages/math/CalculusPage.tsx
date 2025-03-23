@@ -1,0 +1,89 @@
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
+import MathQuestionForm from '@/components/MathQuestionForm';
+import { Sigma } from 'lucide-react';
+import { saveMessage } from '@/utils/messageUtils';
+import { useAuth } from '@supabase/auth-helpers-react';
+
+const CalculusPage = () => {
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const userId = auth?.user()?.id;
+  
+  const handleReturn = () => {
+    navigate('/mathematics');
+  };
+
+  const handleResultGenerated = async (result: {
+    question: string;
+    answer: string;
+    similarQuestions: string[];
+  }) => {
+    if (userId) {
+      await saveMessage({
+        text: result.question,
+        userId,
+        aiResponse: result.answer,
+        chatType: 'teacher',
+        toolType: 'calculus',
+        additionalData: {
+          similarQuestions: result.similarQuestions
+        }
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <NavBar />
+      
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <button 
+          onClick={handleReturn}
+          className="mb-6 text-kid-blue hover:underline flex items-center"
+        >
+          ← Back to Mathematics
+        </button>
+
+        <div className="flex items-center mb-8">
+          <div className="bg-kid-yellow p-3 rounded-full mr-4">
+            <Sigma className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold">
+            <span className="bg-gradient-to-r from-kid-yellow to-amber-500 bg-clip-text text-transparent">
+              Calculus
+            </span>
+          </h1>
+        </div>
+
+        <div className="mb-8">
+          <p className="text-lg text-gray-700 mb-4">
+            Calculus is the mathematical study of continuous change. Ask questions about limits, derivatives, 
+            integrals, differential equations, or applications of calculus.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-kid-yellow/10 p-4 rounded-lg border-2 border-kid-yellow/30">
+              <h3 className="font-bold mb-2">Example Questions:</h3>
+              <ul className="list-disc list-inside space-y-2">
+                <li>How do I find the derivative of f(x) = x³ - 2x² + 5x - 3?</li>
+                <li>What is the chain rule and how do I use it?</li>
+                <li>How do I integrate ∫x²e^x dx?</li>
+                <li>What is a limit and how do I evaluate it?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <MathQuestionForm topic="Calculus" onResultGenerated={handleResultGenerated} />
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default CalculusPage;

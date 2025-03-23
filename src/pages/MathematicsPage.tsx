@@ -12,7 +12,30 @@ const MathematicsPage = () => {
   const handleToolClick = (tool: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     console.log(`Clicked on ${tool}`);
-    // Future implementation for mathematics tools
+    
+    switch(tool) {
+      case 'Basic Arithmetic':
+        navigate('/math/arithmetic');
+        break;
+      case 'Algebra':
+        navigate('/math/algebra');
+        break;
+      case 'Geometry':
+        navigate('/math/geometry');
+        break;
+      case 'Calculus':
+        navigate('/math/calculus');
+        break;
+      case 'Statistics':
+        navigate('/math/statistics');
+        break;
+      case 'Problem Solving':
+        // Future implementation
+        console.log('Problem Solving tool not yet implemented');
+        break;
+      default:
+        break;
+    }
   };
 
   const mathTools = [
