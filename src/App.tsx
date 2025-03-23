@@ -18,6 +18,7 @@ import AuthCallbackPage from "./pages/AuthCallbackPage";
 import ProfilePage from "./pages/ProfilePage";
 import HistoryPage from "./pages/HistoryPage";
 import SubjectsPage from "./pages/SubjectsPage";
+import MathematicsPage from "./pages/MathematicsPage";
 import NotFound from "./pages/NotFound";
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
@@ -69,6 +70,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <SubjectsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/mathematics" 
+                  element={
+                    <ProtectedRoute>
+                      <MathematicsPage />
                     </ProtectedRoute>
                   } 
                 />

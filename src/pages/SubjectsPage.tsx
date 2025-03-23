@@ -13,6 +13,8 @@ const SubjectsPage = () => {
     e.preventDefault();
     if (subject === 'English') {
       navigate('/'); // Redirect to index page instead of external URL
+    } else if (subject === 'Mathematics') {
+      navigate('/mathematics'); // Redirect to mathematics page
     } else {
       console.log(`Clicked on ${subject}`);
       // Future implementation for other subjects
