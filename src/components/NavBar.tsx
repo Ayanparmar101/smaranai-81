@@ -58,6 +58,16 @@ const NavBar = () => {
                     <span className="text-sm font-medium text-center">Home</span>
                   </button>
                   
+                  {user && 
+                    <button 
+                      onClick={handleNavigation("/subjects")} 
+                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                    >
+                      <GraduationCap size={24} className="text-kid-purple" />
+                      <span className="text-sm font-medium text-center">Subjects</span>
+                    </button>
+                  }
+                  
                   <button 
                     onClick={handleNavigation("/grammar")} 
                     className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-green transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"

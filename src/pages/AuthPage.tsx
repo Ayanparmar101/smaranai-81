@@ -21,7 +21,7 @@ const AuthPage = () => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
-        navigate('/');
+        navigate('/subjects');
       }
     };
     
@@ -30,7 +30,7 @@ const AuthPage = () => {
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate('/');
+        navigate('/subjects');
       }
     });
 

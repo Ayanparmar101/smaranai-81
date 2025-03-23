@@ -17,6 +17,7 @@ import AuthPage from "./pages/AuthPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import ProfilePage from "./pages/ProfilePage";
 import HistoryPage from "./pages/HistoryPage";
+import SubjectsPage from "./pages/SubjectsPage";
 import NotFound from "./pages/NotFound";
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
@@ -63,6 +64,14 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                <Route 
+                  path="/subjects" 
+                  element={
+                    <ProtectedRoute>
+                      <SubjectsPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="/grammar" 
                   element={
