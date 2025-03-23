@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '@/App';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
-import { Menu } from 'lucide-react';
+import { Menu, Grid3x3 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const NavBar = () => {
@@ -36,49 +36,95 @@ const NavBar = () => {
               </div>
               
               <div className="flex-1 overflow-auto py-6 px-4">
-                <div className="space-y-6">
-                  <button onClick={handleNavigation("/")} className="flex items-center gap-2 p-3 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-colors w-full text-left">
-                    <span className="text-lg font-medium">Home</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    onClick={handleNavigation("/")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Home</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/grammar")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Grammar</span>
+                  <button 
+                    onClick={handleNavigation("/grammar")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Grammar</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/story-images")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Story Images</span>
+                  <button 
+                    onClick={handleNavigation("/story-images")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Story Images</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/spoken-english")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Spoken English</span>
+                  <button 
+                    onClick={handleNavigation("/spoken-english")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Spoken English</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/voice-bot")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Voice Bot</span>
+                  <button 
+                    onClick={handleNavigation("/voice-bot")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Voice Bot</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/socratic-tutor")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Socratic Tutor</span>
+                  <button 
+                    onClick={handleNavigation("/socratic-tutor")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Socratic Tutor</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/study-planner")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Study Planner</span>
+                  <button 
+                    onClick={handleNavigation("/study-planner")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Study Planner</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/pomodoro")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Pomodoro Timer</span>
+                  <button 
+                    onClick={handleNavigation("/pomodoro")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Pomodoro Timer</span>
                   </button>
                   
-                  {user && <button onClick={handleNavigation("/teacher")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left px-[27px] py-0">
-                      <span className="text-lg font-medium">Teacher Tools</span>
-                    </button>}
+                  {user && 
+                    <button 
+                      onClick={handleNavigation("/teacher")} 
+                      className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    >
+                      <Grid3x3 size={24} />
+                      <span className="text-sm font-medium text-center">Teacher Tools</span>
+                    </button>
+                  }
                   
-                  <button onClick={handleNavigation("/profile")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">Profile</span>
+                  <button 
+                    onClick={handleNavigation("/profile")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">Profile</span>
                   </button>
                   
-                  <button onClick={handleNavigation("/history")} className="flex items-center gap-2 p-3 hover:bg-[#1d1d1d] transition-colors rounded-lg w-full text-left">
-                    <span className="text-lg font-medium">History</span>
+                  <button 
+                    onClick={handleNavigation("/history")} 
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                  >
+                    <Grid3x3 size={24} />
+                    <span className="text-sm font-medium text-center">History</span>
                   </button>
                 </div>
               </div>
