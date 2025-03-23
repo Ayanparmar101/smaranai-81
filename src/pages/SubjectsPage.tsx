@@ -12,7 +12,7 @@ const SubjectsPage = () => {
   const handleSubjectClick = (subject: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     if (subject === 'English') {
-      window.location.href = 'https://smaranai-53.lovable.app/';
+      navigate('/'); // Redirect to index page instead of external URL
     } else {
       console.log(`Clicked on ${subject}`);
       // Future implementation for other subjects
