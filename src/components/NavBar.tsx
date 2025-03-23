@@ -5,7 +5,20 @@ import { useContext } from 'react';
 import { AuthContext } from '@/App';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
-import { Menu, Grid3x3 } from 'lucide-react';
+import { 
+  Menu, 
+  Home, 
+  BookText, 
+  Image, 
+  Mic, 
+  Bot, 
+  GraduationCap, 
+  CalendarDays, 
+  Timer, 
+  BookOpen, 
+  UserRound, 
+  History 
+} from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const NavBar = () => {
@@ -41,7 +54,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <Home size={24} />
                     <span className="text-sm font-medium text-center">Home</span>
                   </button>
                   
@@ -49,7 +62,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/grammar")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <BookText size={24} />
                     <span className="text-sm font-medium text-center">Grammar</span>
                   </button>
                   
@@ -57,7 +70,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/story-images")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <Image size={24} />
                     <span className="text-sm font-medium text-center">Story Images</span>
                   </button>
                   
@@ -65,7 +78,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/spoken-english")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <Mic size={24} />
                     <span className="text-sm font-medium text-center">Spoken English</span>
                   </button>
                   
@@ -73,7 +86,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/voice-bot")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <Bot size={24} />
                     <span className="text-sm font-medium text-center">Voice Bot</span>
                   </button>
                   
@@ -81,7 +94,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/socratic-tutor")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <GraduationCap size={24} />
                     <span className="text-sm font-medium text-center">Socratic Tutor</span>
                   </button>
                   
@@ -89,7 +102,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/study-planner")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <CalendarDays size={24} />
                     <span className="text-sm font-medium text-center">Study Planner</span>
                   </button>
                   
@@ -97,7 +110,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/pomodoro")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <Timer size={24} />
                     <span className="text-sm font-medium text-center">Pomodoro Timer</span>
                   </button>
                   
@@ -106,7 +119,7 @@ const NavBar = () => {
                       onClick={handleNavigation("/teacher")} 
                       className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                     >
-                      <Grid3x3 size={24} />
+                      <BookOpen size={24} />
                       <span className="text-sm font-medium text-center">Teacher Tools</span>
                     </button>
                   }
@@ -115,7 +128,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/profile")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <UserRound size={24} />
                     <span className="text-sm font-medium text-center">Profile</span>
                   </button>
                   
@@ -123,7 +136,7 @@ const NavBar = () => {
                     onClick={handleNavigation("/history")} 
                     className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
                   >
-                    <Grid3x3 size={24} />
+                    <History size={24} />
                     <span className="text-sm font-medium text-center">History</span>
                   </button>
                 </div>
