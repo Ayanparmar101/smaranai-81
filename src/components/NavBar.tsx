@@ -52,7 +52,7 @@ const NavBar = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     onClick={handleNavigation("/")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-[#5b86e5]/50 h-24"
                   >
                     <Home size={24} />
                     <span className="text-sm font-medium text-center">Home</span>
@@ -60,83 +60,83 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/grammar")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
                   >
-                    <BookText size={24} />
+                    <BookText size={24} className="text-kid-green" />
                     <span className="text-sm font-medium text-center">Grammar</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/story-images")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-yellow/50 h-24"
                   >
-                    <Image size={24} />
+                    <Image size={24} className="text-kid-yellow" />
                     <span className="text-sm font-medium text-center">Story Images</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/spoken-english")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-red/50 h-24"
                   >
-                    <Mic size={24} />
+                    <Mic size={24} className="text-kid-red" />
                     <span className="text-sm font-medium text-center">Spoken English</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/voice-bot")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
                   >
-                    <Bot size={24} />
+                    <Bot size={24} className="text-kid-purple" />
                     <span className="text-sm font-medium text-center">Voice Bot</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/socratic-tutor")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
                   >
-                    <GraduationCap size={24} />
+                    <GraduationCap size={24} className="text-kid-blue" />
                     <span className="text-sm font-medium text-center">Socratic Tutor</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/study-planner")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-pink/50 h-24"
                   >
-                    <CalendarDays size={24} />
+                    <CalendarDays size={24} className="text-kid-pink" />
                     <span className="text-sm font-medium text-center">Study Planner</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/pomodoro")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
                   >
-                    <Timer size={24} />
+                    <Timer size={24} className="text-kid-orange" />
                     <span className="text-sm font-medium text-center">Pomodoro Timer</span>
                   </button>
                   
                   {user && 
                     <button 
                       onClick={handleNavigation("/teacher")} 
-                      className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
                     >
-                      <BookOpen size={24} />
+                      <BookOpen size={24} className="text-kid-green" />
                       <span className="text-sm font-medium text-center">Teacher Tools</span>
                     </button>
                   }
                   
                   <button 
                     onClick={handleNavigation("/profile")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
                   >
-                    <UserRound size={24} />
+                    <UserRound size={24} className="text-kid-blue" />
                     <span className="text-sm font-medium text-center">Profile</span>
                   </button>
                   
                   <button 
                     onClick={handleNavigation("/history")} 
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-colors h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
                   >
-                    <History size={24} />
+                    <History size={24} className="text-kid-purple" />
                     <span className="text-sm font-medium text-center">History</span>
                   </button>
                 </div>
