@@ -60,7 +60,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/grammar")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-green transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
                   >
                     <BookText size={24} className="text-kid-green" />
                     <span className="text-sm font-medium text-center">Grammar</span>
@@ -68,7 +68,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/story-images")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-yellow/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-yellow transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-yellow/50 h-24"
                   >
                     <Image size={24} className="text-kid-yellow" />
                     <span className="text-sm font-medium text-center">Story Images</span>
@@ -76,7 +76,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/spoken-english")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-red/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-red transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-red/50 h-24"
                   >
                     <Mic size={24} className="text-kid-red" />
                     <span className="text-sm font-medium text-center">Spoken English</span>
@@ -84,7 +84,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/voice-bot")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
                   >
                     <Bot size={24} className="text-kid-purple" />
                     <span className="text-sm font-medium text-center">Voice Bot</span>
@@ -92,7 +92,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/socratic-tutor")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-blue transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
                   >
                     <GraduationCap size={24} className="text-kid-blue" />
                     <span className="text-sm font-medium text-center">Socratic Tutor</span>
@@ -100,7 +100,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/study-planner")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-pink/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-pink transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-pink/50 h-24"
                   >
                     <CalendarDays size={24} className="text-kid-pink" />
                     <span className="text-sm font-medium text-center">Study Planner</span>
@@ -108,7 +108,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/pomodoro")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-orange transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
                   >
                     <Timer size={24} className="text-kid-orange" />
                     <span className="text-sm font-medium text-center">Pomodoro Timer</span>
@@ -117,7 +117,7 @@ const NavBar = () => {
                   {user && 
                     <button 
                       onClick={handleNavigation("/teacher")} 
-                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
+                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-green transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
                     >
                       <BookOpen size={24} className="text-kid-green" />
                       <span className="text-sm font-medium text-center">Teacher Tools</span>
@@ -126,7 +126,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/profile")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-blue transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
                   >
                     <UserRound size={24} className="text-kid-blue" />
                     <span className="text-sm font-medium text-center">Profile</span>
@@ -134,7 +134,7 @@ const NavBar = () => {
                   
                   <button 
                     onClick={handleNavigation("/history")} 
-                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl hover:bg-[#1d1d1d] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
                   >
                     <History size={24} className="text-kid-purple" />
                     <span className="text-sm font-medium text-center">History</span>
