@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,7 +12,7 @@ import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import { saveMessage } from '@/utils/messageUtils';
 
 const formSchema = z.object({
@@ -22,7 +22,7 @@ const formSchema = z.object({
 });
 
 const VoiceBotPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string; }[]>([]);
   const [isListening, setIsListening] = useState(false);

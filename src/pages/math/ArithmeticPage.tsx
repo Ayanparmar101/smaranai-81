@@ -1,17 +1,15 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import MathQuestionForm from '@/components/MathQuestionForm';
 import { Calculator } from 'lucide-react';
 import { saveMessage } from '@/utils/messageUtils';
-import { useAuth } from '@supabase/auth-helpers-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ArithmeticPage = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
-  const userId = auth?.user()?.id;
+  const { user } = useAuth();
   
   const handleReturn = () => {
     navigate('/mathematics');
@@ -22,10 +20,10 @@ const ArithmeticPage = () => {
     answer: string;
     similarQuestions: string[];
   }) => {
-    if (userId) {
+    if (user?.id) {
       await saveMessage({
         text: result.question,
-        userId,
+        userId: user.id,
         aiResponse: result.answer,
         chatType: 'teacher',
         toolType: 'basic-arithmetic',

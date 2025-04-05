@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { openaiService } from '@/services/openaiService';
@@ -13,7 +14,7 @@ import QuestionAnswerSection from './QuestionAnswerSection';
 import { saveMessage } from '@/utils/messageUtils';
 
 const TeacherPageContainer: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState<string>("8");
   const [selectedBook, setSelectedBook] = useState<string>("honeydew");

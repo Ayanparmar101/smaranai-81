@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
@@ -9,11 +10,11 @@ import { Mic, MicOff, Play, Square, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import DoodleButton from '@/components/DoodleButton';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import { saveMessage } from '@/utils/messageUtils';
 
 const SpokenEnglishPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [isApiKeySet, setIsApiKeySet] = useState(!!openaiService.getApiKey());
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');

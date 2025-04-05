@@ -1,7 +1,7 @@
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogIn, LogOut, UserRound } from 'lucide-react';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { NeoButton } from '@/components/NeoButton';
 
 const AuthButton = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
 

@@ -1,16 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useContext } from 'react';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 const ProfilePage = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
 

@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { toast } from 'sonner';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import { openaiService } from '@/services/openaiService';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import StoryInput from '@/components/story-images/StoryInput';
 import PromptGenerator from '@/components/story-images/PromptGenerator';
 import ImageDisplay from '@/components/story-images/ImageDisplay';
@@ -15,7 +16,7 @@ import { saveMessage } from '@/utils/messageUtils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StoryImagesPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [storyText, setStoryText] = useState('');
   const [prompt, setPrompt] = useState('');

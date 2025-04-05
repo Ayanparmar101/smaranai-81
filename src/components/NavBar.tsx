@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import AuthButton from './AuthButton';
 import { ThemeToggle } from './ThemeToggle';
 import { 
@@ -24,7 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const NavBar = () => {
   const {
     user
-  } = useContext(AuthContext);
+  } = useAuth();
   const navigate = useNavigate();
   const handleNavigation = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();

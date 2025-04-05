@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import { Send, HelpCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import DoodleButton from '@/components/DoodleButton';
@@ -10,11 +10,11 @@ import { openaiService } from '@/services/openaiService';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import DoodleDecoration from '@/components/DoodleDecoration';
-import { AuthContext } from '@/App';
+import { useAuth } from '@/contexts/AuthContext';
 import { saveMessage } from '@/utils/messageUtils';
 
 const SocraticTutorPage = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [question, setQuestion] = useState('');
   const [conversation, setConversation] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
