@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -96,6 +97,14 @@ const NavBar = () => {
                   >
                     <Bot size={24} className="text-kid-purple" />
                     <span className="text-sm font-medium text-center">Voice Bot</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/gujarati")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-orange transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
+                  >
+                    <BookOpen size={24} className="text-kid-orange" />
+                    <span className="text-sm font-medium text-center">Gujarati</span>
                   </button>
                   
                   <button 

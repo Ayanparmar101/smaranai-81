@@ -29,6 +29,12 @@ import GeometryPage from './pages/math/GeometryPage';
 import CalculusPage from './pages/math/CalculusPage';
 import StatisticsPage from './pages/math/StatisticsPage';
 
+// Gujarati pages
+import GujaratiPage from './pages/GujaratiPage';
+import GujaratiPoemsPage from './pages/gujarati/GujaratiPoemsPage';
+import GujaratiLessonsPage from './pages/gujarati/GujaratiLessonsPage';
+import GujaratiChatbotPage from './pages/gujarati/GujaratiChatbotPage';
+
 function App() {
   return (
     <ThemeProvider>
@@ -47,6 +53,12 @@ function App() {
             <Route path="/math/geometry" element={<GeometryPage />} />
             <Route path="/math/calculus" element={<CalculusPage />} />
             <Route path="/math/statistics" element={<StatisticsPage />} />
+            
+            {/* Gujarati routes */}
+            <Route path="/gujarati" element={<GujaratiPage />} />
+            <Route path="/gujarati/poems" element={<GujaratiPoemsPage />} />
+            <Route path="/gujarati/lessons" element={<GujaratiLessonsPage />} />
+            <Route path="/gujarati/chatbot" element={<GujaratiChatbotPage />} />
             
             <Route path="/pomodoro" element={<PomodoroPage />} />
             <Route path="/grammar" element={<GrammarPage />} />
