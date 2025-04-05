@@ -9,7 +9,7 @@ import { NeoButton } from '@/components/NeoButton';
 import { Mic, MicOff, Send, Bot } from 'lucide-react';
 import { toast } from 'sonner';
 import { saveMessage } from '@/utils/messageUtils';
-import { openaiService } from '@/services/openaiService';
+import { useOpenAI } from '@/hooks/useOpenAI';
 
 interface Message {
   content: string;
@@ -25,6 +25,7 @@ const GujaratiChatbotPage = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const { openaiService } = useOpenAI();
 
   // Setup speech recognition
   useEffect(() => {
@@ -97,17 +98,6 @@ const GujaratiChatbotPage = () => {
         timestamp: Date.now()
       }
     ]);
-
-    // Setup OpenAI API key
-    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envApiKey) {
-      openaiService.setApiKey(envApiKey);
-    } else {
-      const savedApiKey = localStorage.getItem('openaiApiKey');
-      if (savedApiKey) {
-        openaiService.setApiKey(savedApiKey);
-      }
-    }
   }, []);
 
   const toggleListening = () => {
@@ -130,14 +120,14 @@ const GujaratiChatbotPage = () => {
     }
   };
 
-  const saveToHistory = async (text: string, isUserMessage: boolean, aiResponse?: string) => {
+  const saveToHistory = async (text: string, aiResponse?: string) => {
     if (!user) return;
     
     try {
       await saveMessage({
         text,
         userId: user.id,
-        aiResponse: isUserMessage ? undefined : aiResponse,
+        aiResponse,
         chatType: 'gujarati-chatbot'
       });
     } catch (error) {
@@ -163,8 +153,6 @@ const GujaratiChatbotPage = () => {
       toggleListening();
     }
 
-    await saveToHistory(inputText, true);
-
     try {
       const systemPrompt = `You are a helpful Gujarati language tutor. 
       Reply in both Gujarati and English to help the student learn.
@@ -172,6 +160,7 @@ const GujaratiChatbotPage = () => {
       If the user sends a message in English, still provide your answer in both Gujarati and English.`;
       
       let fullResponse = '';
+      
       await openaiService.createCompletion(
         systemPrompt,
         inputText,
@@ -179,16 +168,21 @@ const GujaratiChatbotPage = () => {
           stream: true,
           onChunk: (chunk) => {
             fullResponse += chunk;
+            
+            // Check if we already have an assistant message we can update
             setMessages(prev => {
               const lastMessage = prev[prev.length - 1];
               
-              if (lastMessage.role === 'assistant' && lastMessage.content === '') {
-                // Update existing empty assistant message
-                return prev.slice(0, -1).concat({
+              // If the last message is already an assistant message that we're building
+              if (lastMessage.role === 'assistant' && prev.length >= 2 && prev[prev.length - 2].content === userMessage.content) {
+                // Update the existing message
+                const updatedMessages = [...prev];
+                updatedMessages[prev.length - 1] = {
                   ...lastMessage,
                   content: fullResponse
-                });
-              } else {
+                };
+                return updatedMessages;
+              } else if (lastMessage.role === 'user' && lastMessage.content === userMessage.content) {
                 // Add new assistant message
                 return [...prev, { 
                   role: 'assistant', 
@@ -196,12 +190,14 @@ const GujaratiChatbotPage = () => {
                   timestamp: Date.now()
                 }];
               }
+              
+              return prev;
             });
           }
         }
       );
 
-      await saveToHistory(inputText, false, fullResponse);
+      await saveToHistory(inputText, fullResponse);
     } catch (error) {
       console.error('Error getting response:', error);
       toast.error('Failed to get response. Please try again.');
