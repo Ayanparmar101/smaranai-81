@@ -9,65 +9,103 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      messages: {
+      documents: {
         Row: {
-          ai_response: string | null
-          chat_type: string | null
           created_at: string | null
+          file_type: string
+          file_url: string
           id: string
-          image_url: string | null
-          text: string
-          timestamp: number
-          tool_type: string | null
-          user_id: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          ai_response?: string | null
-          chat_type?: string | null
           created_at?: string | null
+          file_type: string
+          file_url: string
           id?: string
-          image_url?: string | null
-          text: string
-          timestamp?: number
-          tool_type?: string | null
-          user_id: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          ai_response?: string | null
-          chat_type?: string | null
           created_at?: string | null
+          file_type?: string
+          file_url?: string
           id?: string
-          image_url?: string | null
-          text?: string
-          timestamp?: number
-          tool_type?: string | null
-          user_id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          avatar_url: string | null
-          created_at: string | null
+          created_at: string
           id: string
-          updated_at: string | null
-          username: string | null
+          updated_at: string
+          username: string
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           id: string
-          updated_at?: string | null
-          username?: string | null
+          updated_at?: string
+          username: string
         }
         Update: {
-          avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
-          updated_at?: string | null
-          username?: string | null
+          updated_at?: string
+          username?: string
         }
         Relationships: []
+      }
+      questions: {
+        Row: {
+          bloom_level: string
+          created_at: string | null
+          document_id: string | null
+          id: string
+          image_url: string | null
+          keywords: string[] | null
+          marks: number | null
+          text: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bloom_level: string
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          image_url?: string | null
+          keywords?: string[] | null
+          marks?: number | null
+          text: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bloom_level?: string
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          image_url?: string | null
+          keywords?: string[] | null
+          marks?: number | null
+          text?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
