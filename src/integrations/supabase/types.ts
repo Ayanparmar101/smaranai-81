@@ -39,6 +39,45 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          additional_data: Json | null
+          ai_response: string | null
+          chat_type: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          text: string
+          timestamp: number
+          tool_type: string | null
+          user_id: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          ai_response?: string | null
+          chat_type?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          text: string
+          timestamp: number
+          tool_type?: string | null
+          user_id: string
+        }
+        Update: {
+          additional_data?: Json | null
+          ai_response?: string | null
+          chat_type?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          text?: string
+          timestamp?: number
+          tool_type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
