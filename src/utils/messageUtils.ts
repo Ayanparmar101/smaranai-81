@@ -6,10 +6,10 @@ export interface SaveMessageParams {
   text: string;
   userId: string;
   aiResponse?: string;
-  chatType: 'story-images' | 'spoken-english' | 'voice-bot' | 'socratic-tutor' | 'teacher';
+  chatType: 'story-images' | 'spoken-english' | 'voice-bot' | 'socratic-tutor' | 'teacher' | 'gujarati-chatbot';
   imageUrl?: string;
   toolType?: string;
-  additionalData?: Record<string, any>; // Add this line to support additional data
+  additionalData?: Record<string, any>;
 }
 
 export const saveMessage = async ({
@@ -31,7 +31,7 @@ export const saveMessage = async ({
         chat_type: chatType,
         image_url: imageUrl,
         tool_type: toolType,
-        additional_data: additionalData, // Add this to pass additional data to Supabase
+        additional_data: additionalData,
         timestamp: Math.floor(Date.now() / 1000)
       });
 
