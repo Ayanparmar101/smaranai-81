@@ -33,7 +33,7 @@ import { Toaster } from "./components/ui/sonner";
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
