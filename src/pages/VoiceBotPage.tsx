@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Mic, Send, StopCircle } from 'lucide-react';
+import { Mic, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,9 @@ import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveMessage } from '@/utils/messageUtils';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useOpenAI } from '@/hooks/useOpenAI';
+import { openaiService } from '@/services/openaiService';
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -23,13 +26,13 @@ const formSchema = z.object({
 
 const VoiceBotPage = () => {
   const { user } = useAuth();
-  const [apiKey, setApiKey] = useState<string | null>(null);
+  const { openaiService: openaiHook } = useOpenAI();
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string; }[]>([]);
-  const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [loading, setLoading] = useState(false);
+  const [streamingResponse, setStreamingResponse] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,9 +41,42 @@ const VoiceBotPage = () => {
     },
   });
 
+  const { isListening, toggleListening } = useSpeechRecognition({
+    onTranscriptChange: (newTranscript) => {
+      setTranscript(newTranscript);
+    }
+  });
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Check if transcript has been idle for 2 seconds (assuming the user has stopped speaking)
+    let typingTimer: NodeJS.Timeout;
+    
+    if (transcript && isListening) {
+      typingTimer = setTimeout(() => {
+        if (transcript.trim()) {
+          toggleListening(); // Stop listening
+          handleSubmitVoice(transcript); // Submit what was transcribed
+        }
+      }, 2000);
+    }
+    
+    return () => {
+      clearTimeout(typingTimer);
+    };
+  }, [transcript, isListening]);
+
+  useEffect(() => {
+    // Stop any ongoing speech when component unmounts
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,68 +86,13 @@ const VoiceBotPage = () => {
     setMessages((prevMessages) => [...prevMessages, { role, text }]);
   };
 
-  const handleApiKeySubmit = (key: string) => {
-    setApiKey(key);
-  };
-
-  const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast.error("Speech recognition is not supported in your browser");
-      return;
-    }
-
-    recognitionRef.current = new SpeechRecognition();
-    
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.interimResults = true;
-    
-    recognitionRef.current.onstart = () => {
-      setIsListening(true);
-      setTranscript('');
-    };
-    
-    recognitionRef.current.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
-      
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
-        }
-      }
-      
-      setTranscript(finalTranscript || interimTranscript);
-    };
-    
-    recognitionRef.current.onerror = (event) => {
-      console.error('Speech recognition error', event.error);
-      setIsListening(false);
-    };
-    
-    recognitionRef.current.onend = () => {
-      setIsListening(false);
-    };
-    
-    recognitionRef.current.start();
-  };
-
-  const stopListening = async () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-      
-      if (transcript.trim()) {
-        await handleSubmitVoice(transcript);
-      }
-    }
-  };
-
   const handleSubmitVoice = async (text: string) => {
     if (!text.trim()) return;
+    
+    // Cancel any ongoing text-to-speech
+    if (window.speechSynthesis && speechSynthesisRef.current) {
+      window.speechSynthesis.cancel();
+    }
     
     addMessage(text, 'user');
     setTranscript('');
@@ -122,73 +103,88 @@ const VoiceBotPage = () => {
     const message = values.message.trim();
     if (!message) return;
     
+    // Cancel any ongoing text-to-speech
+    if (window.speechSynthesis && speechSynthesisRef.current) {
+      window.speechSynthesis.cancel();
+    }
+    
     addMessage(message, 'user');
     form.reset();
     await fetchBotResponse(message);
   };
 
   const fetchBotResponse = async (message: string) => {
-    if (!apiKey) {
+    if (!openaiService.getApiKey()) {
       toast.error('Please add your OpenAI API key first.');
       return;
     }
     
     setLoading(true);
+    setStreamingResponse('');
     
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a friendly voice assistant for children learning English. Keep your responses simple, encouraging, and suitable for children. Limit your responses to 2-3 sentences.'
-            },
-            {
-              role: 'user',
-              content: message
-            }
-          ],
-          max_tokens: 150
-        })
-      });
+      // Add an empty bot message that will be updated as tokens arrive
+      setMessages(prev => [...prev, { role: 'bot', text: '' }]);
       
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to get response');
-      }
+      // System prompt for the voice assistant
+      const systemPrompt = 'You are a friendly voice assistant for children learning English. Keep your responses simple, encouraging, and suitable for children. Limit your responses to 2-3 sentences.';
       
-      const data = await response.json();
-      const botMessage = data.choices[0].message.content;
-      addMessage(botMessage, 'bot');
+      // Use the streaming option with onChunk callback
+      const fullResponse = await openaiService.createCompletion(
+        systemPrompt,
+        message,
+        {
+          temperature: 0.7,
+          max_tokens: 150,
+          stream: true,
+          onChunk: (chunk) => {
+            setStreamingResponse(prev => {
+              const newResponse = prev + chunk;
+              
+              // Update the last bot message in real-time
+              setMessages(messages => {
+                const updatedMessages = [...messages];
+                if (updatedMessages.length > 0) {
+                  updatedMessages[updatedMessages.length - 1] = {
+                    ...updatedMessages[updatedMessages.length - 1],
+                    text: newResponse
+                  };
+                }
+                return updatedMessages;
+              });
+              
+              return newResponse;
+            });
+          }
+        }
+      );
       
       // Save to message history if user is logged in
-      if (user) {
+      if (user && fullResponse) {
         await saveMessage({
           text: message,
           userId: user.id,
-          aiResponse: botMessage,
+          aiResponse: fullResponse,
           chatType: 'voice-bot'
         });
       }
       
       // Text-to-speech for bot response
-      if ('speechSynthesis' in window) {
-        const speech = new SpeechSynthesisUtterance(botMessage);
-        speech.rate = 0.9; // Slightly slower for children
-        speech.pitch = 1.1; // Slightly higher pitch
-        window.speechSynthesis.speak(speech);
+      if ('speechSynthesis' in window && fullResponse) {
+        speechSynthesisRef.current = new SpeechSynthesisUtterance(fullResponse);
+        speechSynthesisRef.current.rate = 0.9; // Slightly slower for children
+        speechSynthesisRef.current.pitch = 1.1; // Slightly higher pitch
+        window.speechSynthesis.speak(speechSynthesisRef.current);
       }
     } catch (error: any) {
       toast.error(error.message || 'Something went wrong');
       console.error('Error:', error);
+      
+      // Remove the last empty bot message if there was an error
+      setMessages(prev => prev.slice(0, -1));
     } finally {
       setLoading(false);
+      setStreamingResponse('');
     }
   };
 
@@ -199,7 +195,7 @@ const VoiceBotPage = () => {
       <main className="flex-1 container mx-auto max-w-4xl p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-kid-purple">Voice Bot</h1>
-          <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
+          <ApiKeyInput onApiKeySubmit={(key) => openaiService.setApiKey(key)} />
         </div>
         
         <div className="bg-card rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto text-card-foreground">
@@ -246,21 +242,12 @@ const VoiceBotPage = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <DoodleButton 
-            onClick={startListening}
-            disabled={isListening || loading}
-            color="purple"
+            onClick={toggleListening}
+            disabled={loading}
+            color={isListening ? "red" : "purple"}
             className="w-full"
           >
-            Start Recording
-          </DoodleButton>
-          
-          <DoodleButton 
-            onClick={stopListening}
-            disabled={!isListening || loading}
-            color="red"
-            className="w-full"
-          >
-            Stop Recording
+            {isListening ? "Stop Recording" : "Start Recording"}
           </DoodleButton>
         </div>
         
