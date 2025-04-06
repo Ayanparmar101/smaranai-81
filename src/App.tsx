@@ -1,6 +1,6 @@
 
 import { Route, Routes } from "react-router-dom";
-import Layout from "./components/Layout";
+import { Layout } from "./components/Layout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import GujaratiPage from "./pages/GujaratiPage";
@@ -33,7 +33,7 @@ import { Toaster } from "./components/ui/sonner";
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <ThemeProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />

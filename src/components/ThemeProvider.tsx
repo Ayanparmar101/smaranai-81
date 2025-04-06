@@ -1,10 +1,12 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark' | 'system';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
 };
 
 type ThemeContextType = {
@@ -14,28 +16,41 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('light');
-  
-  useEffect(() => {
-    // Check for saved preference or system preference
-    const savedTheme = localStorage.getItem('theme') as Theme;
+export function ThemeProvider({
+  children,
+  defaultTheme = 'system',
+  storageKey = 'vite-ui-theme',
+}: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Check for saved preference or use default theme
+    const savedTheme = localStorage.getItem(storageKey) as Theme;
     if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(isDark ? 'dark' : 'light');
+      return savedTheme;
     }
-  }, []);
+    
+    // If user prefers dark mode and theme is system, return dark
+    if (defaultTheme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    return defaultTheme;
+  });
 
   useEffect(() => {
     // Update localStorage and DOM when theme changes
     const root = window.document.documentElement;
     
     root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.classList.add(systemTheme);
+    } else {
+      root.classList.add(theme);
+    }
+    
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
