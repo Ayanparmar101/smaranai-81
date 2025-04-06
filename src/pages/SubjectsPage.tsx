@@ -1,83 +1,123 @@
 
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, BookText, Atom, GraduationCap, Globe, Flag } from 'lucide-react';
+import DoodleCard from '@/components/DoodleCard';
+import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
-const SubjectsPage: React.FC = () => {
+const SubjectsPage = () => {
+  const navigate = useNavigate();
+  
+  const handleSubjectClick = (subject: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (subject === 'English') {
+      navigate('/'); // Redirect to index page instead of external URL
+    } else if (subject === 'Mathematics') {
+      navigate('/mathematics'); // Redirect to mathematics page
+    } else if (subject === 'Gujarati') {
+      navigate('/gujarati'); // Redirect to gujarati page
+    } else {
+      console.log(`Clicked on ${subject}`);
+      // Future implementation for other subjects
+    }
+  };
+
   const subjects = [
-    {
-      title: "Gujarati Language",
-      description: "Learn Gujarati through interactive lessons, poems, and a dedicated chatbot.",
-      icon: "🇮🇳",
-      route: "/gujarati",
-      color: "bg-orange-100 dark:bg-orange-950",
+    { 
+      name: 'Mathematics', 
+      icon: <GraduationCap className="w-10 h-10" />, 
+      color: 'blue',
+      description: 'Explore numbers, shapes, and patterns with interactive math lessons'
     },
-    {
-      title: "Mathematics",
-      description: "Master math concepts with guided problem-solving and step-by-step explanations.",
-      icon: "🧮",
-      route: "/mathematics",
-      color: "bg-blue-100 dark:bg-blue-950",
+    { 
+      name: 'English', 
+      icon: <BookText className="w-10 h-10" />, 
+      color: 'green',
+      description: 'Master language skills with grammar, vocabulary, and writing exercises'
     },
-    {
-      title: "Grammar",
-      description: "Improve your grammar with personalized lessons and practical exercises.",
-      icon: "📝",
-      route: "/grammar",
-      color: "bg-green-100 dark:bg-green-950",
+    { 
+      name: 'Science', 
+      icon: <Atom className="w-10 h-10" />, 
+      color: 'purple',
+      description: 'Discover the natural world through biology, chemistry, and physics'
     },
-    {
-      title: "Study Tools",
-      description: "Access helpful study tools like planners, timers, and AI assistance.",
-      icon: "📚",
-      route: "/study-planner",
-      color: "bg-purple-100 dark:bg-purple-950",
+    { 
+      name: 'Social Science', 
+      icon: <Globe className="w-10 h-10" />, 
+      color: 'yellow',
+      description: 'Learn about history, geography, civics, and economics'
     },
-    {
-      title: "Creative Learning",
-      description: "Explore creative learning methods with story illustrations and voice interactions.",
-      icon: "🎨",
-      route: "/story-images",
-      color: "bg-pink-100 dark:bg-pink-950",
+    { 
+      name: 'Hindi', 
+      icon: <Flag className="w-10 h-10" />, 
+      color: 'orange',
+      description: 'Develop Hindi language skills with comprehensive lessons'
     },
-    {
-      title: "AI Assistance",
-      description: "Get personalized help from our AI teacher and Socratic tutor.",
-      icon: "🤖",
-      route: "/teacher",
-      color: "bg-yellow-100 dark:bg-yellow-950",
-    },
+    { 
+      name: 'Gujarati', 
+      icon: <BookOpen className="w-10 h-10" />, 
+      color: 'red',
+      description: 'Learn Gujarati with interactive poems, lessons, and a chatbot'
+    }
   ];
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Explore Subjects</h1>
-        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Discover our wide range of subjects and learning tools designed to help you master new skills and knowledge.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {subjects.map((subject, index) => (
-          <Link to={subject.route} key={index}>
-            <Card className={`h-full transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${subject.color}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <span className="text-3xl mr-2">{subject.icon}</span>
-                  {subject.title}
-                </CardTitle>
-                <CardDescription>{subject.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm text-right">
-                  <span className="underline">Explore →</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <NavBar />
+      
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative py-12 md:py-20 overflow-hidden">
+          <div className="container mx-auto px-4 relative z-10">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center">
+              <span className="bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
+                Choose Your Subject
+              </span>
+            </h1>
+            <p className="text-xl mb-12 text-gray-700 text-center max-w-3xl mx-auto">
+              Select a subject to start learning with interactive lessons, exercises, and AI-powered tutoring
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+              {subjects.map((subject, index) => (
+                <DoodleCard 
+                  key={index}
+                  title={subject.name} 
+                  description={subject.description} 
+                  icon={subject.icon} 
+                  color={subject.color as 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink'} 
+                  onClick={handleSubjectClick(subject.name)}
+                  className="hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <button 
+                      onClick={handleSubjectClick(subject.name)} 
+                      className="text-kid-blue font-medium hover:underline"
+                    >
+                      Start Learning &rarr;
+                    </button>
+                  </div>
+                </DoodleCard>
+              ))}
+            </div>
+          </div>
+          
+          {/* Background decorations */}
+          <div className="absolute top-20 left-10 opacity-20">
+            <div className="text-kid-blue">
+              <GraduationCap size={64} />
+            </div>
+          </div>
+          <div className="absolute bottom-20 right-10 opacity-20">
+            <div className="text-kid-green">
+              <BookText size={64} />
+            </div>
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
     </div>
   );
 };

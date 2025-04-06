@@ -1,177 +1,180 @@
 
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
-import ThemeToggle from "./ThemeToggle";
-import AuthButton from "./AuthButton";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import useMobile from "../hooks/use-mobile";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthButton from './AuthButton';
+import { ThemeToggle } from './ThemeToggle';
+import { 
+  Menu, 
+  Home, 
+  BookText, 
+  Image, 
+  Mic, 
+  Bot, 
+  GraduationCap, 
+  CalendarDays, 
+  Timer, 
+  BookOpen, 
+  UserRound, 
+  History 
+} from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const NavBar: React.FC = () => {
-  const isMobile = useMobile();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+const NavBar = () => {
+  const {
+    user
+  } = useAuth();
+  const navigate = useNavigate();
+  const handleNavigation = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(path);
   };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "Subjects", path: "/subjects" },
-    { name: "Gujarati", path: "/gujarati" },
-    { name: "Mathematics", path: "/mathematics" },
-    { name: "Grammar", path: "/grammar" },
-    { name: "Study Planner", path: "/study-planner" },
-    { name: "Pomodoro", path: "/pomodoro" },
-    { name: "Story Images", path: "/story-images" },
-    { name: "Teacher", path: "/teacher" },
-    { name: "Voice Bot", path: "/voice-bot" },
-    { name: "Socratic Tutor", path: "/socratic-tutor" },
-    { name: "History", path: "/history" },
-  ];
-
-  // Mobile navigation
-  if (isMobile) {
-    return (
-      <div className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="font-bold text-xl flex items-center" onClick={closeMenu}>
-            Smaran.ai
-          </Link>
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <AuthButton />
-            <Button variant="ghost" size="icon" onClick={toggleMenu} className="md:hidden">
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
-        </div>
-
-        {isMenuOpen && (
-          <div className="container pb-4 md:hidden">
-            <nav className="flex flex-col space-y-3">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `px-2 py-1 rounded-md ${
-                      isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                    }`
+  
+  return <header className="w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40">
+      <div className="container mx-auto flex justify-between items-center">
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className="text-white hover:text-[#5B86E5] transition-colors focus:outline-none focus:ring-2 focus:ring-[#5B86E5] rounded-md" aria-label="Open menu">
+              <Menu size={24} />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[300px] bg-[#121212] text-white p-0">
+            <nav className="flex flex-col h-full">
+              <div className="p-4 border-b border-border/40">
+                <Link to="/" className="text-2xl font-bold flex items-center gap-1">
+                  <span className="text-[#5B86E5]">Smaran</span>
+                  <span className="text-[#ff6b8b]">.ai</span>
+                </Link>
+              </div>
+              
+              <div className="flex-1 overflow-auto py-6 px-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    onClick={handleNavigation("/")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-[#4E9BF5] hover:bg-[#3d8be5] transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-[#5b86e5]/50 h-24"
+                  >
+                    <Home size={24} />
+                    <span className="text-sm font-medium text-center">Home</span>
+                  </button>
+                  
+                  {user && 
+                    <button 
+                      onClick={handleNavigation("/subjects")} 
+                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                    >
+                      <GraduationCap size={24} className="text-kid-purple" />
+                      <span className="text-sm font-medium text-center">Subjects</span>
+                    </button>
                   }
-                  onClick={closeMenu}
-                >
-                  {item.name}
-                </NavLink>
-              ))}
+                  
+                  <button 
+                    onClick={handleNavigation("/grammar")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-green transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
+                  >
+                    <BookText size={24} className="text-kid-green" />
+                    <span className="text-sm font-medium text-center">Grammar</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/story-images")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-yellow transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-yellow/50 h-24"
+                  >
+                    <Image size={24} className="text-kid-yellow" />
+                    <span className="text-sm font-medium text-center">Story Images</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/spoken-english")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-red transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-red/50 h-24"
+                  >
+                    <Mic size={24} className="text-kid-red" />
+                    <span className="text-sm font-medium text-center">Spoken English</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/voice-bot")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                  >
+                    <Bot size={24} className="text-kid-purple" />
+                    <span className="text-sm font-medium text-center">Voice Bot</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/gujarati")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-orange transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
+                  >
+                    <BookOpen size={24} className="text-kid-orange" />
+                    <span className="text-sm font-medium text-center">Gujarati</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/socratic-tutor")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-blue transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
+                  >
+                    <GraduationCap size={24} className="text-kid-blue" />
+                    <span className="text-sm font-medium text-center">Socratic Tutor</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/study-planner")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-pink transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-pink/50 h-24"
+                  >
+                    <CalendarDays size={24} className="text-kid-pink" />
+                    <span className="text-sm font-medium text-center">Study Planner</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/pomodoro")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-orange transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-orange/50 h-24"
+                  >
+                    <Timer size={24} className="text-kid-orange" />
+                    <span className="text-sm font-medium text-center">Pomodoro Timer</span>
+                  </button>
+                  
+                  {user && 
+                    <button 
+                      onClick={handleNavigation("/teacher")} 
+                      className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-green transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-green/50 h-24"
+                    >
+                      <BookOpen size={24} className="text-kid-green" />
+                      <span className="text-sm font-medium text-center">Teacher Tools</span>
+                    </button>
+                  }
+                  
+                  <button 
+                    onClick={handleNavigation("/profile")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-blue transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-blue/50 h-24"
+                  >
+                    <UserRound size={24} className="text-kid-blue" />
+                    <span className="text-sm font-medium text-center">Profile</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleNavigation("/history")} 
+                    className="card-doodle flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-transparent hover:bg-kid-purple transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-dashed border-kid-purple/50 h-24"
+                  >
+                    <History size={24} className="text-kid-purple" />
+                    <span className="text-sm font-medium text-center">History</span>
+                  </button>
+                </div>
+              </div>
             </nav>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Desktop navigation
-  return (
-    <div className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <div className="container flex h-14 items-center">
-        <Link to="/" className="font-bold text-xl mr-8">
-          Smaran.ai
-        </Link>
-
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <nav className="flex items-center space-x-2">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `px-3 py-1 rounded-md ${
-                  isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                }`
-              }
-            >
-              Home
-            </NavLink>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost">Subjects</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem asChild>
-                  <Link to="/subjects">All Subjects</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/gujarati">Gujarati</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/mathematics">Mathematics</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/grammar">Grammar</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost">Tools</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem asChild>
-                  <Link to="/study-planner">Study Planner</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/pomodoro">Pomodoro Timer</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/story-images">Story Images</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost">AI Tutors</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem asChild>
-                  <Link to="/teacher">Teacher</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/voice-bot">Voice Bot</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/socratic-tutor">Socratic Tutor</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <NavLink
-              to="/history"
-              className={({ isActive }) =>
-                `px-3 py-1 rounded-md ${
-                  isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                }`
-              }
-            >
-              History
-            </NavLink>
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <AuthButton />
-          </div>
+          </SheetContent>
+        </Sheet>
+        
+        <div className="flex-1 flex justify-center md:justify-start">
+          <Link to="/" className="text-2xl font-bold flex items-center gap-1 px-[19px]">
+            <span className="text-[#5B86E5]">Smaran</span>
+            <span className="text-[#ff6b8b]">.ai</span>
+          </Link>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <AuthButton />
         </div>
       </div>
-    </div>
-  );
+    </header>;
 };
 
 export default NavBar;
