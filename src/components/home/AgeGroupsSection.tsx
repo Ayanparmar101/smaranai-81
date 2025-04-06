@@ -1,19 +1,8 @@
 
 import React from 'react';
 
-interface AgeGroup {
-  age: string;
-  title: string;
-  description: string;
-  benefits: string[];
-}
-
-interface AgeGroupsSectionProps {
-  ageGroups?: AgeGroup[];
-}
-
-const AgeGroupsSection: React.FC<AgeGroupsSectionProps> = ({ ageGroups }) => {
-  const defaultAgeGroups = [
+const AgeGroupsSection = () => {
+  const ageGroups = [
     {
       grade: '1-2',
       title: 'Early Learners',
@@ -41,13 +30,13 @@ const AgeGroupsSection: React.FC<AgeGroupsSectionProps> = ({ ageGroups }) => {
       <div className="container mx-auto px-4">
         <h2 className="section-title">For All Age Groups</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
-          {defaultAgeGroups.map((group, index) => (
+          {ageGroups.map((group, index) => (
             <div key={index} className="card-doodle transition-all duration-300 hover:scale-105">
               <div className={`${group.color} text-white text-sm font-medium px-3 py-1 rounded-full w-fit mb-4`}>
                 Grades {group.grade}
               </div>
               <h3 className="text-xl font-bold mb-3">{group.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-600">
                 Lessons and activities specifically designed for this age group's learning needs.
               </p>
             </div>

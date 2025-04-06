@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -76,62 +78,64 @@ const GujaratiLessonsPage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">ગુજરાતી પાઠો</h1>
-        <p className="text-xl">Gujarati Lessons</p>
-      </div>
+    <Layout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">ગુજરાતી પાઠો</h1>
+          <p className="text-xl">Gujarati Lessons</p>
+        </div>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>ગુજરાતી ભાષા શીખવાના પાઠો</CardTitle>
-          <CardDescription>
-            Structured lessons to help you learn the Gujarati language systematically
-          </CardDescription>
-        </CardHeader>
-      </Card>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>ગુજરાતી ભાષા શીખવાના પાઠો</CardTitle>
+            <CardDescription>
+              Structured lessons to help you learn the Gujarati language systematically
+            </CardDescription>
+          </CardHeader>
+        </Card>
 
-      <Tabs defaultValue="chapter1" value={activeChapter} onValueChange={setActiveChapter} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="chapter1" value={activeChapter} onValueChange={setActiveChapter} className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            {lessons.map(lesson => (
+              <TabsTrigger key={lesson.id} value={lesson.id}>
+                {lesson.englishTitle}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
           {lessons.map(lesson => (
-            <TabsTrigger key={lesson.id} value={lesson.id}>
-              {lesson.englishTitle}
-            </TabsTrigger>
+            <TabsContent key={lesson.id} value={lesson.id}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl">{lesson.title}</CardTitle>
+                  <CardDescription>{lesson.englishTitle}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    {lesson.sections.map((section, index) => (
+                      <AccordionItem key={index} value={`section-${index}`}>
+                        <AccordionTrigger>{section.title}</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-muted p-4 rounded-md whitespace-pre-line">
+                              {section.content}
+                            </div>
+                            <div className="p-4">
+                              <h4 className="text-sm text-gray-500 dark:text-gray-400 mb-2">Explanation:</h4>
+                              <p>{section.english}</p>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            </TabsContent>
           ))}
-        </TabsList>
-        
-        {lessons.map(lesson => (
-          <TabsContent key={lesson.id} value={lesson.id}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">{lesson.title}</CardTitle>
-                <CardDescription>{lesson.englishTitle}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  {lesson.sections.map((section, index) => (
-                    <AccordionItem key={index} value={`section-${index}`}>
-                      <AccordionTrigger>{section.title}</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="bg-muted p-4 rounded-md whitespace-pre-line">
-                            {section.content}
-                          </div>
-                          <div className="p-4">
-                            <h4 className="text-sm text-gray-500 dark:text-gray-400 mb-2">Explanation:</h4>
-                            <p>{section.english}</p>
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
+        </Tabs>
+      </div>
+    </Layout>
   );
 };
 

@@ -1,12 +1,13 @@
 
 import React from 'react';
+import { Layout } from '@/components/Layout';
 import StudyPlannerContainer from './study-planner/StudyPlannerContainer';
 
 const StudyPlannerPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <Layout>
       <StudyPlannerContainer />
-    </div>
+    </Layout>
   );
 };
 

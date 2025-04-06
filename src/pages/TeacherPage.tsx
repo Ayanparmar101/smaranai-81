@@ -1,12 +1,13 @@
 
 import React from 'react';
+import { Layout } from '@/components/Layout';
 import TeacherPageContainer from './teacher/TeacherPageContainer';
 
 const TeacherPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <Layout>
       <TeacherPageContainer />
-    </div>
+    </Layout>
   );
 };
 

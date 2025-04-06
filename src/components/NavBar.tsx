@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
+import ThemeToggle from "./ThemeToggle";
 import AuthButton from "./AuthButton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { useIsMobile } from "../hooks/use-mobile";
+import useMobile from "../hooks/use-mobile";
 
 const NavBar: React.FC = () => {
-  const isMobile = useIsMobile();
+  const isMobile = useMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
