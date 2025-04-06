@@ -18,3 +18,6 @@ export function ThemeToggle() {
     </Toggle>
   );
 }
+
+// Add default export to fix the import issue in NavBar.tsx
+export default ThemeToggle;
