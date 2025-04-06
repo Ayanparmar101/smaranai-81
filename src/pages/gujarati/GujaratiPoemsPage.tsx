@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -46,67 +44,65 @@ const GujaratiPoemsPage = () => {
   ];
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">ગુજરાતી કવિતાઓ</h1>
-          <p className="text-xl">Gujarati Poems</p>
-        </div>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>પ્રાચીન અને આધુનિક ગુજરાતી કવિતાઓનો ખજાનો</CardTitle>
-            <CardDescription>
-              Explore the treasure of traditional and modern Gujarati poems with translations and explanations
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Tabs defaultValue="poem1" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            {poems.map(poem => (
-              <TabsTrigger key={poem.id} value={poem.id}>
-                {poem.englishTitle}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          
-          {poems.map(poem => (
-            <TabsContent key={poem.id} value={poem.id}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl">{poem.title}</CardTitle>
-                  <CardDescription>{poem.englishTitle}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-2">કવિતા (Poem)</h3>
-                      <div className="bg-muted p-4 rounded-md whitespace-pre-line text-lg">
-                        {poem.content}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium mb-2">અનુવાદ (Translation)</h3>
-                      <div className="bg-muted p-4 rounded-md whitespace-pre-line">
-                        {poem.translation}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6">
-                    <h3 className="text-lg font-medium mb-2">સમજૂતી (Explanation)</h3>
-                    <p className="text-gray-700 dark:text-gray-300">
-                      {poem.explanation}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2">ગુજરાતી કવિતાઓ</h1>
+        <p className="text-xl">Gujarati Poems</p>
       </div>
-    </Layout>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>પ્રાચીન અને આધુનિક ગુજરાતી કવિતાઓનો ખજાનો</CardTitle>
+          <CardDescription>
+            Explore the treasure of traditional and modern Gujarati poems with translations and explanations
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      <Tabs defaultValue="poem1" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          {poems.map(poem => (
+            <TabsTrigger key={poem.id} value={poem.id}>
+              {poem.englishTitle}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        
+        {poems.map(poem => (
+          <TabsContent key={poem.id} value={poem.id}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">{poem.title}</CardTitle>
+                <CardDescription>{poem.englishTitle}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">કવિતા (Poem)</h3>
+                    <div className="bg-muted p-4 rounded-md whitespace-pre-line text-lg">
+                      {poem.content}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">અનુવાદ (Translation)</h3>
+                    <div className="bg-muted p-4 rounded-md whitespace-pre-line">
+                      {poem.translation}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium mb-2">સમજૂતી (Explanation)</h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {poem.explanation}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
   );
 };
 

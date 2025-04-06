@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -84,35 +83,33 @@ const ProfilePage = () => {
   };
 
   return (
-    <Layout>
-      <ProtectedRoute>
-        <div className="container mx-auto py-8">
-          <div className="max-w-md mx-auto bg-card rounded-lg shadow-md p-6">
-            <h1 className="text-2xl font-bold mb-6">Profile Settings</h1>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium mb-2">
-                  Display Name
-                </label>
-                <Input
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your display name"
-                />
-              </div>
-              <Button
-                onClick={updateProfile}
-                disabled={loading}
-                className="w-full"
-              >
-                {loading ? 'Updating...' : 'Update Profile'}
-              </Button>
+    <ProtectedRoute>
+      <div className="container mx-auto py-8">
+        <div className="max-w-md mx-auto bg-card rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold mb-6">Profile Settings</h1>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium mb-2">
+                Display Name
+              </label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your display name"
+              />
             </div>
+            <Button
+              onClick={updateProfile}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'Updating...' : 'Update Profile'}
+            </Button>
           </div>
         </div>
-      </ProtectedRoute>
-    </Layout>
+      </div>
+    </ProtectedRoute>
   );
 };
 

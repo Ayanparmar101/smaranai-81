@@ -1,6 +1,4 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
-import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -199,7 +197,6 @@ const HistoryPage = () => {
   };
 
   const MessageContent = ({ message }: { message: ChatMessage; }) => {
-    // Check if we have multiple images
     const hasMultipleImages = message.tool_type === 'story-series-generator' && message.additional_data && 
       message.additional_data.image_urls && Array.isArray(message.additional_data.image_urls);
 
@@ -269,63 +266,61 @@ const HistoryPage = () => {
   };
 
   return (
-    <Layout>
-      <ProtectedRoute>
-        <div className="container mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-6">Chat History</h1>
+    <ProtectedRoute>
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-6">Chat History</h1>
+        
+        {subscriptionError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Connectivity Issue</AlertTitle>
+            <AlertDescription className="flex items-center justify-between">
+              <span>Unable to receive real-time updates. Messages may not appear immediately.</span>
+              <button 
+                onClick={handleManualRefresh} 
+                className="flex items-center text-sm bg-destructive/20 hover:bg-destructive/30 text-destructive-foreground px-2 py-1 rounded-md"
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                Refresh
+              </button>
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        <Tabs defaultValue="all" className="mb-6" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="story-images">Story Images</TabsTrigger>
+            <TabsTrigger value="spoken-english">Spoken English</TabsTrigger>
+            <TabsTrigger value="voice-bot">Voice Bot</TabsTrigger>
+            <TabsTrigger value="socratic-tutor">Socratic Tutor</TabsTrigger>
+            <TabsTrigger value="teacher">Teacher</TabsTrigger>
+          </TabsList>
           
-          {subscriptionError && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Connectivity Issue</AlertTitle>
-              <AlertDescription className="flex items-center justify-between">
-                <span>Unable to receive real-time updates. Messages may not appear immediately.</span>
-                <button 
-                  onClick={handleManualRefresh} 
-                  className="flex items-center text-sm bg-destructive/20 hover:bg-destructive/30 text-destructive-foreground px-2 py-1 rounded-md"
-                >
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  Refresh
-                </button>
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          <Tabs defaultValue="all" className="mb-6" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="story-images">Story Images</TabsTrigger>
-              <TabsTrigger value="spoken-english">Spoken English</TabsTrigger>
-              <TabsTrigger value="voice-bot">Voice Bot</TabsTrigger>
-              <TabsTrigger value="socratic-tutor">Socratic Tutor</TabsTrigger>
-              <TabsTrigger value="teacher">Teacher</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value={activeTab} className="mt-0">
-              <div className="bg-card rounded-lg shadow-md p-6">
-                {error ? <div className="text-center py-4 text-red-500">{error}</div> : loading ? <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => <div key={i} className="flex items-center space-x-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[250px]" />
-                          <Skeleton className="h-4 w-[200px]" />
-                        </div>
+          <TabsContent value={activeTab} className="mt-0">
+            <div className="bg-card rounded-lg shadow-md p-6">
+              {error ? <div className="text-center py-4 text-red-500">{error}</div> : loading ? <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => <div key={i} className="flex items-center space-x-4">
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
+                      </div>
+                    </div>)}
+                </div> : getFilteredMessages().length === 0 ? <div className="text-center py-4 text-muted-foreground">
+                  No messages found for this category
+                </div> : <ScrollArea className="h-[600px] pr-4">
+                  <div className="space-y-6">
+                    {getFilteredMessages().map(message => <div key={message.id} className="p-4 rounded-lg bg-card border">
+                        <MessageContent message={message} />
                       </div>)}
-                  </div> : getFilteredMessages().length === 0 ? <div className="text-center py-4 text-muted-foreground">
-                    No messages found for this category
-                  </div> : <ScrollArea className="h-[600px] pr-4">
-                    <div className="space-y-6">
-                      {getFilteredMessages().map(message => <div key={message.id} className="p-4 rounded-lg bg-card border">
-                          <MessageContent message={message} />
-                        </div>)}
-                    </div>
-                  </ScrollArea>}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </ProtectedRoute>
-    </Layout>
+                  </div>
+                </ScrollArea>}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </ProtectedRoute>
   );
 };
 
