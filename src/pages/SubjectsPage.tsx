@@ -15,8 +15,6 @@ const SubjectsPage = () => {
       navigate('/'); // Redirect to index page instead of external URL
     } else if (subject === 'Mathematics') {
       navigate('/mathematics'); // Redirect to mathematics page
-    } else if (subject === 'Gujarati') {
-      navigate('/gujarati'); // Redirect to gujarati page
     } else {
       console.log(`Clicked on ${subject}`);
       // Future implementation for other subjects
@@ -58,7 +56,7 @@ const SubjectsPage = () => {
       name: 'Gujarati', 
       icon: <BookOpen className="w-10 h-10" />, 
       color: 'red',
-      description: 'Learn Gujarati with interactive poems, lessons, and a chatbot'
+      description: 'Learn Gujarati with interactive lessons and cultural insights'
     }
   ];
 
