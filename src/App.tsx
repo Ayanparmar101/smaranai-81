@@ -21,6 +21,7 @@ import TeacherPage from './pages/TeacherPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Toaster } from "sonner";
+import { ScrollToTop } from './components/ScrollToTop';
 
 // Math subject pages
 import ArithmeticPage from './pages/math/ArithmeticPage';
@@ -34,6 +35,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
