@@ -15,6 +15,7 @@ import AuthCallbackPage from './pages/AuthCallbackPage';
 import HistoryPage from './pages/HistoryPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import VoiceBotPage from './pages/VoiceBotPage';
+import VoiceAssistantPage from './pages/VoiceAssistantPage';
 import SubjectsPage from './pages/SubjectsPage';
 import MathematicsPage from './pages/MathematicsPage';
 import TeacherPage from './pages/TeacherPage';
@@ -57,6 +58,7 @@ function App() {
             <Route path="/study-planner" element={<StudyPlannerPage />} />
             <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
             <Route path="/voice-bot" element={<VoiceBotPage />} />
+            <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
             <Route path="/teacher" element={<TeacherPage />} />
             
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
