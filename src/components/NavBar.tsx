@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -29,7 +30,7 @@ const NavBar = () => {
     navigate(path);
   };
   
-  return <header className="w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40">
+  return <header className="sticky top-0 w-full py-4 px-4 md:px-8 bg-[#121212] border-b border-border/40 z-50 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <Sheet>
           <SheetTrigger asChild>
