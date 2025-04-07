@@ -6,6 +6,8 @@ import MathQuestionForm from '@/components/MathQuestionForm';
 import { SquareDot } from 'lucide-react';
 import { saveMessage } from '@/utils/messageUtils';
 import { useAuth } from '@/contexts/AuthContext';
+import NeoBackButton from '@/components/NeoBackButton';
+import { Layout } from '@/components/Layout';
 
 const AlgebraPage = () => {
   const navigate = useNavigate();
@@ -35,16 +37,13 @@ const AlgebraPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBar />
-      
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <button 
+    <Layout>
+      <div className="container mx-auto px-4 py-8">
+        <NeoBackButton 
+          label="Back to Mathematics" 
+          color="purple" 
           onClick={handleReturn}
-          className="mb-6 text-kid-blue hover:underline flex items-center"
-        >
-          ← Back to Mathematics
-        </button>
+        />
 
         <div className="flex items-center mb-8">
           <div className="bg-kid-purple p-3 rounded-full mr-4">
@@ -77,10 +76,8 @@ const AlgebraPage = () => {
         </div>
 
         <MathQuestionForm topic="Algebra" onResultGenerated={handleResultGenerated} />
-      </main>
-      
-      <Footer />
-    </div>
+      </div>
+    </Layout>
   );
 };
 
