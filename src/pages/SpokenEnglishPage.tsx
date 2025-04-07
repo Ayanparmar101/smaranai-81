@@ -35,9 +35,7 @@ const SpokenEnglishPage = () => {
           </DialogDescription>
         </DialogHeader>
         <ApiKeyInput 
-          apiKey={apiKey} 
-          setApiKey={setApiKey} 
-          placeholder="Enter your OpenAI API key"
+          onApiKeySubmit={setApiKey}
         />
       </DialogContent>
     </Dialog>

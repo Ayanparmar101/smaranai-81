@@ -21,7 +21,7 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
       timestamp: new Date()
     };
     
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessages((prevMessages: Message[]) => [...prevMessages, newMessage]);
     return newMessage;
   }, [setMessages]);
 

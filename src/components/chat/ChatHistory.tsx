@@ -20,7 +20,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   }, [messages]);
   
   return (
-    <ScrollArea className="h-[60vh] pr-4" viewportRef={scrollRef}>
+    <ScrollArea className="h-[60vh] pr-4" ref={scrollRef}>
       <div className="flex flex-col gap-4 py-4">
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground p-4">
