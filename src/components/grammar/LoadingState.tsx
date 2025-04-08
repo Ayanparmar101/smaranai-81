@@ -1,11 +1,27 @@
 
 import React from 'react';
 
-const LoadingState: React.FC = () => {
+interface LoadingStateProps {
+  message?: string;
+  size?: 'sm' | 'md' | 'lg';
+  color?: string;
+}
+
+const LoadingState: React.FC<LoadingStateProps> = ({ 
+  message = "Generating your lesson...", 
+  size = 'md',
+  color = 'border-kid-green'
+}) => {
+  const sizeMap = {
+    sm: 'h-8 w-8',
+    md: 'h-12 w-12',
+    lg: 'h-16 w-16'
+  };
+  
   return (
     <div className="text-center py-12">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-kid-green border-t-transparent"></div>
-      <p className="mt-4 text-lg">Generating your lesson...</p>
+      <div className={`inline-block animate-spin rounded-full ${sizeMap[size]} border-4 ${color} border-t-transparent`}></div>
+      <p className="mt-4 text-lg">{message}</p>
     </div>
   );
 };

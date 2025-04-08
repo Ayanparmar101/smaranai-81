@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card, 
@@ -19,29 +18,12 @@ import {
   BookOpen, 
   Brain, 
   CheckCheck, 
-  GraduationCap, 
   Key, 
   Lightbulb, 
   ListChecks 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface StudyPlanStep {
-  title: string;
-  description: string;
-  timeAllocation: string;
-  completed: boolean;
-}
-
-interface StudyPlan {
-  chapterTitle: string;
-  approach: string;
-  timeEstimate: string;
-  keyTopics: { topic: string; importance: string }[];
-  prerequisites: { topic: string; reason: string }[];
-  steps: StudyPlanStep[];
-  completionPercentage: number;
-}
+import { StudyPlan } from './types';
 
 interface StudyPlanDisplayProps {
   studyPlan: StudyPlan;
