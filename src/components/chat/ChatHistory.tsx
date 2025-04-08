@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Message } from '../../types';
 import ChatMessage from './ChatMessage';
 import { ScrollArea } from '../ui/scroll-area';
@@ -24,7 +24,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
       <div className="flex flex-col gap-4 py-4">
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground p-4">
-            No messages yet. Start a conversation!
+            कोई संदेश नहीं। बातचीत शुरू करें! (No messages yet. Start a conversation!)
           </div>
         ) : (
           messages.map((message) => (

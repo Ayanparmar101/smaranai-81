@@ -43,13 +43,15 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setIsLoading(true);
     
     try {
-      // Get AI response
+      // Get AI response - pass both message and imageUrl to processing function
       const response = await processingFunction(message, imageUrl);
       
       // Add AI response to chat
       addMessage('assistant', response);
     } catch (error) {
       handleApiError(error);
+      // Add error message to chat
+      addMessage('assistant', 'Sorry, I encountered an error processing your request. Please try again.');
     } finally {
       // Clear loading state
       setIsLoading(false);
