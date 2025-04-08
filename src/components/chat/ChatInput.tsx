@@ -46,8 +46,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
   
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="relative">
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="relative w-full">
         {image && (
           <div className="mb-2 p-2 border rounded-md bg-muted flex items-center justify-between">
             <span className="text-sm truncate max-w-[80%]">{image.name}</span>
@@ -67,8 +67,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
-          rows={4}
-          className="resize-none pr-24"
+          rows={6}
+          className="w-full resize-none pr-24"
           disabled={disabled}
         />
         <div className="absolute right-2 bottom-2 flex gap-2">
@@ -100,7 +100,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         </div>
       </div>
       
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-2">
         <Button 
           type="button"
           variant="ghost"

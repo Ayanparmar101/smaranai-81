@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Message } from '../types';
@@ -18,7 +17,7 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
       id: uuidv4(),
       role,
       content,
-      imageUrl,
+      imageUrl, // Include imageUrl when creating a new message
       timestamp: new Date()
     };
     

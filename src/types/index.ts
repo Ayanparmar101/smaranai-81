@@ -1,10 +1,10 @@
-
 // Common types used across the application
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  imageUrl?: string; // Add optional imageUrl to the Message type
 }
 
 export interface ApiResponse {
