@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { toast } from 'sonner';
-import NavBar from '@/components/NavBar';
-import Footer from '@/components/Footer';
+import { Layout } from '@/components/Layout';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import openaiService from '@/services/openaiService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -66,7 +64,6 @@ const StoryImagesPage = () => {
       const result = await openaiService.createCompletion(systemPrompt, storyText);
       setPrompt(result);
 
-      // Save the user's story and the generated prompt to history
       if (user) {
         await saveMessage({
           text: storyText,
@@ -104,7 +101,6 @@ const StoryImagesPage = () => {
       
       setGeneratedImageUrl(imageUrl);
       
-      // Save the image generation to history
       if (user) {
         await saveMessage({
           text: `Generated image from prompt: ${prompt}`,
@@ -115,7 +111,6 @@ const StoryImagesPage = () => {
         });
       }
       
-      // Add to history
       setHistory(prev => [{ prompt, imageUrl }, ...prev.slice(0, 5)]);
     } catch (error) {
       console.error('Error generating image:', error);
@@ -142,26 +137,22 @@ const StoryImagesPage = () => {
     try {
       toast.info('Dividing your story into segments...', { duration: 3000 });
       
-      // Step 1: Divide the story into segments
       const segments = await openaiService.generateStorySegments(storyText);
       
-      // Step 2: Generate consistent prompts for each segment
       toast.info('Creating consistent image prompts...', { duration: 3000 });
       const prompts = await openaiService.generateConsistentImagePrompts(storyText, segments);
       
-      // Step 3: Generate images for each prompt
       toast.info('Generating story illustrations...', { duration: 5000 });
       const imageUrls = await openaiService.generateMultipleImages(prompts);
       
       setMultipleImageUrls(imageUrls);
       
-      // Save to history if user is logged in
       if (user) {
         await saveMessage({
           text: `Generated story series from: ${storyText.substring(0, 100)}...`,
           userId: user.id,
           chatType: 'story-images',
-          imageUrl: imageUrls[0], // Save first image as thumbnail
+          imageUrl: imageUrls[0],
           toolType: 'story-series-generator',
           additionalData: {
             image_urls: imageUrls
@@ -169,7 +160,6 @@ const StoryImagesPage = () => {
         });
       }
       
-      // Add to local history
       setHistory(prev => [{
         prompt: `Story series: ${storyText.substring(0, 50)}...`,
         imageUrl: imageUrls[0],
@@ -225,9 +215,7 @@ const StoryImagesPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <NavBar />
-      
+    <Layout>
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
@@ -280,9 +268,7 @@ const StoryImagesPage = () => {
           />
         </div>
       </main>
-      
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

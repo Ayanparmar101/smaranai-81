@@ -1,10 +1,9 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveMessage } from '@/utils/messageUtils';
-import NavBar from '@/components/NavBar';
-import Footer from '@/components/Footer';
+import { Layout } from '@/components/Layout';
 import VoiceChat from '@/components/voice-assistant/VoiceChat';
 import { openaiService } from '@/services/openai';
 import ApiKeyInput from '@/components/ApiKeyInput';
@@ -30,9 +29,7 @@ const VoiceAssistantPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <NavBar />
-      
+    <Layout>
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
           <div className="mb-4 md:mb-0">
@@ -68,9 +65,7 @@ const VoiceAssistantPage: React.FC = () => {
           </div>
         )}
       </main>
-
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

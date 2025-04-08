@@ -1,11 +1,9 @@
-
 import React, { useState, useRef } from 'react';
 import { Send, HelpCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
-import NavBar from '@/components/NavBar';
-import Footer from '@/components/Footer';
+import { Layout } from '@/components/Layout';
 import openaiService from '@/services/openaiService';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,21 +19,18 @@ const SocraticTutorPage = () => {
   const [isApiKeySet, setIsApiKeySet] = useState(!!openaiService.getApiKey());
   const conversationEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom of conversation
   const scrollToBottom = () => {
     if (conversationEndRef.current) {
       conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  // Handle API key change
   const handleApiKeyChange = (key: string) => {
     openaiService.setApiKey(key);
     setIsApiKeySet(!!key);
     toast.success('API key saved');
   };
 
-  // Handle question submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -49,13 +44,11 @@ const SocraticTutorPage = () => {
       return;
     }
 
-    // Add user question to conversation
     const newUserMessage = { role: 'user' as const, content: question.trim() };
     setConversation(prev => [...prev, newUserMessage]);
     setIsLoading(true);
 
     try {
-      // Prepare Socratic prompt
       const systemPrompt = `
         You are a Socratic tutor for English language students in grades 1-8. 
         Your goal is to help students learn by guiding them to discover answers themselves.
@@ -73,17 +66,14 @@ const SocraticTutorPage = () => {
         Remember: The goal is to develop their critical thinking skills while teaching English.
       `;
 
-      // Get AI response
       const response = await openaiService.createCompletion(
         systemPrompt,
         question,
         { temperature: 0.7 }
       );
 
-      // Add AI response to conversation
       setConversation(prev => [...prev, { role: 'assistant', content: response }]);
       
-      // Save to history if user is logged in
       if (user) {
         await saveMessage({
           text: question,
@@ -99,15 +89,12 @@ const SocraticTutorPage = () => {
       toast.error('Failed to get a response. Please try again.');
     } finally {
       setIsLoading(false);
-      // Scroll to bottom after state updates
       setTimeout(scrollToBottom, 100);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <NavBar />
-      
+    <Layout>
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-start gap-6 mb-8">
@@ -214,9 +201,7 @@ const SocraticTutorPage = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

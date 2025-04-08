@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Layout } from '@/components/Layout';
 import TeacherPageContainer from './teacher/TeacherPageContainer';
+import { Layout } from '@/components/Layout';
 
 const TeacherPage = () => {
   return (

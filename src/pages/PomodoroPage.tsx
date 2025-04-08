@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Layout } from '@/components/Layout';
 import PomodoroTimer from './pomodoro/PomodoroTimer';
+import { Layout } from '@/components/Layout';
 
 const PomodoroPage = () => {
   return (
