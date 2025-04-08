@@ -3,6 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { StudyPlanStep } from '../types';
 import StudyStepsList from './StudyStepsList';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface StudyStepsCardProps {
   steps: StudyPlanStep[];
@@ -17,11 +18,13 @@ const StudyStepsCard: React.FC<StudyStepsCardProps> = ({
 }) => {
   return (
     <Card className="border-3 border-black shadow-neo-md">
-      <StudyStepsList
-        steps={steps}
-        completionPercentage={completionPercentage}
-        onStepComplete={onStepComplete}
-      />
+      <ErrorBoundary>
+        <StudyStepsList
+          steps={steps}
+          completionPercentage={completionPercentage}
+          onStepComplete={onStepComplete}
+        />
+      </ErrorBoundary>
     </Card>
   );
 };

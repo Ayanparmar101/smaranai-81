@@ -10,6 +10,7 @@ import {
 import { StudyPlanStep } from '../types';
 import StudyStepItem from './StudyStepItem';
 import CompletionMessage from './CompletionMessage';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface StudyStepsListProps {
   steps: StudyPlanStep[];
@@ -34,18 +35,20 @@ const StudyStepsList: React.FC<StudyStepsListProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-4">
-          {steps.map((step, index) => (
-            <StudyStepItem 
-              key={index}
-              step={step}
-              index={index}
-              onComplete={onStepComplete}
-            />
-          ))}
-        </ul>
+        <ErrorBoundary>
+          <ul className="space-y-4">
+            {steps.map((step, index) => (
+              <StudyStepItem 
+                key={index}
+                step={step}
+                index={index}
+                onComplete={onStepComplete}
+              />
+            ))}
+          </ul>
 
-        {completionPercentage === 100 && <CompletionMessage />}
+          {completionPercentage === 100 && <CompletionMessage />}
+        </ErrorBoundary>
       </CardContent>
     </>
   );
