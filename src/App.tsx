@@ -38,7 +38,7 @@ import AuthGuard from './components/AuthGuard';
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="smaran-theme">
+    <ThemeProvider>
       <ErrorBoundary>
         <Router>
           <ScrollToTop />
