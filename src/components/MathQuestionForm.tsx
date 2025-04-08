@@ -5,8 +5,9 @@ import { NeoButton } from '@/components/NeoButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { openaiService } from '@/services/openaiService';
+import openaiService from '@/services/openaiService';
 
 interface MathQuestionFormProps {
   topic: string;
@@ -135,22 +136,38 @@ const MathQuestionForm: React.FC<MathQuestionFormProps> = ({ topic, onResultGene
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Textarea
-                placeholder={`Enter your ${topic} question here...`}
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                className="flex-1 neo-input min-h-[100px]"
-              />
-              <NeoButton 
-                variant={isListening ? "destructive" : "secondary"}
-                size="sm"
-                onClick={toggleListening}
-                className="flex-shrink-0"
-                icon={isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-              >
-                {isListening ? "" : ""}
-              </NeoButton>
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center space-x-2">
+                <Textarea
+                  placeholder={`Enter your ${topic} question here...`}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  className={`flex-1 neo-input min-h-[100px] ${isListening ? 'border-green-500 border-2' : ''}`}
+                />
+                <NeoButton 
+                  variant={isListening ? "destructive" : "secondary"}
+                  size="sm"
+                  onClick={toggleListening}
+                  className={`flex-shrink-0 ${isListening ? 'animate-pulse' : ''}`}
+                  icon={isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                >
+                  {isListening ? "" : ""}
+                </NeoButton>
+              </div>
+              
+              {isListening && (
+                <div className="w-full">
+                  <Progress value={100} className="h-1 w-full bg-slate-200 animate-pulse" />
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-xs text-muted-foreground animate-pulse">Recording voice input...</span>
+                    <div className="flex space-x-1">
+                      <div className="w-1 h-1 bg-red-500 rounded-full animate-[pulse_1s_ease-in-out_infinite]"></div>
+                      <div className="w-1 h-2 bg-red-500 rounded-full animate-[pulse_1s_ease-in-out_0.3s_infinite]"></div>
+                      <div className="w-1 h-3 bg-red-500 rounded-full animate-[pulse_1s_ease-in-out_0.5s_infinite]"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
             <NeoButton 
