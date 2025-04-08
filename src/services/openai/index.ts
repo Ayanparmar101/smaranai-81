@@ -4,6 +4,7 @@ import { completionService } from "./completionService";
 import { imageService } from "./imageService";
 import { speechService } from "./speechService";
 import { storyService } from "./storyService";
+import { ImageGenerationOptions } from "./types";
 
 /**
  * Unified OpenAI service that provides access to all OpenAI-related functionality
@@ -24,7 +25,7 @@ class OpenAIService {
   }
 
   // Image generation
-  generateImage(prompt: string, size = "1024x1024") {
+  generateImage(prompt: string, size: ImageGenerationOptions['size'] = "1024x1024") {
     return imageService.generateImage(prompt, { size });
   }
 

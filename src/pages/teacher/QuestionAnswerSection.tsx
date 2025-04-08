@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { RefObject } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -15,6 +15,7 @@ interface QuestionAnswerSectionProps {
   askQuestion: () => void;
   isLoading: boolean;
   selectedChapter: string;
+  answerRef: RefObject<HTMLDivElement>;
 }
 
 const QuestionAnswerSection: React.FC<QuestionAnswerSectionProps> = ({
@@ -25,10 +26,9 @@ const QuestionAnswerSection: React.FC<QuestionAnswerSectionProps> = ({
   toggleListening,
   askQuestion,
   isLoading,
-  selectedChapter
+  selectedChapter,
+  answerRef
 }) => {
-  const answerRef = useRef<HTMLDivElement>(null);
-  
   return (
     <Card className="h-[500px] flex flex-col neo-card">
       <CardHeader>
