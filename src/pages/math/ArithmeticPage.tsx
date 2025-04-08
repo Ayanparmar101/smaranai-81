@@ -1,45 +1,78 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 import MathQuestionForm from '@/components/MathQuestionForm';
+import { Plus } from 'lucide-react';
+import { saveMessage } from '@/utils/messageUtils';
+import { useAuth } from '@/contexts/AuthContext';
+import NeoBackButton from '@/components/NeoBackButton';
 
 const ArithmeticPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  const handleReturn = () => {
+    navigate('/mathematics');
+  };
+
+  const handleResultGenerated = async (result: {
+    question: string;
+    answer: string;
+    similarQuestions: string[];
+  }) => {
+    if (user?.id) {
+      await saveMessage({
+        text: result.question,
+        userId: user.id,
+        aiResponse: result.answer,
+        chatType: 'teacher',
+        toolType: 'arithmetic',
+        additionalData: {
+          similarQuestions: result.similarQuestions
+        }
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8 text-center">Basic Arithmetic</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="p-6 bg-gray-800 border-gray-700">
-            <h2 className="text-xl font-semibold text-white mb-4">Practice Arithmetic</h2>
-            <p className="text-gray-300 mb-6">
-              Build your foundation with addition, subtraction, multiplication, and division exercises.
-            </p>
-            <MathQuestionForm topic="arithmetic" />
-          </Card>
-          
-          <Card className="p-6 bg-gray-800 border-gray-700">
-            <h2 className="text-xl font-semibold text-white mb-4">Learning Resources</h2>
-            <p className="text-gray-300 mb-6">
-              Access comprehensive tutorials and examples to master arithmetic concepts.
-            </p>
-            <div className="space-y-4">
-              <div className="p-4 bg-gray-700 rounded-lg">
-                <h3 className="text-lg font-medium text-white">Addition & Subtraction</h3>
-                <p className="text-gray-300 mt-2">Learn the fundamentals of adding and subtracting numbers.</p>
-              </div>
-              <div className="p-4 bg-gray-700 rounded-lg">
-                <h3 className="text-lg font-medium text-white">Multiplication & Division</h3>
-                <p className="text-gray-300 mt-2">Master techniques for multiplying and dividing efficiently.</p>
-              </div>
-              <div className="p-4 bg-gray-700 rounded-lg">
-                <h3 className="text-lg font-medium text-white">Order of Operations</h3>
-                <p className="text-gray-300 mt-2">Understand PEMDAS and solve complex expressions correctly.</p>
-              </div>
-            </div>
-          </Card>
+    <div className="container mx-auto px-4 py-8">
+      <NeoBackButton 
+        label="Back to Mathematics" 
+        color="blue" 
+        onClick={handleReturn}
+      />
+
+      <div className="flex items-center mb-8">
+        <div className="bg-kid-blue p-3 rounded-full mr-4">
+          <Plus className="w-8 h-8 text-white" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold">
+          <span className="bg-gradient-to-r from-kid-blue to-blue-600 bg-clip-text text-transparent">
+            Arithmetic
+          </span>
+        </h1>
+      </div>
+
+      <div className="mb-8">
+        <p className="text-lg text-gray-700 mb-4">
+          Arithmetic is the branch of mathematics dealing with properties and manipulation of numbers. 
+          Ask questions about addition, subtraction, multiplication, division, fractions, or any basic number operations.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-kid-blue/10 p-4 rounded-lg border-2 border-kid-blue/30">
+            <h3 className="font-bold mb-2">Example Questions:</h3>
+            <ul className="list-disc list-inside space-y-2">
+              <li>How do I add fractions with different denominators?</li>
+              <li>What's the long division method for 5678 ÷ 32?</li>
+              <li>How do I convert a decimal to a fraction?</li>
+              <li>What is the order of operations (PEMDAS) and why is it important?</li>
+            </ul>
+          </div>
         </div>
       </div>
+
+      <MathQuestionForm topic="Arithmetic" onResultGenerated={handleResultGenerated} />
     </div>
   );
 };
