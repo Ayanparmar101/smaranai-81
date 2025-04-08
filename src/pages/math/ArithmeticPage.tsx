@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Layout from '../../components/Layout';
+import { Layout } from '../../components/Layout';
 import { NeoButton } from '../../components/NeoButton';
 import { Card } from '@/components/ui/card';
 import MathQuestionForm from '@/components/MathQuestionForm';
@@ -18,7 +18,7 @@ const ArithmeticPage = () => {
             <p className="text-gray-300 mb-6">
               Build your foundation with addition, subtraction, multiplication, and division exercises.
             </p>
-            <MathQuestionForm />
+            <MathQuestionForm topic="arithmetic" />
           </Card>
           
           <Card className="p-6 bg-gray-800 border-gray-700">
