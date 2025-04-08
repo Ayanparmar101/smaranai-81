@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, BookText, Atom, GraduationCap, Globe, Flag } from 'lucide-react';
@@ -59,8 +58,8 @@ const SubjectsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1">
+    <div className="min-h-screen">
+      <main>
         {/* Hero Section */}
         <section className="relative py-12 md:py-20 overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
