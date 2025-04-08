@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { openaiService } from '@/services/openaiService';
+import { openaiService } from '@/services/openai';
 import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';
 import { PDFService } from '@/services/pdfService';
 import { supabase } from '@/integrations/supabase/client';

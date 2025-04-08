@@ -6,7 +6,7 @@ import { saveMessage } from '@/utils/messageUtils';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import VoiceChat from '@/components/voice-assistant/VoiceChat';
-import { openaiService } from '@/services/openaiService';
+import { openaiService } from '@/services/openai';
 import ApiKeyInput from '@/components/ApiKeyInput';
 
 const VoiceAssistantPage: React.FC = () => {
