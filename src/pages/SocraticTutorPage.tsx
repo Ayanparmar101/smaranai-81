@@ -6,7 +6,7 @@ import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
-import { openaiService } from '@/services/openaiService';
+import openaiService from '@/services/openaiService';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import DoodleDecoration from '@/components/DoodleDecoration';

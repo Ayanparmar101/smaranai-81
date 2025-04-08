@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Book, Brain, CheckCheck } from 'lucide-react';
 import DoodleButton from '@/components/DoodleButton';
 import ApiKeyInput from '@/components/ApiKeyInput';
-import { openaiService } from '@/services/openaiService';
+import openaiService from '@/services/openaiService';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';

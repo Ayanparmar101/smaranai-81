@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import ApiKeyInput from '@/components/ApiKeyInput';
-import { openaiService } from '@/services/openaiService';
+import openaiService from '@/services/openaiService';
 import { useAuth } from '@/contexts/AuthContext';
 import StoryInput from '@/components/story-images/StoryInput';
 import PromptGenerator from '@/components/story-images/PromptGenerator';

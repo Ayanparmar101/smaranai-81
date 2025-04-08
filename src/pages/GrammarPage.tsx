@@ -11,7 +11,7 @@ import { Slider } from '@/components/ui/slider';
 import { Toggle, toggleVariants } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { NeoButton } from '@/components/NeoButton';
-import { openaiService } from '@/services/openaiService';
+import openaiService from '@/services/openaiService';
 
 interface QuizQuestion {
   question: string;
@@ -519,4 +519,3 @@ const GrammarPage = () => {
 };
 
 export default GrammarPage;
-
