@@ -30,10 +30,10 @@ import CalculusPage from './pages/math/CalculusPage';
 import StatisticsPage from './pages/math/StatisticsPage';
 
 // Components
-import Layout from './components/Layout';
+import { Layout } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
-import ThemeProvider from './components/ThemeProvider';
-import ScrollToTop from './components/ScrollToTop';
+import { ThemeProvider } from './components/ThemeProvider';
+import { ScrollToTop } from './components/ScrollToTop';
 import AuthGuard from './components/AuthGuard';
 
 function App() {
