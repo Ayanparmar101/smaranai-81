@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, BookText, Atom, GraduationCap, Globe, Flag } from 'lucide-react';
@@ -10,12 +9,13 @@ const SubjectsPage = () => {
   const handleSubjectClick = (subject: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     if (subject === 'English') {
-      navigate('/'); // Redirect to index page instead of external URL
+      navigate('/');
     } else if (subject === 'Mathematics') {
-      navigate('/mathematics'); // Redirect to mathematics page
+      navigate('/mathematics');
+    } else if (subject === 'Hindi') {
+      navigate('/hindi');
     } else {
       console.log(`Clicked on ${subject}`);
-      // Future implementation for other subjects
     }
   };
 
@@ -94,7 +94,6 @@ const SubjectsPage = () => {
         </div>
       </div>
       
-      {/* Background decorations */}
       <div className="absolute top-20 left-10 opacity-20">
         <div className="text-kid-blue">
           <GraduationCap size={64} />

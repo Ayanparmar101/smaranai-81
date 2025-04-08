@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { Toaster } from 'sonner';
@@ -21,6 +20,8 @@ import PomodoroPage from './pages/PomodoroPage';
 import SubjectsPage from './pages/SubjectsPage';
 import MathematicsPage from './pages/MathematicsPage';
 import ProfilePage from './pages/ProfilePage';
+import HindiPage from './pages/HindiPage';
+import HindiChatbotPage from './pages/HindiChatbotPage';
 
 // Math Pages
 import ArithmeticPage from './pages/math/ArithmeticPage';
@@ -144,6 +145,20 @@ function App() {
               <AuthGuard>
                 <Layout>
                   <ProfilePage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/hindi" element={
+              <AuthGuard>
+                <Layout>
+                  <HindiPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/hindi/chatbot" element={
+              <AuthGuard>
+                <Layout>
+                  <HindiChatbotPage />
                 </Layout>
               </AuthGuard>
             } />
