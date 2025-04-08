@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { Layout } from '@/components/Layout';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import openaiService from '@/services/openaiService';
 import LevelSelector from '@/components/grammar/LevelSelector';
@@ -214,68 +213,66 @@ const GrammarPage = () => {
   };
 
   return (
-    <Layout>
-      <div className="page-container">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            <span className="flex items-center gap-2">
-              <BookOpen className="text-kid-green" />
-              English Grammar Learner
-            </span>
-          </h1>
-        </div>
-
-        <LevelSelector 
-          selectedLevel={selectedLevel} 
-          onLevelChange={setSelectedLevel} 
-        />
-
-        <DifficultySelector 
-          selectedDifficulty={selectedDifficulty} 
-          onDifficultyChange={setSelectedDifficulty} 
-        />
-
-        <QuestionCountSelector 
-          numQuestions={numQuestions} 
-          onNumQuestionsChange={setNumQuestions} 
-        />
-
-        <TopicSelector 
-          topics={grammarTopics[selectedLevel]} 
-          selectedTopic={selectedTopic} 
-          onTopicSelect={selectTopic} 
-        />
-
-        {loading ? (
-          <LoadingState />
-        ) : lesson ? (
-          <div className="bg-white rounded-2xl p-6 shadow-neo border-3 border-black mb-8">
-            <LessonContent 
-              title={lesson.title}
-              level={lesson.level}
-              content={lesson.content}
-              examples={lesson.examples}
-            />
-            
-            <Quiz 
-              questions={lesson.quiz[selectedDifficulty]}
-              userAnswers={userAnswers}
-              showResults={showResults}
-              onAnswerSelect={handleAnswerSelect}
-              onSubmitQuiz={handleQuizSubmit}
-              onResetQuiz={resetQuiz}
-              onNewPractice={handleNewPractice}
-            />
-          </div>
-        ) : selectedTopic ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {apiKey ? "Click 'Generate Lesson' to start learning" : "Please enter your OpenAI API key to generate lessons"}
-            </p>
-          </div>
-        ) : null}
+    <div className="page-container">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">
+          <span className="flex items-center gap-2">
+            <BookOpen className="text-kid-green" />
+            English Grammar Learner
+          </span>
+        </h1>
       </div>
-    </Layout>
+
+      <LevelSelector 
+        selectedLevel={selectedLevel} 
+        onLevelChange={setSelectedLevel} 
+      />
+
+      <DifficultySelector 
+        selectedDifficulty={selectedDifficulty} 
+        onDifficultyChange={setSelectedDifficulty} 
+      />
+
+      <QuestionCountSelector 
+        numQuestions={numQuestions} 
+        onNumQuestionsChange={setNumQuestions} 
+      />
+
+      <TopicSelector 
+        topics={grammarTopics[selectedLevel]} 
+        selectedTopic={selectedTopic} 
+        onTopicSelect={selectTopic} 
+      />
+
+      {loading ? (
+        <LoadingState />
+      ) : lesson ? (
+        <div className="bg-white rounded-2xl p-6 shadow-neo border-3 border-black mb-8">
+          <LessonContent 
+            title={lesson.title}
+            level={lesson.level}
+            content={lesson.content}
+            examples={lesson.examples}
+          />
+          
+          <Quiz 
+            questions={lesson.quiz[selectedDifficulty]}
+            userAnswers={userAnswers}
+            showResults={showResults}
+            onAnswerSelect={handleAnswerSelect}
+            onSubmitQuiz={handleQuizSubmit}
+            onResetQuiz={resetQuiz}
+            onNewPractice={handleNewPractice}
+          />
+        </div>
+      ) : selectedTopic ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            {apiKey ? "Click 'Generate Lesson' to start learning" : "Please enter your OpenAI API key to generate lessons"}
+          </p>
+        </div>
+      ) : null}
+    </div>
   );
 };
 

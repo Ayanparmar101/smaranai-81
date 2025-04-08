@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Image } from 'lucide-react';
 import { toast } from 'sonner';
-import { Layout } from '@/components/Layout';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import openaiService from '@/services/openaiService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -215,60 +214,58 @@ const StoryImagesPage = () => {
   };
 
   return (
-    <Layout>
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              <span className="flex items-center gap-2">
-                <Image className="text-kid-yellow" />
-                Story Image Generator
-              </span>
-            </h1>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <div>
-              <StoryInput
-                storyText={storyText}
-                onStoryChange={setStoryText}
-                onGeneratePrompt={generatePrompt}
-                onClear={clearStory}
-                loading={loading && !prompt}
-              />
-              
-              <PromptGenerator
-                prompt={prompt}
-                onPromptChange={setPrompt}
-                onGenerateImage={generateImage}
-                onGenerateMultipleImages={generateMultipleImages}
-                loading={loading}
-              />
-            </div>
-            
-            <div>
-              {activeTab === 'single' ? (
-                <ImageDisplay
-                  imageUrl={generatedImageUrl}
-                  onDownload={downloadImage}
-                />
-              ) : (
-                <MultiImageDisplay
-                  imageUrls={multipleImageUrls}
-                  loading={loading}
-                  onDownload={downloadMultipleImage}
-                />
-              )}
-            </div>
-          </div>
-          
-          <ImageHistory 
-            history={history}
-            onSelectHistory={loadFromHistory}
-          />
+    <main className="flex-1">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+            <span className="flex items-center gap-2">
+              <Image className="text-kid-yellow" />
+              Story Image Generator
+            </span>
+          </h1>
         </div>
-      </main>
-    </Layout>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div>
+            <StoryInput
+              storyText={storyText}
+              onStoryChange={setStoryText}
+              onGeneratePrompt={generatePrompt}
+              onClear={clearStory}
+              loading={loading && !prompt}
+            />
+            
+            <PromptGenerator
+              prompt={prompt}
+              onPromptChange={setPrompt}
+              onGenerateImage={generateImage}
+              onGenerateMultipleImages={generateMultipleImages}
+              loading={loading}
+            />
+          </div>
+          
+          <div>
+            {activeTab === 'single' ? (
+              <ImageDisplay
+                imageUrl={generatedImageUrl}
+                onDownload={downloadImage}
+              />
+            ) : (
+              <MultiImageDisplay
+                imageUrls={multipleImageUrls}
+                loading={loading}
+                onDownload={downloadMultipleImage}
+              />
+            )}
+          </div>
+        </div>
+        
+        <ImageHistory 
+          history={history}
+          onSelectHistory={loadFromHistory}
+        />
+      </div>
+    </main>
   );
 };
 

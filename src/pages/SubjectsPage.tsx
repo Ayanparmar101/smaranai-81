@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, BookText, Atom, GraduationCap, Globe, Flag } from 'lucide-react';
 import DoodleCard from '@/components/DoodleCard';
-import { Layout } from '@/components/Layout';
 
 const SubjectsPage = () => {
   const navigate = useNavigate();
@@ -60,56 +59,53 @@ const SubjectsPage = () => {
   ];
 
   return (
-    <Layout>
-      {/* Hero Section */}
-      <section className="relative py-12 md:py-20 overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center">
-            <span className="bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
-              Choose Your Subject
-            </span>
-          </h1>
-          <p className="text-xl mb-12 text-gray-700 text-center max-w-3xl mx-auto">
-            Select a subject to start learning with interactive lessons, exercises, and AI-powered tutoring
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            {subjects.map((subject, index) => (
-              <DoodleCard 
-                key={index}
-                title={subject.name} 
-                description={subject.description} 
-                icon={subject.icon} 
-                color={subject.color as 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink'} 
-                onClick={handleSubjectClick(subject.name)}
-                className="hover:scale-105 transition-transform duration-300"
-              >
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <button 
-                    onClick={handleSubjectClick(subject.name)} 
-                    className="text-kid-blue font-medium hover:underline"
-                  >
-                    Start Learning &rarr;
-                  </button>
-                </div>
-              </DoodleCard>
-            ))}
-          </div>
-        </div>
+    <section className="relative py-12 md:py-20 overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center">
+          <span className="bg-gradient-to-r from-kid-blue via-kid-purple to-kid-red bg-clip-text text-transparent">
+            Choose Your Subject
+          </span>
+        </h1>
+        <p className="text-xl mb-12 text-gray-700 text-center max-w-3xl mx-auto">
+          Select a subject to start learning with interactive lessons, exercises, and AI-powered tutoring
+        </p>
         
-        {/* Background decorations */}
-        <div className="absolute top-20 left-10 opacity-20">
-          <div className="text-kid-blue">
-            <GraduationCap size={64} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+          {subjects.map((subject, index) => (
+            <DoodleCard 
+              key={index}
+              title={subject.name} 
+              description={subject.description} 
+              icon={subject.icon} 
+              color={subject.color as 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink'} 
+              onClick={handleSubjectClick(subject.name)}
+              className="hover:scale-105 transition-transform duration-300"
+            >
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button 
+                  onClick={handleSubjectClick(subject.name)} 
+                  className="text-kid-blue font-medium hover:underline"
+                >
+                  Start Learning &rarr;
+                </button>
+              </div>
+            </DoodleCard>
+          ))}
         </div>
-        <div className="absolute bottom-20 right-10 opacity-20">
-          <div className="text-kid-green">
-            <BookText size={64} />
-          </div>
+      </div>
+      
+      {/* Background decorations */}
+      <div className="absolute top-20 left-10 opacity-20">
+        <div className="text-kid-blue">
+          <GraduationCap size={64} />
         </div>
-      </section>
-    </Layout>
+      </div>
+      <div className="absolute bottom-20 right-10 opacity-20">
+        <div className="text-kid-green">
+          <BookText size={64} />
+        </div>
+      </div>
+    </section>
   );
 };
 

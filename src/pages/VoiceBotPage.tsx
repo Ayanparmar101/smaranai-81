@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Layout } from '@/components/Layout';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import ChatDisplay from '@/components/voice-bot/ChatDisplay';
 import VoiceControls from '@/components/voice-bot/VoiceControls';
@@ -21,32 +20,30 @@ const VoiceBotPage = () => {
   };
 
   return (
-    <Layout>
-      <main className="flex-1 container mx-auto max-w-4xl p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-kid-purple">Voice Bot</h1>
-          <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
-        </div>
-        
-        <div className="bg-card rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto text-card-foreground">
-          <ChatDisplay messages={messages} />
-        </div>
-        
-        <TranscriptDisplay transcript={transcript} />
-        
-        <VoiceControls 
-          isListening={isListening}
-          loading={loading}
-          startListening={startListening}
-          stopListening={stopListening}
-        />
-        
-        <MessageInput 
-          loading={loading}
-          onSubmit={handleUserMessage}
-        />
-      </main>
-    </Layout>
+    <main className="flex-1 container mx-auto max-w-4xl p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-kid-purple">Voice Bot</h1>
+        <ApiKeyInput onApiKeySubmit={handleApiKeySubmit} />
+      </div>
+      
+      <div className="bg-card rounded-xl shadow-md p-4 mb-4 h-[60vh] overflow-y-auto text-card-foreground">
+        <ChatDisplay messages={messages} />
+      </div>
+      
+      <TranscriptDisplay transcript={transcript} />
+      
+      <VoiceControls 
+        isListening={isListening}
+        loading={loading}
+        startListening={startListening}
+        stopListening={stopListening}
+      />
+      
+      <MessageInput 
+        loading={loading}
+        onSubmit={handleUserMessage}
+      />
+    </main>
   );
 };
 

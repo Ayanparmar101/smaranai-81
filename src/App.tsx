@@ -48,7 +48,7 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/auth-callback" element={<AuthCallbackPage />} />
             
-            {/* Protected routes with AuthGuard */}
+            {/* Protected routes with AuthGuard and Layout */}
             <Route path="/" element={
               <AuthGuard>
                 <Layout>
