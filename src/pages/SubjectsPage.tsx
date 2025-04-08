@@ -3,8 +3,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, BookText, Atom, GraduationCap, Globe, Flag } from 'lucide-react';
 import DoodleCard from '@/components/DoodleCard';
-import NavBar from '@/components/NavBar';
-import Footer from '@/components/Footer';
 
 const SubjectsPage = () => {
   const navigate = useNavigate();
@@ -62,8 +60,6 @@ const SubjectsPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar />
-      
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative py-12 md:py-20 overflow-hidden">
@@ -114,8 +110,6 @@ const SubjectsPage = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };
