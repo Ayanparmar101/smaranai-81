@@ -43,39 +43,156 @@ function App() {
         <Router>
           <ScrollToTop />
           <Toaster richColors position="top-center" />
-          <AuthGuard>
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Index />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
-                <Route path="/teacher" element={<TeacherPage />} />
-                <Route path="/socratic-tutor" element={<SocraticTutorPage />} />
-                <Route path="/grammar" element={<GrammarPage />} />
-                <Route path="/story-images" element={<StoryImagesPage />} />
-                <Route path="/voice-bot" element={<VoiceBotPage />} />
-                <Route path="/study-planner" element={<StudyPlannerPage />} />
-                <Route path="/spoken-english" element={<SpokenEnglishPage />} />
-                <Route path="/pomodoro" element={<PomodoroPage />} />
-                <Route path="/subjects" element={<SubjectsPage />} />
-                <Route path="/mathematics" element={<MathematicsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                
-                {/* Math Routes */}
-                <Route path="/math/arithmetic" element={<ArithmeticPage />} />
-                <Route path="/math/algebra" element={<AlgebraPage />} />
-                <Route path="/math/geometry" element={<GeometryPage />} />
-                <Route path="/math/calculus" element={<CalculusPage />} />
-                <Route path="/math/statistics" element={<StatisticsPage />} />
-                
-                <Route path="*" element={<NotFound />} />
-              </Route>
-              
-              {/* Auth routes outside of Layout */}
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/auth-callback" element={<AuthCallbackPage />} />
-            </Routes>
-          </AuthGuard>
+          <Routes>
+            {/* Auth routes outside of AuthGuard */}
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth-callback" element={<AuthCallbackPage />} />
+            
+            {/* Protected routes with AuthGuard */}
+            <Route path="/" element={
+              <AuthGuard>
+                <Layout>
+                  <Index />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/history" element={
+              <AuthGuard>
+                <Layout>
+                  <HistoryPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/voice-assistant" element={
+              <AuthGuard>
+                <Layout>
+                  <VoiceAssistantPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/teacher" element={
+              <AuthGuard>
+                <Layout>
+                  <TeacherPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/socratic-tutor" element={
+              <AuthGuard>
+                <Layout>
+                  <SocraticTutorPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/grammar" element={
+              <AuthGuard>
+                <Layout>
+                  <GrammarPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/story-images" element={
+              <AuthGuard>
+                <Layout>
+                  <StoryImagesPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/voice-bot" element={
+              <AuthGuard>
+                <Layout>
+                  <VoiceBotPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/study-planner" element={
+              <AuthGuard>
+                <Layout>
+                  <StudyPlannerPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/spoken-english" element={
+              <AuthGuard>
+                <Layout>
+                  <SpokenEnglishPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/pomodoro" element={
+              <AuthGuard>
+                <Layout>
+                  <PomodoroPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/subjects" element={
+              <AuthGuard>
+                <Layout>
+                  <SubjectsPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/mathematics" element={
+              <AuthGuard>
+                <Layout>
+                  <MathematicsPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/profile" element={
+              <AuthGuard>
+                <Layout>
+                  <ProfilePage />
+                </Layout>
+              </AuthGuard>
+            } />
+            
+            {/* Math Routes */}
+            <Route path="/math/arithmetic" element={
+              <AuthGuard>
+                <Layout>
+                  <ArithmeticPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/math/algebra" element={
+              <AuthGuard>
+                <Layout>
+                  <AlgebraPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/math/geometry" element={
+              <AuthGuard>
+                <Layout>
+                  <GeometryPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/math/calculus" element={
+              <AuthGuard>
+                <Layout>
+                  <CalculusPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            <Route path="/math/statistics" element={
+              <AuthGuard>
+                <Layout>
+                  <StatisticsPage />
+                </Layout>
+              </AuthGuard>
+            } />
+            
+            <Route path="*" element={
+              <AuthGuard>
+                <Layout>
+                  <NotFound />
+                </Layout>
+              </AuthGuard>
+            } />
+          </Routes>
         </Router>
       </ErrorBoundary>
     </ThemeProvider>
