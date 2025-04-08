@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Message } from '../../types';
-import { formatDate } from '../../utils/formatters';
-import { Avatar } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { Message } from '@/types';
 
 interface ChatMessageProps {
   message: Message;
@@ -10,33 +10,45 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.role === 'user';
+  const avatarLetter = isUser ? 'U' : 'A';
   
   return (
-    <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div
+      className={cn(
+        'flex w-full gap-2 p-4',
+        isUser ? 'justify-end pl-10' : 'justify-start pr-10',
+      )}
+    >
       {!isUser && (
-        <Avatar className="h-8 w-8">
-          <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center rounded-full">
-            AI
-          </div>
+        <Avatar>
+          <AvatarFallback>{avatarLetter}</AvatarFallback>
         </Avatar>
       )}
       
-      <div className={`max-w-[80%] rounded-lg p-4 ${
-        isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'
-      }`}>
-        <div className="prose dark:prose-invert">
-          {message.content}
-        </div>
-        <div className={`text-xs mt-2 ${isUser ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-          {formatDate(message.timestamp)}
+      <div
+        className={cn(
+          'flex flex-col gap-2 rounded-lg p-4',
+          isUser ? 'bg-primary text-primary-foreground' : 'bg-muted',
+        )}
+      >
+        {message.imageUrl && (
+          <div className="mb-2">
+            <img 
+              src={message.imageUrl} 
+              alt="User uploaded image" 
+              className="max-w-full rounded-md max-h-64 object-contain"
+            />
+          </div>
+        )}
+        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+        <div className="text-xs opacity-50">
+          {message.timestamp.toLocaleTimeString()}
         </div>
       </div>
       
       {isUser && (
-        <Avatar className="h-8 w-8">
-          <div className="bg-secondary text-secondary-foreground flex h-full w-full items-center justify-center rounded-full">
-            You
-          </div>
+        <Avatar>
+          <AvatarFallback>{avatarLetter}</AvatarFallback>
         </Avatar>
       )}
     </div>

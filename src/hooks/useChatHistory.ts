@@ -13,11 +13,12 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
   const [messages, setMessages] = useLocalStorage<Message[]>(storageKey, []);
   const [isLoading, setIsLoading] = useState(false);
 
-  const addMessage = useCallback((role: 'user' | 'assistant', content: string) => {
+  const addMessage = useCallback((role: 'user' | 'assistant', content: string, imageUrl?: string) => {
     const newMessage: Message = {
       id: uuidv4(),
       role,
       content,
+      imageUrl,
       timestamp: new Date()
     };
     

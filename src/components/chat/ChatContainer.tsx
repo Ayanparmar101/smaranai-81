@@ -10,7 +10,7 @@ import { handleApiError } from '../../utils/apiHelpers';
 interface ChatContainerProps {
   title: string;
   storageKey: string;
-  processingFunction: (message: string) => Promise<string>;
+  processingFunction: (message: string, imageUrl?: string) => Promise<string>;
 }
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -26,16 +26,25 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     clearHistory 
   } = useChatHistory(storageKey);
   
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (message: string, image?: File) => {
+    let messageContent = message;
+    let imageUrl: string | undefined;
+    
+    // If there's an image, create a temporary local URL for display
+    if (image) {
+      imageUrl = URL.createObjectURL(image);
+      messageContent = message || "Image"; // Use "Image" as message if text is empty
+    }
+    
     // Add user message to chat
-    addMessage('user', message);
+    addMessage('user', messageContent, imageUrl);
     
     // Set loading state
     setIsLoading(true);
     
     try {
       // Get AI response
-      const response = await processingFunction(message);
+      const response = await processingFunction(message, imageUrl);
       
       // Add AI response to chat
       addMessage('assistant', response);
@@ -44,6 +53,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     } finally {
       // Clear loading state
       setIsLoading(false);
+      
+      // Revoke the object URL to free memory
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
     }
   };
   
