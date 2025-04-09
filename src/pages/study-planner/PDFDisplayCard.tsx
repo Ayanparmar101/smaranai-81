@@ -8,7 +8,7 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileText } from 'lucide-react';
+import { FileText, AlertTriangle } from 'lucide-react';
 import LoadingState from '@/components/grammar/LoadingState';
 
 interface PDFDisplayCardProps {
@@ -23,6 +23,8 @@ const PDFDisplayCard: React.FC<PDFDisplayCardProps> = ({
   isLoading = false 
 }) => {
   if (!pdfUrl && !chapterContent && !isLoading) return null;
+  
+  const isError = chapterContent.includes("Error extracting text");
   
   if (isLoading) {
     return (
@@ -57,15 +59,29 @@ const PDFDisplayCard: React.FC<PDFDisplayCardProps> = ({
         />
         {chapterContent && chapterContent.length > 0 && (
           <div className="mt-4">
-            <p className="text-sm text-muted-foreground mb-2">
-              PDF text extracted ({Math.round(chapterContent.length / 6)} words):
-            </p>
-            <ScrollArea className="h-[100px] w-full pr-4 border border-gray-200 rounded p-2">
-              <p className="text-xs text-muted-foreground whitespace-pre-line">
-                {chapterContent.slice(0, 500)}... 
-                {chapterContent.length > 500 && " [content truncated for preview]"}
-              </p>
-            </ScrollArea>
+            {isError ? (
+              <div className="p-4 border border-red-300 bg-red-50 rounded-md flex items-start gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-red-700">PDF Text Extraction Failed</p>
+                  <p className="text-sm text-red-600 mt-1">
+                    {chapterContent}. Try uploading a different PDF file that contains selectable text.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground mb-2">
+                  PDF text extracted ({Math.round(chapterContent.length / 6)} words):
+                </p>
+                <ScrollArea className="h-[100px] w-full pr-4 border border-gray-200 rounded p-2">
+                  <p className="text-xs text-muted-foreground whitespace-pre-line">
+                    {chapterContent.slice(0, 500)}... 
+                    {chapterContent.length > 500 && " [content truncated for preview]"}
+                  </p>
+                </ScrollArea>
+              </>
+            )}
           </div>
         )}
       </CardContent>

@@ -3,9 +3,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import * as pdfjs from 'pdfjs-dist';
 
-// Set the worker source
-const pdfjsWorker = `https://unpkg.com/pdfjs-dist@3.4.120/legacy/build/pdf.worker.min.js`;
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Set the worker source using the exact matching version (3.4.120)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
 
 class PDFServiceClass {
   async extractTextFromPDF(file: File): Promise<string> {
