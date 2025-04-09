@@ -4,7 +4,7 @@ import { StudyPlan } from './types';
 import StudyPlanOverview from './components/StudyPlanOverview';
 import DayPlanCard from './components/DayPlanCard';
 import { Button } from '@/components/ui/button';
-import { FilePdf, Printer } from 'lucide-react';
+import { FileText, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface StudyPlanDisplayProps {
@@ -52,7 +52,7 @@ const StudyPlanDisplay: React.FC<StudyPlanDisplayProps> = ({
           className="flex items-center gap-1"
           onClick={handleExportToPDF}
         >
-          <FilePdf className="w-4 h-4" />
+          <FileText className="w-4 h-4" />
           Export PDF
         </Button>
       </div>

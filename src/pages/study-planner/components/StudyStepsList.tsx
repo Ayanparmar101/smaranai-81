@@ -28,7 +28,7 @@ const StudyStepsList: React.FC<StudyStepsListProps> = ({
       <CardHeader>
         <CardTitle className="text-xl font-bold flex items-center gap-2">
           <ListChecks className="w-5 h-5 text-[#EF4444]" />
-          Study Steps
+          <span className="font-semibold">Study Steps</span>
         </CardTitle>
         <CardDescription>
           Complete each step and track your progress

@@ -22,3 +22,11 @@ export interface StudyPlan {
   tips: string[];
   completionPercentage: number;
 }
+
+// Add the StudyPlanStep type for the study steps components
+export interface StudyPlanStep {
+  title: string;
+  description: string;
+  timeAllocation: string;
+  completed: boolean;
+}
