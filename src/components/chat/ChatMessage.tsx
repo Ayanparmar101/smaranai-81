@@ -12,6 +12,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.role === 'user';
   const avatarLetter = isUser ? 'U' : 'A';
   
+  // Handle the timestamp formatting safely
+  const formatTimestamp = (timestamp: Date | string | number) => {
+    if (timestamp instanceof Date) {
+      return timestamp.toLocaleTimeString();
+    } else if (typeof timestamp === 'string') {
+      return new Date(timestamp).toLocaleTimeString();
+    } else if (typeof timestamp === 'number') {
+      return new Date(timestamp).toLocaleTimeString();
+    }
+    return '';
+  };
+  
   return (
     <div
       className={cn(
@@ -42,7 +54,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         )}
         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         <div className="text-xs opacity-50">
-          {message.timestamp.toLocaleTimeString()}
+          {formatTimestamp(message.timestamp)}
         </div>
       </div>
       

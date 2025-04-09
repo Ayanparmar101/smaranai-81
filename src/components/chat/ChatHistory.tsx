@@ -10,10 +10,10 @@ interface ChatHistoryProps {
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   // Create ref for scroll area
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom when messages change
-  React.useEffect(() => {
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
