@@ -1,6 +1,11 @@
 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import * as pdfjs from 'pdfjs-dist';
+
+// Set the worker source
+const pdfjsWorker = `https://unpkg.com/pdfjs-dist@3.4.120/legacy/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 class PDFServiceClass {
   async extractTextFromPDF(file: File): Promise<string> {
@@ -8,13 +13,29 @@ class PDFServiceClass {
       // Read the file as an ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
       
-      // For now, we'll return a placeholder that indicates the PDF was processed
-      // In a real implementation, you would use pdf.js or a similar library to extract text
-      return `[PDF Content from ${file.name}] This is a placeholder for the extracted text from the uploaded PDF. In a real implementation, this would contain the actual text extracted from the PDF file.`;
+      // Load the PDF document
+      const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      
+      let fullText = '';
+      
+      // Extract text from each page
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => 'str' in item ? item.str : '').join(' ');
+        fullText += pageText + '\n\n';
+      }
+      
+      if (fullText.trim().length === 0) {
+        return `[PDF appears to be scanned or contain no extractable text. Please upload a text-based PDF.]`;
+      }
+      
+      return fullText;
     } catch (error) {
       console.error("Error extracting text from PDF:", error);
       toast.error("Failed to extract text from PDF");
-      return "Error extracting text from PDF. Please try again.";
+      return "Error extracting text from PDF. Please try again with a different PDF.";
     }
   }
   

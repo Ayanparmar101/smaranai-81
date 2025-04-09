@@ -18,8 +18,9 @@ const StudyPlannerContainer = () => {
   const [selectedBook, setSelectedBook] = useState<string>("honeydew");
   const [selectedChapter, setSelectedChapter] = useState<string>("");
   const { user } = useAuth();
+  const [isPdfProcessing, setIsPdfProcessing] = useState<boolean>(false);
   
-  const { chapterContent, pdfUrl, handleFileUpload } = useChapterContent(selectedChapter, selectedBook);
+  const { chapterContent, pdfUrl, handleFileUpload } = useChapterContent(selectedChapter, selectedBook, setIsPdfProcessing);
   const { studyPlan, isGenerating, progress, generateStudyPlan, handleStepCompletion } = useStudyPlanGenerator(chapterContent);
 
   useEffect(() => {
@@ -39,6 +40,16 @@ const StudyPlannerContainer = () => {
   };
 
   const handleGenerateStudyPlan = async () => {
+    if (!openaiService.getApiKey()) {
+      toast.error("Please enter your OpenAI API key first");
+      return;
+    }
+    
+    if (!chapterContent || chapterContent.length < 100) {
+      toast.error("Please upload a PDF with sufficient content first");
+      return;
+    }
+    
     await generateStudyPlan(selectedChapter, selectedBook);
   };
   
@@ -103,7 +114,11 @@ const StudyPlannerContainer = () => {
         />
         
         {selectedChapter && (
-          <PDFDisplayCard pdfUrl={pdfUrl} chapterContent={chapterContent} />
+          <PDFDisplayCard 
+            pdfUrl={pdfUrl} 
+            chapterContent={chapterContent} 
+            isLoading={isPdfProcessing}
+          />
         )}
         
         {studyPlan && (

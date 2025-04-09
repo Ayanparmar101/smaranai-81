@@ -4,7 +4,11 @@ import { PDFService } from '@/services/pdfService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export const useChapterContent = (selectedChapter: string, selectedBook: string) => {
+export const useChapterContent = (
+  selectedChapter: string, 
+  selectedBook: string,
+  setIsPdfProcessing?: (isProcessing: boolean) => void
+) => {
   const [chapterContent, setChapterContent] = useState<string>("");
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [uploadedPDFs, setUploadedPDFs] = useState<Record<string, { file: File, url: string | null }>>({});
@@ -13,12 +17,14 @@ export const useChapterContent = (selectedChapter: string, selectedBook: string)
     if (selectedChapter) {
       const loadChapterContent = async () => {
         try {
+          if (setIsPdfProcessing) setIsPdfProcessing(true);
           const chapterId = `${selectedBook}-${selectedChapter}`;
           
           if (uploadedPDFs[chapterId]) {
             const content = await PDFService.extractTextFromPDF(uploadedPDFs[chapterId].file);
             setChapterContent(content);
             setPdfUrl(uploadedPDFs[chapterId].url);
+            if (setIsPdfProcessing) setIsPdfProcessing(false);
             return;
           }
           
@@ -49,26 +55,38 @@ export const useChapterContent = (selectedChapter: string, selectedBook: string)
           toast.error('Failed to load chapter content');
           setChapterContent("Error loading chapter content. Please try again.");
           setPdfUrl(null);
+        } finally {
+          if (setIsPdfProcessing) setIsPdfProcessing(false);
         }
       };
       
       loadChapterContent();
     }
-  }, [selectedChapter, selectedBook, uploadedPDFs]);
+  }, [selectedChapter, selectedBook, uploadedPDFs, setIsPdfProcessing]);
 
-  const handleFileUpload = (file: File, publicUrl: string | null) => {
+  const handleFileUpload = async (file: File, publicUrl: string | null) => {
     const chapterId = `${selectedBook}-${selectedChapter}`;
     if (file) {
-      setUploadedPDFs(prev => ({
-        ...prev,
-        [chapterId]: { file, url: publicUrl }
-      }));
-      setPdfUrl(publicUrl);
-      toast.success(`PDF uploaded for ${chapterId}`);
-      
-      PDFService.extractTextFromPDF(file).then(content => {
+      try {
+        if (setIsPdfProcessing) setIsPdfProcessing(true);
+        toast.info("Processing PDF...");
+        
+        setUploadedPDFs(prev => ({
+          ...prev,
+          [chapterId]: { file, url: publicUrl }
+        }));
+        setPdfUrl(publicUrl);
+        
+        const content = await PDFService.extractTextFromPDF(file);
         setChapterContent(content);
-      });
+        
+        toast.success(`PDF uploaded and processed for ${chapterId}`);
+      } catch (error) {
+        console.error("Error processing PDF:", error);
+        toast.error("Failed to process PDF content");
+      } finally {
+        if (setIsPdfProcessing) setIsPdfProcessing(false);
+      }
     }
   };
 

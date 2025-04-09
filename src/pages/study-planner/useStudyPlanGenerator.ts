@@ -23,6 +23,7 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
 
     try {
       setIsGenerating(true);
+      toast.info("Analyzing PDF content and generating study plan...");
       
       // Find the chapter details to include in the prompt
       const book = books.find(b => b.id === selectedBook);
@@ -34,8 +35,25 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
         return;
       }
       
+      // Check if PDF content is sufficient
+      const contentSample = chapterContent.slice(0, 500);
+      console.log("PDF content sample:", contentSample);
+      
+      if (chapterContent.length < 200) {
+        toast.error("The PDF content is too short or couldn't be properly extracted. Please try a different PDF.");
+        setIsGenerating(false);
+        return;
+      }
+      
+      // Limit content size if it's too large to avoid token limits
+      let processedContent = chapterContent;
+      if (chapterContent.length > 15000) {
+        processedContent = chapterContent.slice(0, 15000) + 
+          "\n\n[Content truncated due to length. Please analyze the above portion thoroughly.]";
+      }
+
       const systemPrompt = `You are an expert educational consultant specializing in creating personalized study plans for students. 
-      Create a detailed, structured study plan for the provided chapter's content. The response should be in JSON format with the following structure:
+      Create a detailed, structured study plan based SOLELY on the provided chapter's PDF content. The response should be in JSON format with the following structure:
       
       {
         "chapterTitle": "Title of the chapter",
@@ -90,56 +108,75 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       }
       
       Make sure to:
-      1. Thoroughly analyze the ENTIRE chapter content provided and base your study plan on that specific content
-      2. Extract 4-7 key topics directly from the provided chapter content
-      3. Identify any 2-4 prerequisites needed to understand this chapter (or empty array if not needed)
-      4. Create 3 days of detailed study steps with appropriate tasks for each day based on the chapter's content
-      5. Include 3-5 practical study tips relevant to this particular chapter
-      6. Keep descriptions concise but informative
-      7. Set all completed values to false
-      8. Set completionPercentage to 0
-      9. Use specific examples and references from the chapter content when describing tasks
+      1. READ THE ENTIRE PDF CONTENT THOROUGHLY. Your study plan must be based EXCLUSIVELY on the content provided from the PDF, not general knowledge.
+      2. Include ACTUAL topics, examples, and details FROM THE PDF in your study plan
+      3. Extract 4-7 key topics directly from the PDF content
+      4. Identify any 2-4 prerequisites needed to understand this chapter based on content references (or empty array if not needed)
+      5. Create 3 days of detailed study steps with tasks that reference specific content from the PDF
+      6. Include 3-5 practical study tips relevant to this particular content
+      7. Keep descriptions concise but informative
+      8. Set all completed values to false
+      9. Set completionPercentage to 0
+      10. Use specific examples, terms, and references from the chapter content when describing tasks
       
-      IMPORTANT: Your response MUST be a valid JSON object only, with no additional text, markdown formatting, or code blocks.`;
+      IMPORTANT: Return ONLY valid JSON without any text before or after the JSON object. Do not include markdown formatting, code blocks, or any other text.`;
 
-      const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nChapter Content: ${chapterContent}`;
+      const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nChapter Content from PDF: ${processedContent}`;
 
       let jsonResponse;
       
       try {
-        const response = await openaiService.createCompletion(systemPrompt, userPrompt, { max_tokens: 3000 });
+        console.log("Sending request to OpenAI...");
+        const response = await openaiService.createCompletion(systemPrompt, userPrompt, { 
+          max_tokens: 3500,
+          temperature: 0.2 // Lower temperature for more focused, consistent results
+        });
         
-        // Extract JSON from the response by removing markdown code blocks if present
+        console.log("Raw response from OpenAI:", response.substring(0, 100) + "...");
+        
+        // Clean the response to handle any potential markdown or text formatting
         let cleanedResponse = response;
-        if (response.includes('```json')) {
+        
+        // Try to extract JSON from the response if wrapped in markdown
+        if (response.includes('```json') || response.includes('```')) {
           // Extract content between ```json and ```
-          const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
+          const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
           if (jsonMatch && jsonMatch[1]) {
             cleanedResponse = jsonMatch[1];
-          } else {
-            // Try matching without json specifier
-            const markdownMatch = response.match(/```\s*([\s\S]*?)\s*```/);
-            if (markdownMatch && markdownMatch[1]) {
-              cleanedResponse = markdownMatch[1];
-            }
           }
         }
         
-        console.log('Attempting to parse:', cleanedResponse);
+        // Additional cleaning - remove any non-JSON text before or after
+        cleanedResponse = cleanedResponse.trim();
+        
+        // If the response starts with something that's not a { character, try to find the first {
+        if (!cleanedResponse.startsWith('{')) {
+          const jsonStart = cleanedResponse.indexOf('{');
+          if (jsonStart !== -1) {
+            cleanedResponse = cleanedResponse.substring(jsonStart);
+          }
+        }
+        
+        // If the response doesn't end with a } character, try to find the last }
+        if (!cleanedResponse.endsWith('}')) {
+          const jsonEnd = cleanedResponse.lastIndexOf('}');
+          if (jsonEnd !== -1) {
+            cleanedResponse = cleanedResponse.substring(0, jsonEnd + 1);
+          }
+        }
+        
+        console.log("Attempting to parse cleaned JSON:", cleanedResponse.substring(0, 100) + "...");
         jsonResponse = JSON.parse(cleanedResponse);
         console.log('Successfully parsed JSON response');
       } catch (error) {
         console.error("Error parsing JSON response:", error);
-        toast.error("Error generating study plan. Please try again.");
+        toast.error("Error generating study plan. Please try again with a different PDF or chapter.");
         setIsGenerating(false);
         return;
       }
       
       setStudyPlan(jsonResponse);
-      toast.success("Study plan generated successfully!");
-
-      // Save to Supabase if user is logged in
-      // This would be implemented in a later step
+      toast.success("Study plan generated successfully based on the PDF content!");
       
     } catch (error) {
       console.error("Error:", error);
