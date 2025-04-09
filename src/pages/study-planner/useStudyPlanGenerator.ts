@@ -35,7 +35,7 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       }
       
       const systemPrompt = `You are an expert educational consultant specializing in creating personalized study plans for students. 
-      Create a detailed, structured study plan for the provided chapter. The response should be in JSON format with the following structure:
+      Create a detailed, structured study plan for the provided chapter's content. The response should be in JSON format with the following structure:
       
       {
         "chapterTitle": "Title of the chapter",
@@ -90,17 +90,19 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       }
       
       Make sure to:
-      1. Include 4-7 key topics
-      2. Include 2-4 prerequisites (or empty array if not needed)
-      3. Provide 3 days of detailed study steps with appropriate tasks for each day
-      4. Include 3-5 practical study tips
-      5. Keep descriptions concise but informative
-      6. Set all completed values to false
-      7. Set completionPercentage to 0
+      1. Thoroughly analyze the ENTIRE chapter content provided and base your study plan on that specific content
+      2. Extract 4-7 key topics directly from the provided chapter content
+      3. Identify any 2-4 prerequisites needed to understand this chapter (or empty array if not needed)
+      4. Create 3 days of detailed study steps with appropriate tasks for each day based on the chapter's content
+      5. Include 3-5 practical study tips relevant to this particular chapter
+      6. Keep descriptions concise but informative
+      7. Set all completed values to false
+      8. Set completionPercentage to 0
+      9. Use specific examples and references from the chapter content when describing tasks
       
       You must respond with ONLY the valid JSON, nothing else.`;
 
-      const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nContent: ${chapterContent}`;
+      const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nChapter Content: ${chapterContent}`;
 
       let jsonResponse;
       
