@@ -1,19 +1,23 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
 import ApiKeyInput from '@/components/ApiKeyInput';
-import openaiService from '@/services/openaiService';
+import { openaiService } from '@/services/openai';
 import StudyPlanDisplay from './StudyPlanDisplay';
 import IntroCard from './IntroCard';
 import ChapterSelectionCard from './ChapterSelectionCard';
 import PDFDisplayCard from './PDFDisplayCard';
 import { useChapterContent } from './useChapterContent';
 import { useStudyPlanGenerator } from './useStudyPlanGenerator';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { StudyPlan } from './types';
+import { toast } from 'sonner';
 
 const StudyPlannerContainer = () => {
   const [selectedClass, setSelectedClass] = useState<string>("8");
   const [selectedBook, setSelectedBook] = useState<string>("honeydew");
   const [selectedChapter, setSelectedChapter] = useState<string>("");
+  const { user } = useAuth();
   
   const { chapterContent, pdfUrl, handleFileUpload } = useChapterContent(selectedChapter, selectedBook);
   const { studyPlan, isGenerating, progress, generateStudyPlan, handleStepCompletion } = useStudyPlanGenerator(chapterContent);
@@ -32,14 +36,49 @@ const StudyPlannerContainer = () => {
 
   const handleChapterSelect = (chapterId: string) => {
     setSelectedChapter(chapterId);
-    // Resetting study plan when chapter changes
-    if (studyPlan) {
-      // Don't try to call the hook setter directly
-    }
   };
 
-  const handleGenerateStudyPlan = () => {
-    generateStudyPlan(selectedChapter, selectedBook);
+  const handleGenerateStudyPlan = async () => {
+    await generateStudyPlan(selectedChapter, selectedBook);
+  };
+  
+  const saveStudyPlan = async () => {
+    if (!user) {
+      toast.error("Please log in to save your study plan");
+      return;
+    }
+    
+    if (!studyPlan) {
+      toast.error("No study plan to save");
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          user_id: user.id,
+          chat_type: 'study-planner',
+          text: `${selectedBook} - ${selectedChapter}`,
+          ai_response: JSON.stringify(studyPlan),
+          additional_data: {
+            chapter_id: selectedChapter,
+            book_id: selectedBook,
+            progress: progress
+          }
+        });
+        
+      if (error) {
+        console.error("Error saving study plan:", error);
+        toast.error("Failed to save study plan");
+        return;
+      }
+      
+      toast.success("Study plan saved successfully!");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to save study plan");
+    }
   };
 
   return (
@@ -59,6 +98,8 @@ const StudyPlannerContainer = () => {
           generateStudyPlan={handleGenerateStudyPlan}
           isGenerating={isGenerating}
           handleFileUpload={handleFileUpload}
+          onSaveStudyPlan={saveStudyPlan}
+          canSave={!!studyPlan && !!user}
         />
         
         {selectedChapter && (

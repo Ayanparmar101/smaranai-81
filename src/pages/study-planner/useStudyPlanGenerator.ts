@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import openaiService from '@/services/openaiService';
+import { openaiService } from '@/services/openai';
 import { toast } from 'sonner';
 import { StudyPlan } from './types';
 import { books } from '../teacher/ChapterSelector';
@@ -40,7 +40,7 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       {
         "chapterTitle": "Title of the chapter",
         "approach": "A brief 2-3 sentence overview of how to approach studying this chapter",
-        "timeEstimate": "Estimated time to complete the study plan (e.g., '3-4 hours')",
+        "timeEstimate": "Estimated time to complete the study plan (e.g., '3 days')",
         "keyTopics": [
           { "topic": "Key topic 1", "importance": "Brief explanation of why this topic is important" },
           { "topic": "Key topic 2", "importance": "Brief explanation of why this topic is important" }
@@ -51,17 +51,40 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
         ],
         "steps": [
           { 
-            "title": "Step 1: Title", 
-            "description": "Detailed description", 
-            "timeAllocation": "30 minutes", 
-            "completed": false 
+            "day": 1,
+            "title": "Understanding the Narrative",
+            "tasks": [
+              {
+                "name": "Read & Annotate",
+                "duration": "45 mins",
+                "details": "Highlight key events and write short margin notes.",
+                "completed": false
+              },
+              {
+                "name": "Vocabulary Table",
+                "duration": "20 mins",
+                "details": "Word | Meaning | Sentence format.",
+                "completed": false
+              }
+            ]
           },
-          { 
-            "title": "Step 2: Title", 
-            "description": "Detailed description", 
-            "timeAllocation": "45 minutes", 
-            "completed": false 
+          {
+            "day": 2,
+            "title": "Another Day Title",
+            "tasks": [
+              {
+                "name": "Another Task",
+                "duration": "30 mins",
+                "details": "Task details here",
+                "completed": false
+              }
+            ]
           }
+        ],
+        "tips": [
+          "Use Pomodoro technique for better focus",
+          "Teach someone else to improve retention",
+          "Use visual diagrams to map out places/events"
         ],
         "completionPercentage": 0
       }
@@ -69,19 +92,20 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       Make sure to:
       1. Include 4-7 key topics
       2. Include 2-4 prerequisites (or empty array if not needed)
-      3. Provide 5-8 detailed study steps
-      4. Keep descriptions concise but informative
-      5. Set all completed values to false
-      6. Set completionPercentage to 0
+      3. Provide 3 days of detailed study steps with appropriate tasks for each day
+      4. Include 3-5 practical study tips
+      5. Keep descriptions concise but informative
+      6. Set all completed values to false
+      7. Set completionPercentage to 0
       
       You must respond with ONLY the valid JSON, nothing else.`;
 
-      const userPrompt = `Here is the chapter to create a study plan for:\n\nTitle: ${chapter.name}\n\nContent: ${chapterContent}`;
+      const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nContent: ${chapterContent}`;
 
       let jsonResponse;
       
       try {
-        const response = await openaiService.createCompletion(systemPrompt, userPrompt, { max_tokens: 2000 });
+        const response = await openaiService.createCompletion(systemPrompt, userPrompt, { max_tokens: 3000 });
         jsonResponse = JSON.parse(response);
       } catch (error) {
         console.error("Error parsing JSON response:", error);
@@ -92,6 +116,10 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       
       setStudyPlan(jsonResponse);
       toast.success("Study plan generated successfully!");
+
+      // Save to Supabase if user is logged in
+      // This would be implemented in a later step
+      
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to generate study plan. Please try again.");
@@ -100,15 +128,27 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
     }
   };
 
-  const handleStepCompletion = (index: number) => {
+  const handleStepCompletion = (dayIndex: number, taskIndex: number) => {
     if (!studyPlan) return;
     
     const updatedPlan = { ...studyPlan };
-    updatedPlan.steps[index].completed = !updatedPlan.steps[index].completed;
+    const task = updatedPlan.steps[dayIndex].tasks[taskIndex];
+    task.completed = !task.completed;
     
     // Calculate completion percentage
-    const completedSteps = updatedPlan.steps.filter(step => step.completed).length;
-    updatedPlan.completionPercentage = Math.round((completedSteps / updatedPlan.steps.length) * 100);
+    let completedTasks = 0;
+    let totalTasks = 0;
+    
+    updatedPlan.steps.forEach(day => {
+      day.tasks.forEach(task => {
+        totalTasks++;
+        if (task.completed) {
+          completedTasks++;
+        }
+      });
+    });
+    
+    updatedPlan.completionPercentage = Math.round((completedTasks / totalTasks) * 100);
     
     setStudyPlan(updatedPlan);
     setProgress(updatedPlan.completionPercentage);

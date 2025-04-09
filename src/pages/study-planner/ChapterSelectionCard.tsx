@@ -6,7 +6,7 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
-import { Book, Brain } from 'lucide-react';
+import { Book, Brain, Save } from 'lucide-react';
 import ChapterSelector from '../teacher/ChapterSelector';
 import DoodleButton from '@/components/DoodleButton';
 import { ChapterPDFUploader } from '@/components/ChapterPDFUploader';
@@ -21,6 +21,8 @@ interface ChapterSelectionCardProps {
   generateStudyPlan: () => void;
   isGenerating: boolean;
   handleFileUpload: (file: File, publicUrl: string | null) => void;
+  onSaveStudyPlan?: () => void;
+  canSave?: boolean;
 }
 
 const ChapterSelectionCard: React.FC<ChapterSelectionCardProps> = ({
@@ -32,10 +34,12 @@ const ChapterSelectionCard: React.FC<ChapterSelectionCardProps> = ({
   setSelectedChapter,
   generateStudyPlan,
   isGenerating,
-  handleFileUpload
+  handleFileUpload,
+  onSaveStudyPlan,
+  canSave = false
 }) => {
   return (
-    <Card className="border-3 border-black shadow-neo-md">
+    <Card className="border-3 border-black shadow-neo-md print:hidden">
       <CardHeader>
         <CardTitle className="text-xl font-bold flex items-center gap-2">
           <Book className="w-5 h-5 text-[#5B86E5]" />
@@ -53,7 +57,7 @@ const ChapterSelectionCard: React.FC<ChapterSelectionCardProps> = ({
         />
         
         {selectedChapter && (
-          <div className="mt-4 flex justify-between items-center">
+          <div className="mt-4 flex flex-wrap gap-2">
             <ChapterPDFUploader 
               onFileUpload={handleFileUpload}
               chapterId={`${selectedBook}-${selectedChapter}`}
@@ -66,6 +70,17 @@ const ChapterSelectionCard: React.FC<ChapterSelectionCardProps> = ({
             >
               {isGenerating ? "Generating Plan..." : "Generate Study Plan"}
             </DoodleButton>
+            
+            {onSaveStudyPlan && (
+              <DoodleButton
+                onClick={onSaveStudyPlan}
+                disabled={!canSave}
+                icon={<Save size={18} />}
+                color="green"
+              >
+                Save Plan
+              </DoodleButton>
+            )}
           </div>
         )}
       </CardContent>

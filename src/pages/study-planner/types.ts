@@ -1,9 +1,15 @@
 
-export interface StudyPlanStep {
+export interface StudyTask {
+  name: string;
+  duration: string;
+  details: string;
+  completed?: boolean;
+}
+
+export interface StudyDay {
+  day: number;
   title: string;
-  description: string;
-  timeAllocation: string;
-  completed: boolean;
+  tasks: StudyTask[];
 }
 
 export interface StudyPlan {
@@ -12,6 +18,7 @@ export interface StudyPlan {
   timeEstimate: string;
   keyTopics: { topic: string; importance: string }[];
   prerequisites: { topic: string; reason: string }[];
-  steps: StudyPlanStep[];
+  steps: StudyDay[];
+  tips: string[];
   completionPercentage: number;
 }

@@ -9,6 +9,7 @@ import StudyPlanHeader from './StudyPlanHeader';
 import ApproachSection from './ApproachSection';
 import TopicsList from './TopicsList';
 import PrerequisitesList from './PrerequisitesList';
+import StudyTips from './StudyTips';
 
 interface StudyPlanOverviewProps {
   chapterTitle: string;
@@ -16,6 +17,7 @@ interface StudyPlanOverviewProps {
   approach: string;
   keyTopics: { topic: string; importance: string }[];
   prerequisites: { topic: string; reason: string }[];
+  tips: string[];
 }
 
 const StudyPlanOverview: React.FC<StudyPlanOverviewProps> = ({
@@ -23,10 +25,11 @@ const StudyPlanOverview: React.FC<StudyPlanOverviewProps> = ({
   timeEstimate,
   approach,
   keyTopics,
-  prerequisites
+  prerequisites,
+  tips
 }) => {
   return (
-    <Card className="border-3 border-black shadow-neo-md">
+    <Card className="border-3 border-black shadow-neo-md print:break-inside-avoid">
       <StudyPlanHeader 
         chapterTitle={chapterTitle} 
         timeEstimate={timeEstimate} 
@@ -38,6 +41,7 @@ const StudyPlanOverview: React.FC<StudyPlanOverviewProps> = ({
           <Accordion type="single" collapsible className="w-full">
             <TopicsList topics={keyTopics} />
             <PrerequisitesList prerequisites={prerequisites} />
+            <StudyTips tips={tips} />
           </Accordion>
         </div>
       </CardContent>
