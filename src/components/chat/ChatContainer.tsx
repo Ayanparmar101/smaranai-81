@@ -36,9 +36,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       messageContent = message || "Image"; // Use "Image" as message if text is empty
     }
     
-    // Add user message to chat
-    addMessage('user', messageContent, imageUrl);
-    console.log("User message added to chat history");
+    // Add user message to chat history and save it as a reference
+    const userMessage = addMessage('user', messageContent, imageUrl);
+    console.log("User message added to chat history with ID:", userMessage.id);
     
     // Set loading state
     setIsLoading(true);
@@ -47,7 +47,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Get AI response - pass both message and imageUrl to processing function
       const response = await processingFunction(message, imageUrl);
       
-      // Add AI response to chat
+      // Add AI response to chat - this should NOT remove the user message
       addMessage('assistant', response);
       console.log("AI response added to chat history");
     } catch (error) {

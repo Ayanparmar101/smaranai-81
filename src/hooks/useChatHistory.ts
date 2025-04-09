@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Message } from '../types';
@@ -28,9 +27,24 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
       console.log("Current messages:", prevMessages);
       console.log("Adding message:", newMessage);
       
-      const updatedMessages = [...prevMessages, newMessage];
-      console.log("Updated messages array:", updatedMessages);
-      return updatedMessages;
+      // Get unique messages (by ID and role) to prevent duplicates and ensure proper ordering
+      // This is crucial to maintain both user and assistant messages
+      const allMessages = [...prevMessages, newMessage];
+      
+      // Keep track of seen messages to avoid duplicates
+      const seenMessagesMap = new Map();
+      const uniqueMessages = [];
+      
+      for (const msg of allMessages) {
+        const key = msg.id;
+        if (!seenMessagesMap.has(key)) {
+          seenMessagesMap.set(key, true);
+          uniqueMessages.push(msg);
+        }
+      }
+      
+      console.log("Updated messages array:", uniqueMessages);
+      return uniqueMessages;
     });
     
     return newMessage;
