@@ -23,6 +23,7 @@ const HindiChatbotPage = () => {
           }
           
           const response = await openaiService.createCompletion(systemPrompt, userPrompt);
+          console.log("Received AI response, user message was:", message);
           return response;
         } catch (error) {
           console.error("Error processing message:", error);

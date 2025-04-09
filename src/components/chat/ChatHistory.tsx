@@ -19,8 +19,14 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
       // Use a small timeout to ensure DOM is updated
       setTimeout(() => {
         scrollElement.scrollTop = scrollElement.scrollHeight;
+        console.log("Scrolling to bottom, messages length:", messages.length);
       }, 100);
     }
+  }, [messages]);
+  
+  // Log messages for debugging
+  useEffect(() => {
+    console.log("ChatHistory rendering messages:", messages);
   }, [messages]);
   
   return (
@@ -32,7 +38,10 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
           </div>
         ) : (
           messages.map((message, index) => (
-            <ChatMessage key={`${message.id}-${index}`} message={message} />
+            <ChatMessage 
+              key={`${message.id || index}-${index}`} 
+              message={message} 
+            />
           ))
         )}
       </div>

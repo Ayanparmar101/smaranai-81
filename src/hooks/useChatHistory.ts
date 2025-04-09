@@ -18,14 +18,18 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
       id: uuidv4(),
       role,
       content,
-      imageUrl, // Include imageUrl when creating a new message
+      imageUrl,
       timestamp: new Date()
     };
     
     // Use a function to update state to ensure we're working with the latest state
     setMessages((prevMessages: Message[]) => {
+      // Log both the current messages and the message we're adding for debugging
+      console.log("Current messages:", prevMessages);
+      console.log("Adding message:", newMessage);
+      
       const updatedMessages = [...prevMessages, newMessage];
-      console.log("Updated messages array:", updatedMessages); // Debug log
+      console.log("Updated messages array:", updatedMessages);
       return updatedMessages;
     });
     

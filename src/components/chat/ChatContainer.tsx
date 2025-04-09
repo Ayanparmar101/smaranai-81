@@ -37,8 +37,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     }
     
     // Add user message to chat
-    const userMessage = addMessage('user', messageContent, imageUrl);
-    console.log("Added user message:", userMessage); // Debug log
+    addMessage('user', messageContent, imageUrl);
+    console.log("User message added to chat history");
     
     // Set loading state
     setIsLoading(true);
@@ -49,6 +49,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       
       // Add AI response to chat
       addMessage('assistant', response);
+      console.log("AI response added to chat history");
     } catch (error) {
       handleApiError(error);
       // Add error message to chat
