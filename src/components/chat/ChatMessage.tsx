@@ -14,12 +14,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   
   // Handle the timestamp formatting safely
   const formatTimestamp = (timestamp: Date | string | number) => {
-    if (timestamp instanceof Date) {
-      return timestamp.toLocaleTimeString();
-    } else if (typeof timestamp === 'string') {
-      return new Date(timestamp).toLocaleTimeString();
-    } else if (typeof timestamp === 'number') {
-      return new Date(timestamp).toLocaleTimeString();
+    try {
+      if (timestamp instanceof Date) {
+        return timestamp.toLocaleTimeString();
+      } else if (typeof timestamp === 'string') {
+        return new Date(timestamp).toLocaleTimeString();
+      } else if (typeof timestamp === 'number') {
+        return new Date(timestamp).toLocaleTimeString();
+      }
+    } catch (error) {
+      console.error("Error formatting timestamp:", error);
     }
     return '';
   };

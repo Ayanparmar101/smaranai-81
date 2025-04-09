@@ -10,6 +10,8 @@ const HindiChatbotPage = () => {
       storageKey="hindi-chatbot" 
       processingFunction={async (message, imageUrl) => {
         try {
+          console.log("Processing message:", message); // Debug log
+          
           // Use OpenAI API to process the message
           const systemPrompt = "You are a helpful Hindi chatbot. Always respond in Hindi script. If the user sends a message in English, translate it to Hindi and then respond in Hindi. Be polite, helpful, and engaging.";
           

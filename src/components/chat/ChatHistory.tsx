@@ -27,8 +27,8 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
             कोई संदेश नहीं। बातचीत शुरू करें! (No messages yet. Start a conversation!)
           </div>
         ) : (
-          messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
+          messages.map((message, index) => (
+            <ChatMessage key={`${message.id}-${index}`} message={message} />
           ))
         )}
       </div>

@@ -37,7 +37,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     }
     
     // Add user message to chat
-    addMessage('user', messageContent, imageUrl);
+    const userMessage = addMessage('user', messageContent, imageUrl);
+    console.log("Added user message:", userMessage); // Debug log
     
     // Set loading state
     setIsLoading(true);
