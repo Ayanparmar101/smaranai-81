@@ -8,6 +8,7 @@ export interface OpenAICompletion {
   temperature?: number;
   max_tokens?: number;
   stream?: boolean;
+  response_format?: { type: string }; // Add this to support JSON response format
 }
 
 export interface CompletionOptions {
