@@ -15,7 +15,11 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const scrollElement = scrollRef.current;
+      // Use a small timeout to ensure DOM is updated
+      setTimeout(() => {
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      }, 100);
     }
   }, [messages]);
   

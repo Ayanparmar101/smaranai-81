@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Message } from '../types';
@@ -21,7 +22,13 @@ export const useChatHistory = (storageKey: string = 'chatHistory') => {
       timestamp: new Date()
     };
     
-    setMessages((prevMessages: Message[]) => [...prevMessages, newMessage]);
+    // Use a function to update state to ensure we're working with the latest state
+    setMessages((prevMessages: Message[]) => {
+      const updatedMessages = [...prevMessages, newMessage];
+      console.log("Updated messages array:", updatedMessages); // Debug log
+      return updatedMessages;
+    });
+    
     return newMessage;
   }, [setMessages]);
 
