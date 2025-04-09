@@ -100,7 +100,7 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       8. Set completionPercentage to 0
       9. Use specific examples and references from the chapter content when describing tasks
       
-      You must respond with ONLY the valid JSON, nothing else.`;
+      IMPORTANT: Your response MUST be a valid JSON object only, with no additional text, markdown formatting, or code blocks.`;
 
       const userPrompt = `Here is the chapter to create a study plan for:\n\nSubject: ${book?.name || 'English'}\nGrade: ${selectedBook.includes('8') ? '8' : 'Middle School'}\nTitle: ${chapter.name}\n\nChapter Content: ${chapterContent}`;
 
@@ -108,7 +108,26 @@ export const useStudyPlanGenerator = (chapterContent: string) => {
       
       try {
         const response = await openaiService.createCompletion(systemPrompt, userPrompt, { max_tokens: 3000 });
-        jsonResponse = JSON.parse(response);
+        
+        // Extract JSON from the response by removing markdown code blocks if present
+        let cleanedResponse = response;
+        if (response.includes('```json')) {
+          // Extract content between ```json and ```
+          const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
+          if (jsonMatch && jsonMatch[1]) {
+            cleanedResponse = jsonMatch[1];
+          } else {
+            // Try matching without json specifier
+            const markdownMatch = response.match(/```\s*([\s\S]*?)\s*```/);
+            if (markdownMatch && markdownMatch[1]) {
+              cleanedResponse = markdownMatch[1];
+            }
+          }
+        }
+        
+        console.log('Attempting to parse:', cleanedResponse);
+        jsonResponse = JSON.parse(cleanedResponse);
+        console.log('Successfully parsed JSON response');
       } catch (error) {
         console.error("Error parsing JSON response:", error);
         toast.error("Error generating study plan. Please try again.");

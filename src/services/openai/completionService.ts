@@ -30,10 +30,16 @@ class CompletionService {
           role: "user",
           content: userPrompt,
         },
+        // Add a clear instruction about the response format
+        {
+          role: "system",
+          content: "Remember to return only valid JSON without any markdown formatting or code blocks."
+        }
       ],
       temperature,
       max_tokens,
       stream,
+      response_format: { type: "json_object" } // Use the response_format parameter to ensure proper JSON
     };
 
     try {
@@ -76,13 +82,17 @@ class CompletionService {
       throw new Error("API key not set");
     }
 
+    // Remove response_format for streaming as it's not compatible
+    const streamPayload = { ...payload };
+    delete streamPayload.response_format;
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({ ...payload, stream: true }),
+      body: JSON.stringify({ ...streamPayload, stream: true }),
     });
 
     if (!response.ok) {
