@@ -1,62 +1,68 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { 
   Card, 
   CardContent, 
+  CardFooter, 
   CardHeader, 
-  CardTitle,
+  CardTitle, 
   CardDescription
 } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileText, AlertTriangle } from 'lucide-react';
+import { FileText, AlertTriangle, Sparkles } from 'lucide-react';
 import LoadingState from '@/components/grammar/LoadingState';
 
 interface PDFDisplayCardProps {
-  pdfUrl: string | null;
-  chapterContent: string;
+  pdfUrl?: string;
+  chapterContent?: string;
+  onReset?: () => void;
   isLoading?: boolean;
 }
 
-const PDFDisplayCard: React.FC<PDFDisplayCardProps> = ({ 
+const PDFDisplayCard = ({ 
   pdfUrl, 
-  chapterContent, 
+  chapterContent = "", 
+  onReset,
   isLoading = false 
 }) => {
   if (!pdfUrl && !chapterContent && !isLoading) return null;
   
-  const isError = chapterContent.includes("Error extracting text");
+  const isError = chapterContent?.includes("Error extracting text");
+  const isOCR = chapterContent?.length > 0 && !isError && !chapterContent?.includes("Page 1");
   
   if (isLoading) {
     return (
-      <Card className="border-3 border-black shadow-neo-md">
+      <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Chapter Content</CardTitle>
-          <CardDescription>Extracting text from PDF...</CardDescription>
+          <CardTitle>Processing PDF</CardTitle>
+          <CardDescription>Please wait while we extract the text from your PDF...</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center py-8">
-          <LoadingState message="Processing PDF..." size="sm" />
+        <CardContent>
+          <LoadingState />
         </CardContent>
       </Card>
     );
   }
-  
-  return pdfUrl ? (
-    <Card className="border-3 border-black shadow-neo-md">
+
+  return (
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          Chapter PDF
-        </CardTitle>
-        <CardDescription>
-          The uploaded PDF will be used to generate your study plan
-        </CardDescription>
+        <CardTitle>PDF Preview</CardTitle>
+        <CardDescription>The text extracted from your PDF will be used to generate a study plan</CardDescription>
       </CardHeader>
       <CardContent>
-        <iframe 
-          src={pdfUrl} 
-          className="w-full h-[400px] border-3 border-black rounded-md shadow-neo-sm"
-          title="Chapter PDF"
-        />
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="h-5 w-5 text-blue-500" />
+          <a 
+            href={pdfUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            View Original PDF
+          </a>
+        </div>
         {chapterContent && chapterContent.length > 0 && (
           <div className="mt-4">
             {isError ? (
@@ -71,9 +77,17 @@ const PDFDisplayCard: React.FC<PDFDisplayCardProps> = ({
               </div>
             ) : (
               <>
-                <p className="text-sm text-muted-foreground mb-2">
-                  PDF text extracted ({Math.round(chapterContent.length / 6)} words):
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-muted-foreground">
+                    PDF text extracted ({Math.round(chapterContent.length / 6)} words)
+                  </p>
+                  {isOCR && (
+                    <div className="flex items-center gap-1 bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">
+                      <Sparkles className="h-3 w-3" />
+                      <span>OCR Processed</span>
+                    </div>
+                  )}
+                </div>
                 <ScrollArea className="h-[100px] w-full pr-4 border border-gray-200 rounded p-2">
                   <p className="text-xs text-muted-foreground whitespace-pre-line">
                     {chapterContent.slice(0, 500)}... 
@@ -85,25 +99,11 @@ const PDFDisplayCard: React.FC<PDFDisplayCardProps> = ({
           </div>
         )}
       </CardContent>
-    </Card>
-  ) : (
-    <Card className="border-3 border-black shadow-neo-md">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold">Chapter Content</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[300px] w-full pr-4 border-3 border-black rounded-md shadow-neo-sm">
-          <div className="p-4">
-            {chapterContent ? (
-              <p className="whitespace-pre-line">{chapterContent}</p>
-            ) : (
-              <p className="text-center text-muted-foreground">
-                Upload a PDF to view the chapter content
-              </p>
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
+      {onReset && (
+        <CardFooter>
+          <Button onClick={onReset} variant="outline">Upload a Different PDF</Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };
