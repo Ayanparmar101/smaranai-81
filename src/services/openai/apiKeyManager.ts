@@ -6,6 +6,12 @@ class ApiKeyManager {
   private apiKey: string | null = null;
 
   constructor() {
+    // Always prioritize env variables first
+    this.loadApiKey();
+  }
+  
+  // Load the API key from environment or localStorage
+  private loadApiKey(): void {
     // Try to get the API key from env
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
@@ -25,6 +31,12 @@ class ApiKeyManager {
   }
 
   getApiKey(): string | null {
+    // Always check env variable first in case it was updated
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      return envApiKey;
+    }
+    // Fall back to stored key
     return this.apiKey;
   }
 

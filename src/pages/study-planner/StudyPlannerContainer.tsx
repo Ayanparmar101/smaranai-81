@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import { openaiService } from '@/services/openai';
@@ -10,8 +9,8 @@ import { useChapterContent } from './useChapterContent';
 import { useStudyPlanGenerator } from './useStudyPlanGenerator';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { StudyPlan } from './types';
 import { toast } from 'sonner';
+import { useOpenAIKey } from '@/hooks/useOpenAIKey';
 
 const StudyPlannerContainer = () => {
   const [selectedClass, setSelectedClass] = useState<string>("8");
@@ -23,18 +22,8 @@ const StudyPlannerContainer = () => {
   const { chapterContent, pdfUrl, handleFileUpload } = useChapterContent(selectedChapter, selectedBook, setIsPdfProcessing);
   const { studyPlan, isGenerating, progress, generateStudyPlan, handleStepCompletion } = useStudyPlanGenerator(chapterContent);
 
-  useEffect(() => {
-    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envApiKey) {
-      openaiService.setApiKey(envApiKey);
-    } else {
-      const savedApiKey = localStorage.getItem('openaiApiKey');
-      if (savedApiKey) {
-        openaiService.setApiKey(savedApiKey);
-      }
-    }
-  }, []);
-
+  useOpenAIKey();
+  
   const handleChapterSelect = (chapterId: string) => {
     setSelectedChapter(chapterId);
   };
@@ -51,14 +40,12 @@ const StudyPlannerContainer = () => {
       return false;
     }
     
-    // Check if it's in valid format first
     if (!(apiKey.startsWith('sk-') || apiKey.startsWith('sk-proj-')) || apiKey.length < 20) {
       toast.error("Invalid API key format. OpenAI API keys should start with 'sk-' or 'sk-proj-'");
       return false;
     }
     
     try {
-      // For project API keys, we need to add the OpenAI-Beta header
       const headers: Record<string, string> = {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
@@ -68,7 +55,6 @@ const StudyPlannerContainer = () => {
         headers['OpenAI-Beta'] = 'assistants=v1';
       }
       
-      // Make a simple request to verify the API key is working
       const response = await fetch('https://api.openai.com/v1/models', {
         headers
       });

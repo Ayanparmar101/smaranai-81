@@ -2,6 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
+// Always get the API key from environment variable
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
@@ -13,6 +14,16 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Check if API key is available
+  if (!openAIApiKey) {
+    return new Response(JSON.stringify({ 
+      error: 'OpenAI API key not configured. Please set the OPENAI_API_KEY environment variable.' 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -35,7 +46,7 @@ serve(async (req) => {
     const isProjectKey = openAIApiKey?.startsWith('sk-proj-');
     
     // Set up headers with conditional beta header
-    const headers = {
+    const headers: Record<string, string> = {
       'Authorization': `Bearer ${openAIApiKey}`,
       'Content-Type': 'application/json',
     };

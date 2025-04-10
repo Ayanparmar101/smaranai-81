@@ -19,13 +19,18 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
 
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    
     if (envApiKey) {
+      // If environment variable is set, use it and don't show dialog
       onApiKeySubmit(envApiKey);
+      toast.success('Using OpenAI API key from environment variables');
     } else {
+      // Check localStorage as fallback
       const savedApiKey = localStorage.getItem('openaiApiKey');
       if (savedApiKey) {
         onApiKeySubmit(savedApiKey);
       } else {
+        // No key found anywhere, show input dialog
         setOpen(true);
       }
     }
