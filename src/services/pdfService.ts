@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import * as pdfjs from 'pdfjs-dist';
 
@@ -56,7 +57,8 @@ class PDFServiceClass {
       const response = await fetch(`${supabase.supabaseUrl}/functions/v1/ocr-pdf`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${supabase.supabaseKey}`,
+          // Use the anon key instead of accessing protected properties
+          'Authorization': `Bearer ${supabase.auth.anon.key}`,
         },
         body: formData,
       });
@@ -95,6 +97,26 @@ class PDFServiceClass {
       .getPublicUrl(filePath);
     
     return publicUrl;
+  }
+
+  // Add the missing getPDF method
+  async getPDF(chapterId: string): Promise<Response | null> {
+    try {
+      // Try to fetch the PDF from storage
+      const { data, error } = await supabase.storage
+        .from('chapter_pdfs')
+        .download(`${chapterId}/${chapterId}.pdf`);
+        
+      if (error) {
+        console.error('Error fetching PDF:', error);
+        return null;
+      }
+      
+      return new Response(data);
+    } catch (error) {
+      console.error('Error in getPDF:', error);
+      return null;
+    }
   }
 }
 

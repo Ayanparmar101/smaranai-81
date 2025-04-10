@@ -39,6 +39,10 @@ const StudyPlannerContainer = () => {
     setSelectedChapter(chapterId);
   };
 
+  const handleResetPDF = () => {
+    setSelectedChapter("");
+  };
+
   const handleGenerateStudyPlan = async () => {
     if (!openaiService.getApiKey()) {
       toast.error("Please enter your OpenAI API key first");
@@ -118,6 +122,7 @@ const StudyPlannerContainer = () => {
             pdfUrl={pdfUrl} 
             chapterContent={chapterContent} 
             isLoading={isPdfProcessing}
+            onReset={handleResetPDF}
           />
         )}
         
