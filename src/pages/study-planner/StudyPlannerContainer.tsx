@@ -51,20 +51,39 @@ const StudyPlannerContainer = () => {
       return false;
     }
     
+    // Check if it's in valid format first
+    if (!(apiKey.startsWith('sk-') || apiKey.startsWith('sk-proj-')) || apiKey.length < 20) {
+      toast.error("Invalid API key format. OpenAI API keys should start with 'sk-' or 'sk-proj-'");
+      return false;
+    }
+    
     try {
+      // For project API keys, we need to add the OpenAI-Beta header
+      const headers: Record<string, string> = {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      };
+      
+      if (apiKey.startsWith('sk-proj-')) {
+        headers['OpenAI-Beta'] = 'assistants=v1';
+      }
+      
       // Make a simple request to verify the API key is working
-      await fetch('https://api.openai.com/v1/models', {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          ...(apiKey.startsWith('sk-proj-') ? { 'OpenAI-Beta': 'assistants=v1' } : {})
-        }
+      const response = await fetch('https://api.openai.com/v1/models', {
+        headers
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API key verification failed:", errorData);
+        toast.error(errorData.error?.message || "Your OpenAI API key appears to be invalid. Please check and update it.");
+        return false;
+      }
       
       return true;
     } catch (error) {
       console.error("API key verification failed:", error);
-      toast.error("Your OpenAI API key appears to be invalid. Please check and update it.");
+      toast.error("Your OpenAI API key verification failed. Please check your internet connection and try again.");
       return false;
     }
   };

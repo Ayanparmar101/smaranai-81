@@ -31,14 +31,24 @@ serve(async (req) => {
     const arrayBuffer = await pdfFile.arrayBuffer();
     const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
+    // Check if we're using a project API key
+    const isProjectKey = openAIApiKey?.startsWith('sk-proj-');
+    
+    // Set up headers with conditional beta header
+    const headers = {
+      'Authorization': `Bearer ${openAIApiKey}`,
+      'Content-Type': 'application/json',
+    };
+    
+    // Add beta header for project API keys
+    if (isProjectKey) {
+      headers['OpenAI-Beta'] = 'assistants=v1';
+    }
+
     // Call OpenAI API for OCR
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v1'  // Add this header for project API keys
-      },
+      headers,
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [

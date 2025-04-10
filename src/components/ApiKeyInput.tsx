@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Key, AlertTriangle } from 'lucide-react';
+import { Key, AlertTriangle, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ApiKeyInputProps {
@@ -47,7 +47,12 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
     localStorage.setItem('openaiApiKey', apiKey);
     onApiKeySubmit(apiKey);
     setOpen(false);
-    toast.success('API key saved successfully!');
+    
+    if (apiKey.startsWith('sk-proj-')) {
+      toast.success('Project API key saved successfully!');
+    } else {
+      toast.success('API key saved successfully!');
+    }
   };
 
   return (
@@ -73,6 +78,14 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
               <code className="block bg-muted p-2 mt-2 rounded text-sm">
                 VITE_OPENAI_API_KEY=your_api_key_here
               </code>
+            </AlertDescription>
+          </Alert>
+
+          <Alert className="my-4 bg-blue-50">
+            <Info className="h-4 w-4 text-blue-500" />
+            <AlertDescription>
+              Both standard API keys (starting with <code className="bg-muted p-1 rounded text-sm">sk-</code>) and 
+              project API keys (starting with <code className="bg-muted p-1 rounded text-sm">sk-proj-</code>) are supported.
             </AlertDescription>
           </Alert>
           

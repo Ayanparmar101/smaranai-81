@@ -36,6 +36,34 @@ class ApiKeyManager {
     // Check if it's a project key (starts with sk-proj-) or a standard key (starts with sk-)
     return apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-');
   }
+  
+  // Check if the API key is a project key (starts with sk-proj-)
+  isProjectKey(): boolean {
+    const apiKey = this.getApiKey();
+    if (!apiKey) return false;
+    
+    return apiKey.startsWith('sk-proj-');
+  }
+  
+  // Create headers for OpenAI API requests with proper authentication
+  createHeaders(): Record<string, string> {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
+      throw new Error("API key not set");
+    }
+    
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    };
+    
+    // Add the beta header for project API keys
+    if (this.isProjectKey()) {
+      headers['OpenAI-Beta'] = 'assistants=v1';
+    }
+    
+    return headers;
+  }
 }
 
 export const apiKeyManager = new ApiKeyManager();
