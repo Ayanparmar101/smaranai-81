@@ -48,12 +48,19 @@ class CompletionService {
       } else {
         console.log(`Making request with max_tokens: ${max_tokens}`);
         
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        };
+        
+        // Add the beta header for project API keys
+        if (apiKey.startsWith('sk-proj-')) {
+          headers['OpenAI-Beta'] = 'assistants=v1';
+        }
+        
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
+          headers: headers,
           body: JSON.stringify(payload),
         });
 
@@ -86,12 +93,19 @@ class CompletionService {
     const streamPayload = { ...payload };
     delete streamPayload.response_format;
 
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    };
+    
+    // Add the beta header for project API keys
+    if (apiKey.startsWith('sk-proj-')) {
+      headers['OpenAI-Beta'] = 'assistants=v1';
+    }
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers: headers,
       body: JSON.stringify({ ...streamPayload, stream: true }),
     });
 

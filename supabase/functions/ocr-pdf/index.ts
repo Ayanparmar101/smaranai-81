@@ -37,9 +37,10 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
+        'OpenAI-Beta': 'assistants=v1'  // Add this header for project API keys
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini-2024-07-18',
+        model: 'gpt-4o-mini',
         messages: [
           { 
             role: 'system', 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,14 +6,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { toast } from 'sonner';
 import { Key, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+
 interface ApiKeyInputProps {
   onApiKeySubmit: (apiKey: string) => void;
 }
+
 const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
   onApiKeySubmit
 }) => {
   const [apiKey, setApiKey] = useState('');
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (envApiKey) {
@@ -26,6 +30,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
       }
     }
   }, [onApiKeySubmit]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!apiKey.trim()) {
@@ -33,19 +38,20 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
       return;
     }
 
-    // Simple validation for basic API key format
-    if (!apiKey.startsWith('sk-') || apiKey.length < 20) {
-      toast.error('Please enter a valid OpenAI API key starting with "sk-"');
+    // Validate API key format - support both standard and project API keys
+    if (!(apiKey.startsWith('sk-') || apiKey.startsWith('sk-proj-')) || apiKey.length < 20) {
+      toast.error('Please enter a valid OpenAI API key starting with "sk-" or "sk-proj-"');
       return;
     }
+
     localStorage.setItem('openaiApiKey', apiKey);
     onApiKeySubmit(apiKey);
     setOpen(false);
     toast.success('API key saved successfully!');
   };
-  return <>
-      
-      
+
+  return (
+    <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -73,7 +79,13 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Input id="apiKey" placeholder="sk-..." type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                <Input 
+                  id="apiKey" 
+                  placeholder="sk-... or sk-proj-..." 
+                  type="password" 
+                  value={apiKey} 
+                  onChange={e => setApiKey(e.target.value)} 
+                />
               </div>
             </div>
             
@@ -83,6 +95,8 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
           </form>
         </DialogContent>
       </Dialog>
-    </>;
+    </>
+  );
 };
+
 export default ApiKeyInput;

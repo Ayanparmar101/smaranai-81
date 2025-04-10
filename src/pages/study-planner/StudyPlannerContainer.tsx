@@ -43,9 +43,34 @@ const StudyPlannerContainer = () => {
     setSelectedChapter("");
   };
 
-  const handleGenerateStudyPlan = async () => {
-    if (!openaiService.getApiKey()) {
+  const verifyApiKey = async (): Promise<boolean> => {
+    const apiKey = openaiService.getApiKey();
+    
+    if (!apiKey) {
       toast.error("Please enter your OpenAI API key first");
+      return false;
+    }
+    
+    try {
+      // Make a simple request to verify the API key is working
+      await fetch('https://api.openai.com/v1/models', {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          ...(apiKey.startsWith('sk-proj-') ? { 'OpenAI-Beta': 'assistants=v1' } : {})
+        }
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("API key verification failed:", error);
+      toast.error("Your OpenAI API key appears to be invalid. Please check and update it.");
+      return false;
+    }
+  };
+
+  const handleGenerateStudyPlan = async () => {
+    if (!await verifyApiKey()) {
       return;
     }
     
