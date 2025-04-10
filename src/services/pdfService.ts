@@ -53,12 +53,15 @@ class PDFServiceClass {
       const formData = new FormData();
       formData.append('pdf', file);
 
+      // Get Supabase URL from an env variable or configuration
+      const supabaseUrl = "https://zmjotxjabqcycwfxlymq.supabase.co";
+      
       // Call our Supabase Edge Function for OCR
-      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/ocr-pdf`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/ocr-pdf`, {
         method: 'POST',
         headers: {
-          // Use the anon key instead of accessing protected properties
-          'Authorization': `Bearer ${supabase.auth.anon.key}`,
+          // Use the public anon key
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptam90eGphYnFjeWN3ZnhseW1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE3OTEzODksImV4cCI6MjA1NzM2NzM4OX0.USlSHB3Vehe42WfgaHV4XSJzrZysEO2nwLtqoTLkZZs`,
         },
         body: formData,
       });
@@ -99,7 +102,6 @@ class PDFServiceClass {
     return publicUrl;
   }
 
-  // Add the missing getPDF method
   async getPDF(chapterId: string): Promise<Response | null> {
     try {
       // Try to fetch the PDF from storage
